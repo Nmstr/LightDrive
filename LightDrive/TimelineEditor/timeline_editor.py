@@ -104,7 +104,7 @@ class TimelineEditor(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setObjectName("TimelineEditor")
-        self.setWindowTitle("LightDrive")
+        self.setWindowTitle("LightDrive - Timeline Editor")
 
         # Load the stylesheet
         with open('style.qss', 'r') as f:

@@ -7,7 +7,7 @@ class SceneEditor(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setObjectName("SceneEditor")
-        self.setWindowTitle("LightDrive")
+        self.setWindowTitle("LightDrive - Scene Editor")
         self.file_path = None
         self.channels = []
 
