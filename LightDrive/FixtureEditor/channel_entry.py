@@ -27,6 +27,7 @@ class ChannelEntry(QFrame):
         self.ui.maximum_spin = QSpinBox(self)
         self.ui.maximum_spin.setMinimum(0)
         self.ui.maximum_spin.setMaximum(255)
+        self.ui.maximum_spin.setValue(255)
         self.ui.layout.addWidget(self.ui.maximum_spin)
         # Description
         self.ui.description = QLineEdit(self)
