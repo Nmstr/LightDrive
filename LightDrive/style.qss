@@ -1,0 +1,22 @@
+#MainWindow {
+    background-color: #1b1e20;
+}
+
+QPushButton {
+    background-color: #31363b;
+    color: white;
+    border: 1px solid #64686b;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+QPushButton:pressed {
+    background-color: #2c3035;
+    border: 1px solid #4d5156;
+}
+
+QPushButton:checked {
+    background-color: #2c3035;
+    border: 1px solid #4d5156;
+}
