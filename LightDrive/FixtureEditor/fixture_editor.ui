@@ -17,7 +17,7 @@
    <item row="1" column="0" colspan="3">
     <widget class="QTabWidget" name="tab_container">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="generic_tab">
       <attribute name="title">
@@ -96,6 +96,9 @@
            <widget class="QSpinBox" name="power_spin">
             <property name="suffix">
              <string>W</string>
+            </property>
+            <property name="maximum">
+             <number>2147483647</number>
             </property>
            </widget>
           </item>
@@ -197,6 +200,9 @@
             <property name="suffix">
              <string>°</string>
             </property>
+            <property name="maximum">
+             <number>2147483647</number>
+            </property>
            </widget>
           </item>
           <item row="2" column="0">
@@ -210,6 +216,9 @@
            <widget class="QSpinBox" name="max_tilt_spin">
             <property name="suffix">
              <string>°</string>
+            </property>
+            <property name="maximum">
+             <number>2147483647</number>
             </property>
            </widget>
           </item>
@@ -260,12 +269,18 @@
             <property name="suffix">
              <string>W</string>
             </property>
+            <property name="maximum">
+             <number>2147483647</number>
+            </property>
            </widget>
           </item>
           <item row="3" column="4">
            <widget class="QSpinBox" name="lumen_spin">
             <property name="suffix">
              <string> lm</string>
+            </property>
+            <property name="maximum">
+             <number>2147483647</number>
             </property>
            </widget>
           </item>
@@ -290,6 +305,9 @@
            <widget class="QSpinBox" name="temp_spin">
             <property name="suffix">
              <string> K</string>
+            </property>
+            <property name="maximum">
+             <number>2147483647</number>
             </property>
            </widget>
           </item>
@@ -353,6 +371,9 @@
             <property name="suffix">
              <string>kg</string>
             </property>
+            <property name="maximum">
+             <double>2147483647.000000000000000</double>
+            </property>
            </widget>
           </item>
           <item row="0" column="0" colspan="2">
@@ -377,6 +398,9 @@
             <property name="suffix">
              <string>mm</string>
             </property>
+            <property name="maximum">
+             <number>2147483647</number>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -398,12 +422,18 @@
             <property name="suffix">
              <string>mm</string>
             </property>
+            <property name="maximum">
+             <number>2147483647</number>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QSpinBox" name="height_spin">
             <property name="suffix">
              <string>mm</string>
+            </property>
+            <property name="maximum">
+             <number>2147483647</number>
             </property>
            </widget>
           </item>
