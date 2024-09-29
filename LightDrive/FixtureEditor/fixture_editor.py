@@ -1,3 +1,4 @@
+from save_error_dialog import SaveErrorDialog
 from channel_entry import ChannelEntry
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtUiTools import QUiLoader
@@ -65,15 +66,15 @@ class MainWindow(QMainWindow):
         fixture_name = self.ui.name_edit.text()
         print(fixture_name)
         if fixture_name == "":
-            print("Invalid name")
+            SaveErrorDialog("The fixture name can not be empty.").exec()
             return
         if not is_alphanumeric_with_spaces(fixture_name):
-            print("Invalid name")
+            SaveErrorDialog("The fixture name needs to be alphanumeric (+ spaces).").exec()
             return
         fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
         fixture_path = os.path.join(fixture_dir, f"{fixture_name}.json")
         if os.path.exists(fixture_path) and self.file_path != fixture_path:
-            print("Invalid name")
+            SaveErrorDialog("This fixture already exists. If you intended to edit it, open it first.").exec()
             return
         self.file_path = fixture_path  # This allows the fixture to be resaved, while still disallowing it to be overwritten when not opened
         os.makedirs(fixture_dir, exist_ok=True)
@@ -102,7 +103,7 @@ class MainWindow(QMainWindow):
         for i, channel in enumerate(self.channels):
             channel_data = channel.get_data()
             if channel_data["name"] == "":
-                print("All channels need to be named")
+                SaveErrorDialog("All channels need to be named").exec()
                 return
             fixture_data["channels"][i] = channel_data
 
