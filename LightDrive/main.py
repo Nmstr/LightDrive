@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QGraphicsView, QGraphic
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
 from PySide6.QtGui import QBrush
+import random
 import sys
 
 class Keyframe(QGraphicsEllipseItem):
@@ -24,7 +25,8 @@ class Timeline(QGraphicsView):
     def create_timeline(self):
         y_position = len(self.timelines) * 60
         timeline_rect = QGraphicsRectItem(0, y_position, 800, 50)
-        timeline_rect.setBrush(Qt.red)
+        colors = [Qt.red, Qt.green, Qt.blue, Qt.cyan, Qt.magenta, Qt.yellow, Qt.darkRed, Qt.darkGreen, Qt.darkBlue, Qt.darkCyan, Qt.darkMagenta, Qt.darkYellow]
+        timeline_rect.setBrush(colors[len(self.timelines) % len(colors)])
         timeline_rect.setOpacity(0.25)
         self.scene.addItem(timeline_rect)
         self.timelines.append(timeline_rect)
