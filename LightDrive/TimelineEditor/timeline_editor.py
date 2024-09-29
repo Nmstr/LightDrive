@@ -100,7 +100,7 @@ class Timeline(QGraphicsView):
             self.main_window.set_page("timeline_configuration")
         return super().mouseDoubleClickEvent(event)
 
-class MainWindow(QMainWindow):
+class TimelineEditor(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setObjectName("MainWindow")
@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
 
         # Load the UI file
         loader = QUiLoader()
-        ui_file = QFile("main.ui")
+        ui_file = QFile("TimelineEditor/timeline_editor.ui")
         self.ui = loader.load(ui_file, self)
         ui_file.close()
         self.setGeometry(self.ui.geometry())
@@ -156,6 +156,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = TimelineEditor()
     window.show()
     sys.exit(app.exec())
