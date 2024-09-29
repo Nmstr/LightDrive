@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tab_container">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="generic_tab">
       <attribute name="title">
@@ -74,10 +74,30 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <item row="3" column="1" colspan="2">
-           <widget class="QComboBox" name="dmx_type_combo"/>
+           <widget class="QComboBox" name="dmx_type_combo">
+            <item>
+             <property name="text">
+              <string>3-Pin</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>5-Pin</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item row="2" column="1" colspan="2">
-           <widget class="QSpinBox" name="power_spin"/>
+           <widget class="QSpinBox" name="power_spin">
+            <property name="suffix">
+             <string>W</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="power_label">
@@ -142,7 +162,28 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="1" column="1">
-           <widget class="QComboBox" name="head_type_combo"/>
+           <widget class="QComboBox" name="head_type_combo">
+            <item>
+             <property name="text">
+              <string>Fixed</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Head</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Mirror</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
@@ -152,7 +193,11 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QSpinBox" name="max_pan_spin"/>
+           <widget class="QSpinBox" name="max_pan_spin">
+            <property name="suffix">
+             <string>°</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_3">
@@ -162,7 +207,11 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="max_tilt_spin"/>
+           <widget class="QSpinBox" name="max_tilt_spin">
+            <property name="suffix">
+             <string>°</string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_4">
@@ -207,10 +256,18 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="5" column="4">
-           <widget class="QSpinBox" name="wattage_spin"/>
+           <widget class="QSpinBox" name="wattage_spin">
+            <property name="suffix">
+             <string>W</string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="4">
-           <widget class="QSpinBox" name="lumen_spin"/>
+           <widget class="QSpinBox" name="lumen_spin">
+            <property name="suffix">
+             <string> lm</string>
+            </property>
+           </widget>
           </item>
           <item row="5" column="0" colspan="4">
            <widget class="QLabel" name="width_label_4">
@@ -230,7 +287,11 @@
            </widget>
           </item>
           <item row="4" column="4">
-           <widget class="QSpinBox" name="temp_spin"/>
+           <widget class="QSpinBox" name="temp_spin">
+            <property name="suffix">
+             <string> K</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="4">
            <widget class="QLineEdit" name="type_edit"/>
@@ -275,7 +336,11 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="5" column="1">
-           <widget class="QDoubleSpinBox" name="weigth_dspin"/>
+           <widget class="QDoubleSpinBox" name="weigth_dspin">
+            <property name="suffix">
+             <string>kg</string>
+            </property>
+           </widget>
           </item>
           <item row="0" column="0" colspan="2">
            <widget class="QLabel" name="dimensions_label">
@@ -295,7 +360,11 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QSpinBox" name="length_spin"/>
+           <widget class="QSpinBox" name="length_spin">
+            <property name="suffix">
+             <string>mm</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="width_label">
@@ -312,10 +381,18 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="width_spin"/>
+           <widget class="QSpinBox" name="width_spin">
+            <property name="suffix">
+             <string>mm</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QSpinBox" name="height_spin"/>
+           <widget class="QSpinBox" name="height_spin">
+            <property name="suffix">
+             <string>mm</string>
+            </property>
+           </widget>
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="weigth_label">
