@@ -103,7 +103,7 @@ class Timeline(QGraphicsView):
 class TimelineEditor(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setObjectName("MainWindow")
+        self.setObjectName("TimelineEditor")
         self.setWindowTitle("LightDrive")
 
         # Load the stylesheet
