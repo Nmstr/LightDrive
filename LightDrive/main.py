@@ -6,14 +6,20 @@ from PySide6.QtGui import QBrush
 import sys
 
 class Keyframe(QGraphicsEllipseItem):
-    def __init__(self, x, y, diameter):
+    def __init__(self, main_window, x, y, diameter):
+        self.main_window = main_window
         super().__init__(x - diameter / 2, y - diameter / 2, diameter, diameter)
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
+    def mousePressEvent(self, event):  # noqa: N802
+        self.main_window.set_page("keyframe_configuration")
+        return super().mousePressEvent(event)
+
 class Timeline(QGraphicsView):
-    def __init__(self):
+    def __init__(self, main_window):
+        self.main_window = main_window
         super().__init__()
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
@@ -35,7 +41,7 @@ class Timeline(QGraphicsView):
         for timeline in self.timelines:
             if timeline.rect().contains(position.x(), position.y()):
                 timeline_y_center = timeline.rect().center().y()
-                keyframe = Keyframe(position.x(), timeline_y_center, 10)
+                keyframe = Keyframe(self.main_window, position.x(), timeline_y_center, 10)
                 self.scene.addItem(keyframe)
                 break
 
@@ -55,6 +61,11 @@ class Timeline(QGraphicsView):
             self.add_keyframe(position)
         return super().mousePressEvent(event)
 
+    def mouseDoubleClickEvent(self, event):  # noqa: N802
+        if event.button() == Qt.LeftButton:
+            self.main_window.set_page("timeline_configuration")
+        return super().mouseDoubleClickEvent(event)
+
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
@@ -73,7 +84,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(self.ui.geometry())
         self.showMaximized()
 
-        self.timeline = Timeline()
+        self.timeline = Timeline(self)
 
         # Add a button to add a new timeline
         self.add_timeline_button = QPushButton("Add Timeline")
@@ -89,6 +100,12 @@ class MainWindow(QMainWindow):
 
     def add_timeline(self):
         self.timeline.create_timeline()
+
+    def set_page(self, page: str):
+        if page == "timeline_configuration":
+            self.ui.top_display.setCurrentWidget(self.ui.timeline_configuration)
+        elif page == "keyframe_configuration":
+            self.ui.top_display.setCurrentWidget(self.ui.keyframe_configuration)
 
     def resizeEvent(self, event):  # noqa: N802
         try:

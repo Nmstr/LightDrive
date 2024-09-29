@@ -16,8 +16,36 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QStackedWidget" name="top_display">
-     <widget class="QWidget" name="keyframe_configuration"/>
-     <widget class="QWidget" name="page_2"/>
+     <widget class="QWidget" name="keyframe_configuration">
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>300</y>
+         <width>161</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Keyframe Configuration</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="timeline_configuration">
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>350</x>
+         <y>290</y>
+         <width>211</width>
+         <height>91</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Timeline Configuration</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
    <item>
