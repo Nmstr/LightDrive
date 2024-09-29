@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, \
-    QGraphicsEllipseItem, QPushButton, QGraphicsItem, QMenu
+    QGraphicsEllipseItem, QPushButton, QGraphicsItem
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
 from PySide6.QtGui import QBrush
