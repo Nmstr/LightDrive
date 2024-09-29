@@ -1,4 +1,5 @@
-#MainWindow {
+#MainWindow,
+#FixtureEditor {
     background-color: #1b1e20;
 }
 
@@ -28,6 +29,7 @@ QFrame#timeline {
 }
 
 QStackedWidget#top_display,
-QFrame#timeline {
+QFrame#timeline,
+QTabWidget {
     background-color: #24282c;
 }
