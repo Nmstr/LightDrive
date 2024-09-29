@@ -16,7 +16,7 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QStackedWidget" name="top_display">
-     <widget class="QWidget" name="page"/>
+     <widget class="QWidget" name="keyframe_configuration"/>
      <widget class="QWidget" name="page_2"/>
     </widget>
    </item>

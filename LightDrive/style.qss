@@ -21,13 +21,13 @@ QPushButton:checked {
     border: 1px solid #4d5156;
 }
 
-QStackedWidget#content_display,
+QStackedWidget#top_display,
 QFrame#timeline {
     border: 1px solid #202327;
     border-radius: 10px;
 }
 
-QStackedWidget#content_display,
+QStackedWidget#top_display,
 QFrame#timeline {
     background-color: #24282c;
 }
