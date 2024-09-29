@@ -47,7 +47,7 @@ class Timeline(QGraphicsView):
             timeline = self.timelines[index]
             timeline.setBrush(QBrush(color))
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # noqa: N802
         if event.button() == Qt.RightButton:
             # Mapping the clicked position from view coordinates to scene coordinates
             position = self.mapToScene(event.pos())
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
     def add_timeline(self):
         self.timeline.create_timeline()
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event):  # noqa: N802
         try:
             self.timeline.adjust_all_timeline_sizes(self.width(), 60)
         except AttributeError:
