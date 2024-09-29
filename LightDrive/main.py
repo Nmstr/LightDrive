@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, \
-    QGraphicsEllipseItem, QPushButton, QGraphicsItem
+    QGraphicsEllipseItem, QPushButton, QGraphicsItem, QMenu
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
 from PySide6.QtGui import QBrush
@@ -48,8 +48,8 @@ class Timeline(QGraphicsView):
             timeline = self.timelines[index]
             timeline.setBrush(QBrush(color))
 
-    def mouseDoubleClickEvent(self, event):
-        if event.button() == Qt.LeftButton:
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
             # Add a new keyframe
             position = self.mapToScene(event.pos())
             self.add_keyframe(position)
