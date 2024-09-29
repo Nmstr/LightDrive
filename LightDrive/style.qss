@@ -22,6 +22,11 @@ QPushButton:checked {
     border: 1px solid #4d5156;
 }
 
+QFrame#dimensions_frame,
+QFrame#illuminant_frame,
+QFrame#heads_frame,
+QFrame#connectors_frame,
+QFrame#channel_container,
 QStackedWidget#top_display,
 QFrame#timeline {
     border: 1px solid #202327;
@@ -30,6 +35,6 @@ QFrame#timeline {
 
 QStackedWidget#top_display,
 QFrame#timeline,
-QTabWidget {
+QTabWidget#tab_container {
     background-color: #24282c;
 }

@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tab_container">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="generic_tab">
       <attribute name="title">
@@ -91,6 +91,9 @@
             <property name="text">
              <string>Connectors</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
            </widget>
           </item>
           <item row="3" column="0">
@@ -158,13 +161,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="heads_edit">
-            <property name="text">
-             <string>Heads</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="1">
            <widget class="QSpinBox" name="max_tilt_spin"/>
           </item>
@@ -187,6 +183,16 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="heads_edit">
+            <property name="text">
+             <string>Heads</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -217,6 +223,9 @@
            <widget class="QLabel" name="Illuminant_label">
             <property name="text">
              <string>Illuminant</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
