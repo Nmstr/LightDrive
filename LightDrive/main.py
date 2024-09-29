@@ -48,7 +48,7 @@ class Timeline(QGraphicsView):
             timeline = self.timelines[index]
             timeline.setBrush(QBrush(color))
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # noqa: N802
         if event.button() == Qt.RightButton:
             # Add a new keyframe
             position = self.mapToScene(event.pos())
