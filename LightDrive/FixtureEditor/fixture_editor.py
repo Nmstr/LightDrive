@@ -39,7 +39,7 @@ def clear_field(container: str, target_layout, *, amount_left: int = 1):
             child.widget().deleteLater()
     return layout
 
-class MainWindow(QMainWindow):
+class FixtureEditor(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setObjectName("FixtureEditor")
@@ -172,6 +172,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = FixtureEditor()
     window.show()
     sys.exit(app.exec())
