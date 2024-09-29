@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QGraphicsView, QGraphic
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
 from PySide6.QtGui import QBrush
-import random
 import sys
 
 class Keyframe(QGraphicsEllipseItem):
