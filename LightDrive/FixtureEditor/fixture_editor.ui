@@ -13,11 +13,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_8">
+   <item row="1" column="0" colspan="3">
     <widget class="QTabWidget" name="tab_container">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="generic_tab">
       <attribute name="title">
@@ -64,7 +64,7 @@
        <string>Hardware</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="1">
+       <item row="2" column="1">
         <widget class="QFrame" name="connectors_frame">
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
@@ -139,7 +139,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -152,7 +152,7 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QFrame" name="heads_frame">
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
@@ -246,7 +246,7 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="1" column="1">
         <widget class="QFrame" name="illuminant_frame">
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
@@ -294,7 +294,7 @@
            </widget>
           </item>
           <item row="2" column="4">
-           <widget class="QLineEdit" name="type_edit"/>
+           <widget class="QLineEdit" name="illuminant_type_edit"/>
           </item>
           <item row="4" column="0" colspan="4">
            <widget class="QLabel" name="width_label_3">
@@ -320,7 +320,20 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="0">
+       <item row="2" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
         <widget class="QFrame" name="dimensions_frame">
          <property name="minimumSize">
           <size>
@@ -336,7 +349,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="5" column="1">
-           <widget class="QDoubleSpinBox" name="weigth_dspin">
+           <widget class="QDoubleSpinBox" name="weight_dspin">
             <property name="suffix">
              <string>kg</string>
             </property>
@@ -397,25 +410,12 @@
           <item row="5" column="0">
            <widget class="QLabel" name="weigth_label">
             <property name="text">
-             <string>Weigth</string>
+             <string>Weight</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
-       </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -471,6 +471,33 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="open_btn">
+     <property name="text">
+      <string>Open</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="save_btn">
+     <property name="text">
+      <string>Save</string>
+     </property>
     </widget>
    </item>
   </layout>

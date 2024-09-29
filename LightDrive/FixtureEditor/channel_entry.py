@@ -29,3 +29,12 @@ class ChannelEntry(QFrame):
         self.ui.description = QLineEdit(self)
         self.ui.description.setPlaceholderText("Channel Description")
         self.ui.layout.addWidget(self.ui.description)
+
+    def get_data(self) -> dict:
+        channel_data = {
+            "name": self.ui.name_edit.text(),
+            "minimum": self.ui.minimum_spin.value(),
+            "maximum": self.ui.maximum_spin.value(),
+            "description:": self.ui.description.text()
+        }
+        return channel_data
