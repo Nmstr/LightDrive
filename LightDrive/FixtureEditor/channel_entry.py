@@ -1,7 +1,10 @@
 from PySide6.QtWidgets import QFrame, QLabel, QLineEdit, QHBoxLayout, QWidget, QSpinBox
 
 class ChannelEntry(QFrame):
-    def __init__(self) -> None:
+    def __init__(self, channel_name = None,
+                 minimum_value = None,
+                 maximum_value = None,
+                 description = None) -> None:
         super().__init__()
         self.setObjectName("ChannelEntry")
 
@@ -30,11 +33,22 @@ class ChannelEntry(QFrame):
         self.ui.description.setPlaceholderText("Channel Description")
         self.ui.layout.addWidget(self.ui.description)
 
+        # Fill in the values
+        print(channel_name, minimum_value, maximum_value, description)
+        if channel_name:
+            self.ui.name_edit.setText(channel_name)
+        if minimum_value:
+            self.ui.minimum_spin.setValue(minimum_value)
+        if maximum_value:
+            self.ui.maximum_spin.setValue(maximum_value)
+        if description:
+            self.ui.description.setText(description)
+
     def get_data(self) -> dict:
         channel_data = {
             "name": self.ui.name_edit.text(),
             "minimum": self.ui.minimum_spin.value(),
             "maximum": self.ui.maximum_spin.value(),
-            "description:": self.ui.description.text()
+            "description": self.ui.description.text()
         }
         return channel_data
