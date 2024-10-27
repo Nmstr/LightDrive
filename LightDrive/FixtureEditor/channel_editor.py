@@ -1,17 +1,8 @@
-from audioop import reverse
-from logging import warning
-from mmap import error
-
-from PySide6.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import QFile
-from PySide6.QtGui import QIcon, QPixmap
-
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout
 from PySide6.QtCore import QFile
 from PySide6.QtGui import QPixmap
 
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
 
 class AcceptInfoDialog(QDialog):
     def __init__(self, message: str, *, error_message: bool = True) -> None:
