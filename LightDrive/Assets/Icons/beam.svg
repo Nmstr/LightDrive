@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 500 500"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="beam.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:bx="https://boxy-svg.com">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.598"
+     inkscape:cx="250"
+     inkscape:cy="250"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient1"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#343434;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+      <stop
+         style="stop-color:#818181;stop-opacity:1;"
+         offset="1"
+         id="stop2" />
+    </linearGradient>
+    <bx:guide
+       x="277.9751216786954"
+       y="301.95380629634644"
+       angle="0" />
+    <bx:guide
+       x="167.851"
+       y="223.801"
+       angle="0" />
+    <bx:guide
+       x="253.108337630761"
+       y="279.75132053926217"
+       angle="0" />
+    <bx:guide
+       x="199.8223718137587"
+       y="249.55593990962748"
+       angle="0" />
+    <bx:guide
+       x="222.91295700112636"
+       y="265.5417296547282"
+       angle="0" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1"
+       id="linearGradient2"
+       x1="255.99998"
+       y1="356.81909"
+       x2="255.99998"
+       y2="155.57239"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <path
+     d="M 256 31 L 356 481 L 156 481 L 256 31 Z"
+     bx:shape="triangle 156 31 200 450 0.5 0 1@1501f76a"
+     style="stroke:rgb(0, 0, 0);fill:url(#linearGradient2);fill-opacity:1"
+     id="path1" />
+</svg>

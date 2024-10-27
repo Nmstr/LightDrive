@@ -1,4 +1,5 @@
-#MainWindow {
+#FixtureEditor,
+#ChannelEditor {
     background-color: #1b1e20;
 }
 
@@ -19,4 +20,22 @@ QPushButton:pressed {
 QPushButton:checked {
     background-color: #2c3035;
     border: 1px solid #4d5156;
+}
+
+QFrame#channel_top_frame,
+QFrame#channel_table_container,
+QFrame#dimensions_frame,
+QFrame#illuminant_frame,
+QFrame#heads_frame,
+QFrame#connectors_frame,
+QFrame#channel_container {
+    border: 1px solid #202327;
+    border-radius: 10px;
+}
+
+QTableWidget#channel_table,
+QFrame#channel_top_frame,
+QFrame#channel_table_container,
+QTabWidget#tab_container {
+    background-color: #24282c;
 }

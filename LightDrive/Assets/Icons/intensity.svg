@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com">
+  <rect x="70" y="40" width="80" height="400" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+  <rect x="150" y="40" width="50" height="20" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+  <rect x="150" y="180" width="50" height="20" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+  <rect x="150" y="300" width="50" height="20" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+  <rect x="150" y="420" width="50" height="20" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+  <path d="M 476.729 46.031 L 551.729 76.031 L 401.729 76.031 L 476.729 46.031 Z" bx:shape="triangle 401.729 46.031 150 30 0.5 0 1@65b412d7" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(1, -0.000001, 0.000001, 1, -156.728989, 93.969082)"/>
+  <rect x="320" y="140" width="150" height="30" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+</svg>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 500 500"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="gobo.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:bx="https://boxy-svg.com">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.598"
+     inkscape:cx="250"
+     inkscape:cy="250"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <ellipse
+     style="stroke: rgb(255, 255, 255);"
+     cx="255.069"
+     cy="256"
+     rx="180"
+     ry="180"
+     id="ellipse1" />
+  <path
+     d="m 255.36883,106.41276 119.1717,252.08416 H 136.19714 Z"
+     bx:shape="triangle 130 80 250 300 0.5 0 1@acde9408"
+     style="fill:none;stroke:#ffffff;stroke-width:26.8512;stroke-dasharray:none"
+     id="path1" />
+</svg>
