@@ -1,7 +1,9 @@
-from open_fixture_dialog import OpenFixtureDialog
-from save_error_dialog import SaveErrorDialog
-from channel_entry import ChannelEntry
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout
+from FixtureEditor.fixture_dialogs import OpenFixtureDialog
+from FixtureEditor.fixture_dialogs import SaveErrorDialog
+from FixtureEditor.fixture_dialogs import FixtureInfoDialog
+from FixtureEditor.channel_editor import ChannelEditor
+from Functions.ui import clear_field
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
 import json
@@ -19,25 +21,31 @@ def is_alphanumeric_with_spaces(string) -> bool:
             return False
     return True
 
-def clear_field(container: str, target_layout, *, amount_left: int = 1):
-    """
-    Clear a container of its contents
-    :param container: The container to clear
-    :param target_layout: The layout that should be added if none exists (e.g. QVboxLayout, QHboxLayout...)
-    :param amount_left: The amount of elements that should be kept
-    :return: None
-    """
-    # Check if the container has a layout, if not, set a new layout of type target_layout
-    layout = container.layout()
-    if layout is None:
-        layout = target_layout
-        container.setLayout(layout)
+class ChannelEntry(QWidget):
+    def __init__(self, parent = None, channel_data: dict = None):
+        self.channel_data = channel_data
+        self.parent = parent
+        super().__init__(parent)
 
-    while layout.count() > amount_left:
-        child = layout.takeAt(0)
-        if child.widget():
-            child.widget().deleteLater()
-    return layout
+        name_label = QLabel(self)
+        name_label.setText(self.channel_data["name"])
+        type_label = QLabel(self)
+        type_label.setText(self.channel_data["type"])
+        remove_btn = QPushButton(self)
+        remove_btn.setText("Remove Channel")
+        remove_btn.clicked.connect(self.remove)
+
+        layout = QHBoxLayout()
+        layout.addWidget(name_label)
+        layout.addWidget(type_label)
+        layout.addWidget(remove_btn)
+        self.setLayout(layout)
+
+    def remove(self):
+        self.parent.channels.remove(self)
+        dlg = FixtureInfoDialog("You will need to save and re-open the fixture to remove the channel visually. It is recommended you do this immediately!",
+                                width = 800)
+        dlg.exec()
 
 class FixtureEditor(QMainWindow):
     def __init__(self) -> None:
@@ -62,16 +70,19 @@ class FixtureEditor(QMainWindow):
         self.ui.open_btn.clicked.connect(lambda: self.open_fixture())
         self.ui.save_btn.clicked.connect(lambda: self.save_fixture())
 
-    def add_channel(self, channel_name = None,
-                 minimum_value = None,
-                 maximum_value = None,
-                 description = None) -> None:
+    def add_channel(self) -> None:
         """
-        Add a channel to the fixture
+        Adds a new channel to the fixture
         :return: None
         """
+        channel_editor = ChannelEditor()
+        if not channel_editor.exec():
+            return
+        self.add_channel_widget(channel_editor.channel_data)
+
+    def add_channel_widget(self, channel_data: dict):
+        channel_entry = ChannelEntry(self, channel_data)
         layout = self.ui.channel_container.layout()
-        channel_entry = ChannelEntry(channel_name, minimum_value, maximum_value, description)
         layout.insertWidget(layout.count() - 1, channel_entry)
         self.channels.append(channel_entry)
 
@@ -113,8 +124,8 @@ class FixtureEditor(QMainWindow):
         # Set the channels
         channels = fixture_data.get("channels", {})
         clear_field(self.ui.channel_container, QVBoxLayout())
-        for channel_index, channel_data in channels.items():
-            self.add_channel(channel_data["name"], channel_data["minimum"], channel_data["maximum"], channel_data["description"])
+        for channel_index, channel_data in enumerate(channels.items()):
+            self.add_channel_widget(channel_data[1])
         self.file_path = fixture_path
 
     def save_fixture(self) -> None:
@@ -161,10 +172,7 @@ class FixtureEditor(QMainWindow):
 
         # Append channels
         for i, channel in enumerate(self.channels):
-            channel_data = channel.get_data()
-            if channel_data["name"] == "":
-                SaveErrorDialog("All channels need to be named").exec()
-                return
+            channel_data = channel.channel_data
             fixture_data["channels"][i] = channel_data
 
         with open(fixture_path, 'w') as f:

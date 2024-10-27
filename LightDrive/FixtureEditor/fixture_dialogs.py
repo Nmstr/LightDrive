@@ -1,6 +1,26 @@
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel, QPushButton
 import os
 
+class SaveErrorDialog(QDialog):
+    def __init__(self, message: str) -> None:
+        super().__init__()
+        self.setWindowTitle("Error Saving Fixture")
+        self.setFixedSize(500, 100)
+
+        qbtn = (
+            QDialogButtonBox.Ok
+        )
+
+        self.buttonBox = QDialogButtonBox(qbtn)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+
+        layout = QVBoxLayout()
+        self.label = QLabel(message, self)
+        layout.addWidget(self.label)
+        layout.addWidget(self.buttonBox)
+        self.setLayout(layout)
+
 class OpenFixtureDialog(QDialog):
     def __init__(self) -> None:
         super().__init__()
@@ -34,3 +54,23 @@ class OpenFixtureDialog(QDialog):
         """
         self.clicked_fixture = fixture
         self.accept()
+
+
+class FixtureInfoDialog(QDialog):
+    def __init__(self, message: str, *, width: int = 500) -> None:
+        super().__init__()
+        self.setWindowTitle("Info")
+        self.setFixedSize(width, 100)
+
+        qbtn = (
+            QDialogButtonBox.Ok
+        )
+
+        self.buttonBox = QDialogButtonBox(qbtn)
+        self.buttonBox.clicked.connect(self.accept)
+
+        layout = QVBoxLayout()
+        self.label = QLabel(message, self)
+        layout.addWidget(self.label)
+        layout.addWidget(self.buttonBox)
+        self.setLayout(layout)
