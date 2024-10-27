@@ -1,4 +1,3 @@
-#TimelineEditor,
 #FixtureEditor {
     background-color: #1b1e20;
 }
@@ -26,15 +25,11 @@ QFrame#dimensions_frame,
 QFrame#illuminant_frame,
 QFrame#heads_frame,
 QFrame#connectors_frame,
-QFrame#channel_container,
-QStackedWidget#top_display,
-QFrame#timeline {
+QFrame#channel_container {
     border: 1px solid #202327;
     border-radius: 10px;
 }
 
-QStackedWidget#top_display,
-QFrame#timeline,
 QTabWidget#tab_container {
     background-color: #24282c;
 }
