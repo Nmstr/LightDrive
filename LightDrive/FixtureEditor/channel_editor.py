@@ -27,7 +27,6 @@ class AcceptInfoDialog(QDialog):
         layout.addWidget(self.buttonBox)
         self.setLayout(layout)
 
-
 class ChannelEditor(QDialog):
     def __init__(self) -> None:
         super().__init__()
