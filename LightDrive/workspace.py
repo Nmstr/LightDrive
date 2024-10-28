@@ -26,7 +26,7 @@ class Workspace(QMainWindow):
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
 
         console_layout = self.ui.console_scroll_content.layout()
-        for i in range(255):
+        for i in range(512):
             value_slider = ValueSlider(self, i)
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
 
