@@ -6,7 +6,7 @@ class JumpSlider(QSlider):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # noqa: N802
         inverted_pos = (event.pos().y() * -1) + self.height()
         reduced_position = inverted_pos / self.height()
         self.setValue(reduced_position * self.maximum())
@@ -19,7 +19,7 @@ class ResetButton(QWidget):
         self.setFixedSize(50, 50)
         self.icon = QPixmap("Assets/Icons/reset_button.svg")
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # noqa: N802
         self.parent.slider.setValue(0)
         super().mousePressEvent(event)
 
