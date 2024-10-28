@@ -1,3 +1,4 @@
+#Workspace,
 #FixtureEditor,
 #ChannelEditor {
     background-color: #1b1e20;
@@ -22,6 +23,10 @@ QPushButton:checked {
     border: 1px solid #4d5156;
 }
 
+QWidget#console_scroll_content,
+QFrame#console_bottom,
+QFrame#workspace_bar,
+QStackedWidget#content_page,
 QFrame#channel_top_frame,
 QFrame#channel_table_container,
 QFrame#dimensions_frame,
@@ -33,6 +38,10 @@ QFrame#channel_container {
     border-radius: 10px;
 }
 
+QScrollArea#console_scroll,
+QWidget#console_scroll_content,
+QFrame#workspace_bar,
+QStackedWidget#content_page,
 QTableWidget#channel_table,
 QFrame#channel_top_frame,
 QFrame#channel_table_container,
