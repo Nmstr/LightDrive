@@ -24,6 +24,7 @@ class Workspace(QMainWindow):
 
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
+        self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
 
         console_layout = self.ui.console_scroll_content.layout()
         for i in range(512):
