@@ -1,5 +1,4 @@
 from artnet import ArtnetOutput
-import time
 
 class DmxOutput:
     def __init__(self, target_ip: str, universe: int) -> None:
