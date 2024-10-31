@@ -38,7 +38,6 @@ class ValueSlider(QWidget):
         self.workspace_window = parent
         self.index = index
         super().__init__(parent)
-        self.parent = parent
         self.setAutoFillBackground(True)
         self.set_color()
 
