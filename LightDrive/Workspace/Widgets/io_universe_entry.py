@@ -80,12 +80,12 @@ class UniverseEntry(QWidget):
         pal.setColor(self.backgroundRole(), QColor(color))
         self.setPalette(pal)
 
-    def mousePressEvent(self, event: QMouseEvent):
+    def mousePressEvent(self, event: QMouseEvent):  # noqa: N802
         self.set_color("#2a4129")
         self.workspace_window.select_io_universe(self.universe_index)
         super().mousePressEvent(event)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent):
+    def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
         dlg = UniverseConfigurationDialog(self.universe_index)
         if dlg.exec_():
             print("Accepted")
