@@ -1,4 +1,4 @@
-from artnet import ArtnetOutput
+from .artnet import ArtnetOutput
 
 class DmxOutput:
     def __init__(self, target_ip: str, universe: int) -> None:

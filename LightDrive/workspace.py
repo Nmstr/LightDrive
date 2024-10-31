@@ -1,6 +1,8 @@
+from Backend.output import DmxOutput
 from Workspace.Widgets.value_slider import ValueSlider
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtUiTools import QUiLoader
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtCore import QFile
 import sys
 
@@ -26,10 +28,12 @@ class Workspace(QMainWindow):
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
 
-        console_layout = self.ui.console_scroll_content.layout()
-        for i in range(512):
-            value_slider = ValueSlider(self, i)
-            console_layout.insertWidget(console_layout.count() - 1, value_slider)
+        # Setup pages
+        self.setup_console_page()
+
+        # Setup output
+        self.dmx_output = DmxOutput('127.0.0.1', 0)
+        self.dmx_output.set_single_value(1, 127)
 
     def show_page(self, page_index: int) -> None:
         """
@@ -38,6 +42,25 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.content_page.setCurrentIndex(page_index)
+
+    def setup_console_page(self) -> None:
+        """
+        Creates the console page
+        :return: None
+        """
+        console_layout = self.ui.console_scroll_content.layout()
+        for i in range(512):
+            value_slider = ValueSlider(self, i)
+            console_layout.insertWidget(console_layout.count() - 1, value_slider)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """
+        Handles closing of the application
+        :param event:  The close event
+        :return: None
+        """
+        self.dmx_output.stop()
+        super().closeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
