@@ -1,5 +1,6 @@
 from Backend.output import DmxOutput
 from Workspace.Widgets.value_slider import ValueSlider
+from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent
@@ -8,6 +9,8 @@ import sys
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
+        self.universe_entries = {}
+        self.selected_universe_entry = None
         super().__init__()
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
@@ -30,6 +33,7 @@ class Workspace(QMainWindow):
 
         # Setup pages
         self.setup_console_page()
+        self.setup_io_page()
 
         # Setup output
         self.dmx_output = DmxOutput('127.0.0.1', 0)
@@ -52,6 +56,28 @@ class Workspace(QMainWindow):
         for i in range(512):
             value_slider = ValueSlider(self, i)
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
+
+    def setup_io_page(self) -> None:
+        """
+        Creates the io page
+        :return: None
+        """
+        console_layout = self.ui.io_scroll_content.layout()
+
+        for i in range(4):
+            universe_entry = UniverseEntry(self, i)
+            console_layout.insertWidget(console_layout.count() - 1, universe_entry)
+            self.universe_entries[i] = universe_entry
+
+    def select_io_universe(self, universe_number: int) -> None:
+        """
+        Selects a different universe in the io page
+        :param universe_number: The index of the universe to select
+        :return: None
+        """
+        if self.selected_universe_entry:
+            self.selected_universe_entry.deselect()
+        self.selected_universe_entry = self.universe_entries[universe_number]
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """

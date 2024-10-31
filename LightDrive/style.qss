@@ -40,6 +40,8 @@ QFrame#channel_container {
 
 QScrollArea#console_scroll,
 QWidget#console_scroll_content,
+QScrollArea#io_scroll,
+QWidget#io_scroll_content,
 QFrame#workspace_bar,
 QStackedWidget#content_page,
 QTableWidget#channel_table,
