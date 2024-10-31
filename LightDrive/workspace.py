@@ -53,7 +53,7 @@ class Workspace(QMainWindow):
             value_slider = ValueSlider(self, i)
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
 
-    def closeEvent(self, event: QCloseEvent) -> None:
+    def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """
         Handles closing of the application
         :param event:  The close event
