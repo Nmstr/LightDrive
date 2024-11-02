@@ -92,11 +92,23 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
-            <height>38</height>
+            <width>1564</width>
+            <height>403</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
@@ -128,19 +140,69 @@
          <property name="frameShadow">
           <enum>QFrame::Shadow::Raised</enum>
          </property>
-         <widget class="QLabel" name="label_2">
-          <property name="geometry">
-           <rect>
-            <x>110</x>
-            <y>30</y>
-            <width>151</width>
-            <height>18</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>console_page</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QComboBox" name="console_current_universe_combo">
+            <item>
+             <property name="text">
+              <string>Universe 1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 6</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 7</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 8</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 9</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Universe 10</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>console_page</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -196,8 +258,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1562</width>
-            <height>758</height>
+            <width>66</width>
+            <height>18</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
