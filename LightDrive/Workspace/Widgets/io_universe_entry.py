@@ -100,4 +100,6 @@ class UniverseEntry(QWidget):
                                                                 backend = "ArtNet",
                                                                 target_ip = dlg.ui.target_ip_edit.text(),
                                                                 artnet_universe = dlg.ui.universe_spin.value())
+            else:
+                self.workspace_window.dmx_output.remove_universe(universe = self.universe_index + 1,)
         super().mouseDoubleClickEvent(event)

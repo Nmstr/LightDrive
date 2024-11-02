@@ -90,3 +90,15 @@ class DmxOutput:
             return {}
         universe_data = backend.get_universe_data()
         return universe_data
+
+    def remove_universe(self, universe: int) -> None:
+        """
+        Removes a specific universe
+        :param universe: The universe to remove
+        :return: None
+        """
+        backend = self.universes.get(universe)
+        if backend is None:
+            return
+        backend.stop()
+        self.universes.pop(universe)
