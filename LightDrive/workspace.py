@@ -37,7 +37,6 @@ class Workspace(QMainWindow):
 
         # Setup output
         self.dmx_output = DmxOutput('127.0.0.1', 0)
-        self.dmx_output.set_single_value(1, 127)
 
     def show_page(self, page_index: int) -> None:
         """

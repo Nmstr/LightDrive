@@ -10,9 +10,10 @@ class DmxOutput:
         self.packet_size = 512
         self.artnet = ArtnetOutput(target_ip, universe)
 
-    def set_single_value(self, channel: int, value: int) -> None:
+    def set_single_value(self, universe: int, channel: int, value: int) -> None:
         """
         Sets a single channel to another value
+        :param universe: The universe to output to
         :param channel: The channel to set
         :param value: The value that should be set
         :return: None
@@ -22,9 +23,10 @@ class DmxOutput:
             return
         self.artnet.set_single_value(channel, value)
 
-    def set_multiple_values(self, values: list[int]) -> None:
+    def set_multiple_values(self, universe: int, values: list[int]) -> None:
         """
         Sets all channels to a list of values
+        :param universe: The universe to output to
         :param values: The list of values (must match the packet size (512)
         :return: None
         """
@@ -33,9 +35,10 @@ class DmxOutput:
             return
         self.artnet.set_multiple_values(values)
 
-    def blackout(self) -> None:
+    def blackout(self, universe: int) -> None:
         """
         Sets all channels to 0
+        :param universe: The universe blackout
         :return: None
         """
         self.artnet.blackout()

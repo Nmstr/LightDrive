@@ -72,7 +72,7 @@ class ValueSlider(QWidget):
         """
         self.slider.setValue(value)
         self.number_display.setValue(value)
-        self.workspace_window.dmx_output.set_single_value(self.index + 1, value)
+        self.workspace_window.dmx_output.set_single_value(1, self.index + 1, value)
         self.set_color("#2a4129")
 
     def reset_value(self) -> None:
