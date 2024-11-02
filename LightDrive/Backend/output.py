@@ -78,3 +78,15 @@ class DmxOutput:
         """
         for universe in self.universes:
             self.universes.get(universe).stop()
+
+    def get_universe_data(self, universe: int) -> dict:
+        """
+        Gets the data about a specific universe
+        :param universe: The universe to get the data from
+        :return: The data about the universe
+        """
+        backend = self.universes.get(universe)
+        if backend is None:
+            return {}
+        universe_data = backend.get_universe_data()
+        return universe_data

@@ -4,10 +4,11 @@ from PySide6.QtCore import Qt, QFile
 from PySide6.QtUiTools import QUiLoader
 
 class UniverseConfigurationDialog(QDialog):
-    def __init__(self, universe_index: int) -> None:
+    def __init__(self, universe_index: int, universe_data: dict) -> None:
         """
         Creates the universe configuration dialog.
-        :param universe_index: The index of the universe.
+        :param universe_index: The index of the universe
+        :param universe_data: The current data of the universe
         """
         super().__init__()
         self.setWindowTitle("Universe Configuration")
@@ -19,6 +20,11 @@ class UniverseConfigurationDialog(QDialog):
         ui_file.close()
 
         self.ui.artnet_frame.setDisabled(True)
+        if universe_data.get("backend") == "ArtNet":
+            self.ui.artnet_frame.setDisabled(False)
+            self.ui.enable_artnet_checkbox.setChecked(True)
+            self.ui.target_ip_edit.setText(universe_data.get("target_ip"))
+            self.ui.universe_spin.setValue(universe_data.get("artnet_universe"))
 
         self.ui.enable_artnet_checkbox.checkStateChanged.connect(self.switch_artnet_state)
         self.ui.apply_btn.clicked.connect(self.apply)
@@ -86,7 +92,8 @@ class UniverseEntry(QWidget):
         super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
-        dlg = UniverseConfigurationDialog(self.universe_index)
+        universe_data = self.workspace_window.dmx_output.get_universe_data(self.universe_index + 1)
+        dlg = UniverseConfigurationDialog(self.universe_index + 1, universe_data)
         if dlg.exec_():
             if dlg.ui.enable_artnet_checkbox.isChecked():
                 self.workspace_window.dmx_output.setup_universe(universe = self.universe_index + 1,
