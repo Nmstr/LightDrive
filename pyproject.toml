@@ -16,7 +16,8 @@ classifiers = [
     "Topic :: Home Automation",
 ]
 dependencies = [
-    "PySide6"
+    "PySide6",
+    "stupidArtnet"
 ]
 [project.urls]
 Source = "https://github.com/Nmstr/LightDrive"

@@ -35,6 +35,8 @@ class ResetButton(QWidget):
 
 class ValueSlider(QWidget):
     def __init__(self, parent=None, index: int = 0):
+        self.workspace_window = parent
+        self.index = index
         super().__init__(parent)
         self.setAutoFillBackground(True)
         self.set_color()
@@ -56,7 +58,7 @@ class ValueSlider(QWidget):
         layout.addWidget(self.slider)
 
         label = QLabel(self)
-        label.setText(str(index + 1))
+        label.setText(str(self.index + 1))
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(label)
 
@@ -70,6 +72,7 @@ class ValueSlider(QWidget):
         """
         self.slider.setValue(value)
         self.number_display.setValue(value)
+        self.workspace_window.dmx_output.set_single_value(1, self.index + 1, value)
         self.set_color("#2a4129")
 
     def reset_value(self) -> None:
