@@ -63,7 +63,7 @@ class Workspace(QMainWindow):
         """
         console_layout = self.ui.io_scroll_content.layout()
 
-        for i in range(4):
+        for i in range(10):
             universe_entry = UniverseEntry(self, i)
             console_layout.insertWidget(console_layout.count() - 1, universe_entry)
             self.universe_entries[i] = universe_entry
