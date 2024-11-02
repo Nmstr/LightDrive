@@ -37,8 +37,6 @@ class Workspace(QMainWindow):
 
         # Setup output
         self.dmx_output = DmxOutput()
-        self.dmx_output.setup_universe(1, "ArtNet", target_ip = "192.168.188.255", artnet_universe = 0)
-        self.dmx_output.setup_universe(2, "ArtNet", target_ip = "192.168.188.255", artnet_universe = 1)
 
     def show_page(self, page_index: int) -> None:
         """

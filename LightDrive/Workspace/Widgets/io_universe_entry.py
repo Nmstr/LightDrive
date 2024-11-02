@@ -45,7 +45,7 @@ class UniverseConfigurationDialog(QDialog):
         super().accept()
 
 class UniverseEntry(QWidget):
-    def __init__(self, parent=None, universe_index: int = 0):
+    def __init__(self, parent = None, universe_index: int = 0):
         self.universe_index = universe_index
         self.workspace_window = parent
         super().__init__(parent)
@@ -88,5 +88,9 @@ class UniverseEntry(QWidget):
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
         dlg = UniverseConfigurationDialog(self.universe_index)
         if dlg.exec_():
-            print("Accepted")
+            if dlg.ui.enable_artnet_checkbox.isChecked():
+                self.workspace_window.dmx_output.setup_universe(universe = self.universe_index + 1,
+                                                                backend = "ArtNet",
+                                                                target_ip = dlg.ui.target_ip_edit.text(),
+                                                                artnet_universe = dlg.ui.universe_spin.value())
         super().mouseDoubleClickEvent(event)
