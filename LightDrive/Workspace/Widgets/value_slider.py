@@ -37,6 +37,7 @@ class ValueSlider(QWidget):
     def __init__(self, parent=None, index: int = 0):
         self.workspace_window = parent
         self.index = index
+        self.value_in_universe = {}
         super().__init__(parent)
         self.setAutoFillBackground(True)
         self.set_color()
@@ -72,8 +73,25 @@ class ValueSlider(QWidget):
         """
         self.slider.setValue(value)
         self.number_display.setValue(value)
-        self.workspace_window.dmx_output.set_single_value(1, self.index + 1, value)
+        self.workspace_window.dmx_output.set_single_value(universe = self.workspace_window.console_current_universe,
+                                                          channel = self.index + 1,
+                                                          value = value)
         self.set_color("#2a4129")
+        self.value_in_universe[self.workspace_window.console_current_universe] = value
+
+    def update_universe(self):
+        """
+        Updates the universe of the slider to the current one
+        :return: None
+        """
+        if self.workspace_window.console_current_universe in self.value_in_universe:
+            value = self.value_in_universe[self.workspace_window.console_current_universe]
+            if value == 0:
+                self.reset_value()
+            else:
+                self.set_value(self.value_in_universe[self.workspace_window.console_current_universe])
+        else:
+            self.reset_value()
 
     def reset_value(self) -> None:
         """

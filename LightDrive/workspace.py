@@ -11,6 +11,8 @@ class Workspace(QMainWindow):
     def __init__(self) -> None:
         self.universe_entries = {}
         self.selected_universe_entry = None
+        self.console_current_universe = 1
+        self.value_sliders = []
         super().__init__()
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
@@ -51,10 +53,22 @@ class Workspace(QMainWindow):
         Creates the console page
         :return: None
         """
+        self.ui.console_current_universe_combo.currentIndexChanged.connect(self.console_set_current_universe)
         console_layout = self.ui.console_scroll_content.layout()
         for i in range(512):
             value_slider = ValueSlider(self, i)
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
+            self.value_sliders.append(value_slider)
+
+    def console_set_current_universe(self, universe: int) -> None:
+        """
+        Changes the current universe displayed in the console tab
+        :param universe: The universe to change to
+        :return: None
+        """
+        self.console_current_universe = universe + 1
+        for slider in self.value_sliders:
+            slider.update_universe()
 
     def setup_io_page(self) -> None:
         """
