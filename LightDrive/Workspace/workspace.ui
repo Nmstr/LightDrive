@@ -63,19 +63,56 @@
    <item>
     <widget class="QStackedWidget" name="content_page">
      <widget class="QWidget" name="fixture_page">
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>340</x>
-         <y>290</y>
-         <width>191</width>
-         <height>18</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>fixture_page</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QFrame" name="fixture_topper">
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="fixture_add_btn">
+            <property name="text">
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="fixture_remove_btn">
+            <property name="text">
+             <string>Remove</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>1369</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="fixture_tree_widget">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="console_page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -92,8 +129,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1564</width>
-            <height>403</height>
+            <width>68</width>
+            <height>20</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
