@@ -52,9 +52,17 @@ class Workspace(QMainWindow):
         self.ui.content_page.setCurrentIndex(page_index)
 
     def setup_fixture_page(self) -> None:
+        """
+        Creates the fixture page
+        :return: None
+        """
         self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
 
     def add_fixture(self) -> None:
+        """
+        Show the dialog to add a fixture and if successful, add the fixture
+        :return: None
+        """
         dlg = AddFixtureDialog()
         dlg.exec()
 
