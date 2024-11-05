@@ -1,4 +1,5 @@
 from Backend.output import DmxOutput
+from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow
@@ -35,6 +36,7 @@ class Workspace(QMainWindow):
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
 
         # Setup pages
+        self.setup_fixture_page()
         self.setup_console_page()
         self.setup_io_page()
 
@@ -48,6 +50,13 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.content_page.setCurrentIndex(page_index)
+
+    def setup_fixture_page(self) -> None:
+        self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
+
+    def add_fixture(self) -> None:
+        dlg = AddFixtureDialog()
+        dlg.exec()
 
     def setup_console_page(self) -> None:
         """
