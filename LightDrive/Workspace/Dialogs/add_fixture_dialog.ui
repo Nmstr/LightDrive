@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTreeWidget" name="fixture_slection_tree">
+    <widget class="QTreeWidget" name="fixture_selection_tree">
      <column>
       <property name="text">
        <string>Fixtures</string>
