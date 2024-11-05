@@ -2,8 +2,9 @@ from Backend.output import DmxOutput
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtCore import QFile
 import sys
 
@@ -81,6 +82,10 @@ class Workspace(QMainWindow):
             universe_entry = UniverseEntry(self, i)
             console_layout.insertWidget(console_layout.count() - 1, universe_entry)
             self.universe_entries[i] = universe_entry
+            universe_fixture_item = QTreeWidgetItem()
+            universe_fixture_item.setText(0, f"Universe: {i + 1}")
+            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
+            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
     def select_io_universe(self, universe_number: int) -> None:
         """
