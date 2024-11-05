@@ -1,7 +1,6 @@
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QDialog, QVBoxLayout
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
-from PySide6.QtGui import QPixmap
 
 class AddFixtureDialog(QDialog):
     def __init__(self) -> None:
