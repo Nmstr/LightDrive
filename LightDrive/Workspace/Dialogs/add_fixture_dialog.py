@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QTreeWidgetItem
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QTreeWidgetItem, QListWidgetItem
+from PySide6.QtGui import QPixmap
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
 import json
@@ -66,6 +67,14 @@ class AddFixtureDialog(QDialog):
             return
         self.current_selected_fixture_item = item
         self.ui.name_edit.setText(item.text(0))
+
+        # Fill channel_list with all channels
+        fixture_data = self.current_selected_fixture_item.extra_data
+        self.ui.channel_list.clear()
+        for key, value in fixture_data["channels"].items():
+            channel_entry = QListWidgetItem(f"{key}: {value['name']}")
+            channel_entry.setIcon(QPixmap(f"Assets/Icons/{value["type"].lower()}.svg"))
+            self.ui.channel_list.addItem(channel_entry)
 
     def accept_fixture(self, item: QTreeWidgetItem) -> None:
         """
