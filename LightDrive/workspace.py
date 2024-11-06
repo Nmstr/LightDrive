@@ -57,6 +57,11 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
+        for i in range(10):
+            universe_fixture_item = QTreeWidgetItem()
+            universe_fixture_item.setText(0, f"Universe: {i + 1}")
+            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
+            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
     def add_fixture(self) -> None:
         """
@@ -64,7 +69,12 @@ class Workspace(QMainWindow):
         :return: None
         """
         dlg = AddFixtureDialog()
-        dlg.exec()
+        if not dlg.exec() or not dlg.current_selected_fixture_item:
+            return
+        parent_item = self.ui.fixture_tree_widget.topLevelItem(dlg.ui.universe_combo.currentIndex())
+        fixture_item = QTreeWidgetItem(parent_item)
+        fixture_item.setText(0, dlg.current_selected_fixture_item.text(0))
+        parent_item.setExpanded(True)
 
     def setup_console_page(self) -> None:
         """
@@ -99,10 +109,6 @@ class Workspace(QMainWindow):
             universe_entry = UniverseEntry(self, i)
             console_layout.insertWidget(console_layout.count() - 1, universe_entry)
             self.universe_entries[i] = universe_entry
-            universe_fixture_item = QTreeWidgetItem()
-            universe_fixture_item.setText(0, f"Universe: {i + 1}")
-            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
-            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
     def select_io_universe(self, universe_number: int) -> None:
         """

@@ -6,7 +6,7 @@ import os
 
 class AddFixtureDialog(QDialog):
     def __init__(self) -> None:
-        self.current_selected_fixture = None
+        self.current_selected_fixture_item = None
         super().__init__()
         self.setObjectName("AddFixtureDialog")
         self.setWindowTitle("LightDrive - Add Fixture")
@@ -57,7 +57,7 @@ class AddFixtureDialog(QDialog):
     def select_fixture(self, item):
         if item.childCount() != 0:  # Disregard top level items (manufacturers)
             return
-        self.current_selected_fixture = item
+        self.current_selected_fixture_item = item
         self.ui.name_edit.setText(item.text(0))
 
     def accept(self):
