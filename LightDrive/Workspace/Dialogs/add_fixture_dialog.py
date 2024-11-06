@@ -24,6 +24,7 @@ class AddFixtureDialog(QDialog):
         self.ui.button_box.rejected.connect(self.reject)
 
         self.ui.fixture_selection_tree.itemClicked.connect(self.select_fixture)
+        self.ui.fixture_selection_tree.itemDoubleClicked.connect(self.accept_fixture)
 
         layout = QVBoxLayout()
         layout.addWidget(self.ui)
@@ -60,5 +61,11 @@ class AddFixtureDialog(QDialog):
         self.current_selected_fixture_item = item
         self.ui.name_edit.setText(item.text(0))
 
+    def accept_fixture(self, item):
+        if item.childCount() != 0:  # Disregard top level items (manufacturers)
+            return
+        self.current_selected_fixture_item = item
+        super().accept()
+        
     def accept(self):
         super().accept()
