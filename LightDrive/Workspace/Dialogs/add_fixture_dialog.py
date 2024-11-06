@@ -55,13 +55,23 @@ class AddFixtureDialog(QDialog):
             fixture_item = QTreeWidgetItem(manufacturer_item)
             fixture_item.setText(0, fixture_data["name"])
 
-    def select_fixture(self, item):
+    def select_fixture(self, item: QTreeWidgetItem) -> None:
+        """
+        Selects the clicked fixture from the fixture_selection_tree
+        :param item: The QTreeWidgetItem that was clicked
+        :return: None
+        """
         if item.childCount() != 0:  # Disregard top level items (manufacturers)
             return
         self.current_selected_fixture_item = item
         self.ui.name_edit.setText(item.text(0))
 
-    def accept_fixture(self, item):
+    def accept_fixture(self, item: QTreeWidgetItem) -> None:
+        """
+        Accepts the double-clicked fixture from the fixture_selection_tree
+        :param item: The QTreeWidgetItem that was clicked
+        :return: None
+        """
         if item.childCount() != 0:  # Disregard top level items (manufacturers)
             return
         self.current_selected_fixture_item = item
