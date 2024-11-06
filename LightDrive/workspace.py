@@ -71,10 +71,11 @@ class Workspace(QMainWindow):
         dlg = AddFixtureDialog()
         if not dlg.exec() or not dlg.current_selected_fixture_item:
             return
+        fixture_data = dlg.current_selected_fixture_item.extra_data
         parent_item = self.ui.fixture_tree_widget.topLevelItem(dlg.ui.universe_combo.currentIndex())
-        fixture_item = QTreeWidgetItem(parent_item)
-        fixture_item.setText(0, dlg.current_selected_fixture_item.text(0))
         parent_item.setExpanded(True)
+        fixture_item = QTreeWidgetItem(parent_item)
+        fixture_item.setText(0, fixture_data["name"])
 
     def setup_console_page(self) -> None:
         """

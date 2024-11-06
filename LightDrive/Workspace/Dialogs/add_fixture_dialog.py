@@ -53,6 +53,7 @@ class AddFixtureDialog(QDialog):
 
             # Add the item
             fixture_item = QTreeWidgetItem(manufacturer_item)
+            fixture_item.extra_data = fixture_data
             fixture_item.setText(0, fixture_data["name"])
 
     def select_fixture(self, item: QTreeWidgetItem) -> None:
