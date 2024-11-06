@@ -118,7 +118,7 @@
          </property>
          <column>
           <property name="text">
-           <string>Ter</string>
+           <string>Fixtures</string>
           </property>
          </column>
         </widget>
