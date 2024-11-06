@@ -6,6 +6,7 @@ import os
 
 class AddFixtureDialog(QDialog):
     def __init__(self) -> None:
+        self.current_selected_fixture = None
         super().__init__()
         self.setObjectName("AddFixtureDialog")
         self.setWindowTitle("LightDrive - Add Fixture")
@@ -21,6 +22,8 @@ class AddFixtureDialog(QDialog):
         # Add buttons
         self.ui.button_box.accepted.connect(self.accept)
         self.ui.button_box.rejected.connect(self.reject)
+
+        self.ui.fixture_selection_tree.itemClicked.connect(self.select_fixture)
 
         layout = QVBoxLayout()
         layout.addWidget(self.ui)
@@ -50,6 +53,12 @@ class AddFixtureDialog(QDialog):
             # Add the item
             fixture_item = QTreeWidgetItem(manufacturer_item)
             fixture_item.setText(0, fixture_data["name"])
+
+    def select_fixture(self, item):
+        if item.childCount() != 0:  # Disregard top level items (manufacturers)
+            return
+        self.current_selected_fixture = item
+        self.ui.name_edit.setText(item.text(0))
 
     def accept(self):
         super().accept()
