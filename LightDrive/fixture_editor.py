@@ -116,7 +116,7 @@ class FixtureEditor(QMainWindow):
         self.ui.lumen_spin.setValue(fixture_data["lumen"])
         self.ui.temp_spin.setValue(fixture_data["temp"])
         self.ui.wattage_spin.setValue(fixture_data["wattage"])
-        self.ui.head_type_combo.setCurrentText(fixture_data["head_type"])
+        self.ui.light_type_combo.setCurrentText(fixture_data["light_type"])
         self.ui.max_pan_spin.setValue(fixture_data["max_pan"])
         self.ui.max_tilt_spin.setValue(fixture_data["max_tilt"])
         self.ui.power_spin.setValue(fixture_data["power"])
@@ -162,7 +162,7 @@ class FixtureEditor(QMainWindow):
             "lumen": self.ui.lumen_spin.value(),
             "temp": self.ui.temp_spin.value(),
             "wattage": self.ui.wattage_spin.value(),
-            "head_type": self.ui.light_type_combo.currentText(),
+            "light_type": self.ui.light_type_combo.currentText(),
             "max_pan": self.ui.max_pan_spin.value(),
             "max_tilt": self.ui.max_tilt_spin.value(),
             "power": self.ui.power_spin.value(),
