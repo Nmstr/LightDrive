@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="general_light.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.5605469"
+     inkscape:cx="239.33917"
+     inkscape:cy="264.33041"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#333333;stroke-width:3.12832"
+       id="rect1"
+       width="175"
+       height="75"
+       x="55"
+       y="218.5"
+       rx="30"
+       ry="10" />
+    <rect
+       style="fill:#333333;stroke-width:4.82096"
+       id="rect2"
+       width="80"
+       height="220"
+       x="230"
+       y="146"
+       rx="9.1796875"
+       ry="30.382328" />
+    <rect
+       style="fill:#333333;stroke-width:4.25674"
+       id="rect8"
+       width="125"
+       height="15"
+       x="333"
+       y="168.5" />
+    <rect
+       style="fill:#333333;stroke-width:5.48673"
+       id="rect9"
+       width="125"
+       height="15"
+       x="333"
+       y="248.5" />
+    <rect
+       style="fill:#333333;stroke-width:5.76732"
+       id="rect10"
+       width="125"
+       height="15"
+       x="333"
+       y="328.5" />
+  </g>
+</svg>

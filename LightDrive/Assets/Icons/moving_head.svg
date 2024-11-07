@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="moving_head.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.5605469"
+     inkscape:cx="232.93116"
+     inkscape:cy="256.6408"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#333333;stroke-width:5;stroke:#4d4d4d;stroke-opacity:1;stroke-dasharray:none"
+       id="rect1"
+       width="400"
+       height="75"
+       x="56"
+       y="400"
+       ry="25"
+       rx="10" />
+    <rect
+       style="fill:#333333;stroke:#4d4d4d;stroke-width:4.77744;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3"
+       width="269.95096"
+       height="117.39299"
+       x="42.475246"
+       y="225.57712"
+       transform="matrix(0.93775482,-0.34729798,0.34683105,0.93792762,0,0)" />
+    <rect
+       style="opacity:1;mix-blend-mode:normal;fill:#333333;stroke:#4d4d4d;stroke-width:4.74117;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2"
+       width="55.258831"
+       height="195.25883"
+       x="243.37059"
+       y="202.37059"
+       rx="23.024513"
+       ry="9.7629423" />
+  </g>
+</svg>

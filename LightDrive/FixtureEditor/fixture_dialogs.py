@@ -55,7 +55,6 @@ class OpenFixtureDialog(QDialog):
         self.clicked_fixture = fixture
         self.accept()
 
-
 class FixtureInfoDialog(QDialog):
     def __init__(self, message: str, *, width: int = 500) -> None:
         super().__init__()

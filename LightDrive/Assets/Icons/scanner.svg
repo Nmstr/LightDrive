@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="scanner.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.5605469"
+     inkscape:cx="246.38798"
+     inkscape:cy="252.15519"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#333333;stroke-width:3.40978"
+       id="rect1"
+       width="190"
+       height="90"
+       x="323.65228"
+       y="101.86292"
+       transform="rotate(22.513558)" />
+    <rect
+       style="fill:#333333;stroke-width:5.10415"
+       id="rect2"
+       width="130"
+       height="20"
+       x="193.6523"
+       y="101.86292"
+       transform="rotate(22.513558)" />
+    <rect
+       style="fill:#333333;stroke-width:2.74585"
+       id="rect3"
+       width="15"
+       height="80"
+       x="178.6523"
+       y="101.86292"
+       transform="rotate(22.513558)" />
+    <rect
+       style="fill:#333333;stroke-width:4.44602"
+       id="rect4"
+       width="15"
+       height="10"
+       x="308.65228"
+       y="141.86292"
+       transform="rotate(22.513558)" />
+    <rect
+       style="fill:#333333;stroke-width:4.41065"
+       id="rect5"
+       width="25"
+       height="100"
+       x="288.99689"
+       y="-247.53693"
+       transform="scale(1,-1)" />
+  </g>
+</svg>
