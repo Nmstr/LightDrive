@@ -74,8 +74,9 @@ class Workspace(QMainWindow):
         fixture_data = dlg.current_selected_fixture_item.extra_data
         parent_item = self.ui.fixture_tree_widget.topLevelItem(dlg.ui.universe_combo.currentIndex())
         parent_item.setExpanded(True)
-        fixture_item = QTreeWidgetItem(parent_item)
-        fixture_item.setText(0, fixture_data["name"])
+        for _ in range(dlg.ui.amount_spin.value()):
+            fixture_item = QTreeWidgetItem(parent_item)
+            fixture_item.setText(0, fixture_data["name"])
 
     def setup_console_page(self) -> None:
         """
