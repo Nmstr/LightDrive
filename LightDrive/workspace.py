@@ -77,6 +77,7 @@ class Workspace(QMainWindow):
         for _ in range(dlg.ui.amount_spin.value()):
             fixture_item = QTreeWidgetItem(parent_item)
             fixture_item.setText(0, fixture_data["name"])
+            fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
 
     def setup_console_page(self) -> None:
         """
