@@ -15,6 +15,7 @@ class Workspace(QMainWindow):
         self.selected_universe_entry = None
         self.console_current_universe = 1
         self.value_sliders = []
+        self.available_fixtures =  []
         super().__init__()
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
@@ -78,6 +79,12 @@ class Workspace(QMainWindow):
             fixture_item = QTreeWidgetItem(parent_item)
             fixture_item.setText(0, fixture_data["name"])
             fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
+            self.available_fixtures.append({
+                "id": fixture_data["id"],
+                "name": fixture_data["name"],
+                "universe": dlg.ui.universe_combo.currentIndex() + 1,
+                "address": dlg.ui.address_spin.value()
+            })
 
     def setup_console_page(self) -> None:
         """
@@ -100,6 +107,7 @@ class Workspace(QMainWindow):
         self.console_current_universe = universe + 1
         for slider in self.value_sliders:
             slider.update_universe()
+            slider.update_icon()
 
     def setup_io_page(self) -> None:
         """

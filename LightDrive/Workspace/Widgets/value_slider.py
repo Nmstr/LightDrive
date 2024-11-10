@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QWidget, QSlider, QVBoxLayout, QSizePolicy, QSpinBox, QLabel
 from PySide6.QtGui import QPainter, QPixmap, QPalette, QColor
 from PySide6.QtCore import Qt
+import json
+import os
 
 class JumpSlider(QSlider):
     def __init__(self, parent=None):
@@ -14,14 +16,60 @@ class JumpSlider(QSlider):
 
 class ResetButton(QWidget):
     def __init__(self, parent=None):
-        self.parent = parent
+        self.value_slider = parent
         super().__init__(parent)
         self.setFixedSize(50, 50)
         self.icon = QPixmap("Assets/Icons/reset_button.svg")
 
     def mousePressEvent(self, event):  # noqa: N802
-        self.parent.reset_value()
+        self.value_slider.reset_value()
         super().mousePressEvent(event)
+
+    def paintEvent(self, event) -> None:  # noqa: N802
+        """
+        Paint the button
+        :return: None
+        """
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.drawPixmap(self.rect(), self.icon)
+        super().paintEvent(event)
+
+class SliderIcon(QWidget):
+    def __init__(self, parent = None):
+        self.value_slider = parent
+        super().__init__(parent)
+        self.setFixedSize(50, 50)
+        self.icon = None
+        self.update_icon()
+
+    def update_icon(self, fixture_id: int = None, fixture_address: int = None) -> None:
+        """
+        Updates the icon of the widget
+        :param fixture_id: The id of the fixture
+        :param fixture_address: The address of the fixture
+        :return: None
+        """
+        if not fixture_id or fixture_address is None:
+            self.hide()
+            return
+
+        # Get fixture data
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(f"{fixture_dir}/{fixture_id}.json")) as f:
+            fixture_data = json.load(f)
+
+        # Return if the position is wrong
+        relative_position = self.value_slider.index + 1 - fixture_address
+        if relative_position < 0:
+            return  # Return if position too low
+        if relative_position > len(fixture_data["channels"]) - 1:
+            return  # Return if position higher than max channel
+
+        # Update the icon
+        channel_data = fixture_data["channels"][str(relative_position)]
+        self.icon = QPixmap(f"Assets/Icons/{channel_data["type"].lower()}.svg")
+        self.show()
 
     def paintEvent(self, event) -> None:  # noqa: N802
         """
@@ -62,6 +110,9 @@ class ValueSlider(QWidget):
         label.setText(str(self.index + 1))
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(label)
+
+        self.icon = SliderIcon(self)
+        layout.addWidget(self.icon)
 
         self.setLayout(layout)
 
@@ -111,3 +162,15 @@ class ValueSlider(QWidget):
         pal = QPalette()
         pal.setColor(self.backgroundRole(), QColor(color))
         self.setPalette(pal)
+
+    def update_icon(self):
+        """
+        Updates the icon of the slider
+        :return: None
+        """
+        self.icon.update_icon()
+        available_fixtures = self.workspace_window.available_fixtures
+        for fixture in available_fixtures:
+            if not fixture["universe"] == self.workspace_window.console_current_universe:
+                continue
+            self.icon.update_icon(fixture["id"], fixture["address"])
