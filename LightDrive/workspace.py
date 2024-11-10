@@ -1,10 +1,13 @@
 from Backend.output import DmxOutput
+from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtCore import QFile
+import uuid
 import sys
 
 class Workspace(QMainWindow):
@@ -13,6 +16,7 @@ class Workspace(QMainWindow):
         self.selected_universe_entry = None
         self.console_current_universe = 1
         self.value_sliders = []
+        self.available_fixtures =  []
         super().__init__()
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
@@ -34,6 +38,7 @@ class Workspace(QMainWindow):
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
 
         # Setup pages
+        self.setup_fixture_page()
         self.setup_console_page()
         self.setup_io_page()
 
@@ -47,6 +52,54 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.content_page.setCurrentIndex(page_index)
+
+    def setup_fixture_page(self) -> None:
+        """
+        Creates the fixture page
+        :return: None
+        """
+        self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
+        self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
+        for i in range(10):
+            universe_fixture_item = QTreeWidgetItem()
+            universe_fixture_item.setText(0, f"Universe: {i + 1}")
+            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
+            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
+
+    def add_fixture(self) -> None:
+        """
+        Show the dialog to add a fixture and if successful, add the fixture
+        :return: None
+        """
+        dlg = AddFixtureDialog()
+        if not dlg.exec() or not dlg.current_selected_fixture_item:
+            return
+        fixture_data = dlg.current_selected_fixture_item.extra_data
+        parent_item = self.ui.fixture_tree_widget.topLevelItem(dlg.ui.universe_combo.currentIndex())
+        parent_item.setExpanded(True)
+        for _ in range(dlg.ui.amount_spin.value()):
+            fixture_item = QTreeWidgetItem(parent_item)
+            fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
+            fixture_item.setText(0, fixture_data["name"])
+            fixture_universe = dlg.ui.universe_combo.currentIndex() + 1
+            fixture_address = dlg.ui.address_spin.value()
+            fixture_item.setText(1, f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
+            fixture_uuid = uuid.uuid4()
+            fixture_item.uuid = fixture_uuid
+            self.available_fixtures.append({
+                "id": fixture_data["id"],
+                "name": fixture_data["name"],
+                "universe": fixture_universe,
+                "address": fixture_address,
+                "fixture_uuid": fixture_uuid,
+            })
+
+    def remove_fixture(self) -> None:
+        current_item = self.ui.fixture_tree_widget.selectedItems()[0]
+        for fixture in self.available_fixtures:
+            if current_item.uuid == fixture["fixture_uuid"]:
+                self.available_fixtures.remove(fixture)
+        current_item.parent().removeChild(current_item)
 
     def setup_console_page(self) -> None:
         """
@@ -69,6 +122,7 @@ class Workspace(QMainWindow):
         self.console_current_universe = universe + 1
         for slider in self.value_sliders:
             slider.update_universe()
+            slider.update_icon()
 
     def setup_io_page(self) -> None:
         """

@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel, QPushButton
+import json
 import os
 
 class SaveErrorDialog(QDialog):
@@ -40,7 +41,9 @@ class OpenFixtureDialog(QDialog):
 
         fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
         for fixture in os.listdir(fixture_dir):
-            fixture_btn = QPushButton(fixture.split(".")[0], self)
+            with open(os.path.join(fixture_dir, fixture)) as f:
+                fixture_data = json.load(f)
+            fixture_btn = QPushButton(fixture_data["name"], self)
             fixture_btn.clicked.connect(lambda _, f=fixture: self.exit(f))
             layout.addWidget(fixture_btn)
 
@@ -54,7 +57,6 @@ class OpenFixtureDialog(QDialog):
         """
         self.clicked_fixture = fixture
         self.accept()
-
 
 class FixtureInfoDialog(QDialog):
     def __init__(self, message: str, *, width: int = 500) -> None:

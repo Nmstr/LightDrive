@@ -17,14 +17,17 @@
    <item row="1" column="0" colspan="3">
     <widget class="QTabWidget" name="tab_container">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="generic_tab">
       <attribute name="title">
        <string>Generic</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="1">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="manufacturer_edit"/>
+       </item>
+       <item row="4" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -37,16 +40,6 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="name_label">
-         <property name="text">
-          <string>Name/Model</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="manufacturer_edit"/>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="manufacturer_label">
          <property name="text">
@@ -54,8 +47,35 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="id_edit"/>
+       </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="name_edit"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="name_label">
+         <property name="text">
+          <string>Name/Model</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="author_edit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="id_label">
+         <property name="text">
+          <string>Fixture Id</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="author_label">
+         <property name="text">
+          <string>Author</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -165,25 +185,50 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="1" column="1">
-           <widget class="QComboBox" name="head_type_combo">
+           <widget class="QComboBox" name="light_type_combo">
             <item>
              <property name="text">
-              <string>Fixed</string>
+              <string>General Light</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Head</string>
+              <string>Moving Head</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Mirror</string>
+              <string>Pixel Bar</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Other</string>
+              <string>Scanner</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Matrix</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Hazer</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Effect</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Strobe</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Other Fixture</string>
              </property>
             </item>
            </widget>
