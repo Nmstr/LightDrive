@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtCore import QFile
+import uuid
 import sys
 
 class Workspace(QMainWindow):
@@ -58,6 +59,7 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
+        self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
         for i in range(10):
             universe_fixture_item = QTreeWidgetItem()
             universe_fixture_item.setText(0, f"Universe: {i + 1}")
@@ -82,12 +84,22 @@ class Workspace(QMainWindow):
             fixture_universe = dlg.ui.universe_combo.currentIndex() + 1
             fixture_address = dlg.ui.address_spin.value()
             fixture_item.setText(1, f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
+            fixture_uuid = uuid.uuid4()
+            fixture_item.uuid = fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
                 "universe": fixture_universe,
-                "address": fixture_address
+                "address": fixture_address,
+                "fixture_uuid": fixture_uuid,
             })
+
+    def remove_fixture(self) -> None:
+        current_item = self.ui.fixture_tree_widget.selectedItems()[0]
+        for fixture in self.available_fixtures:
+            if current_item.uuid == fixture["fixture_uuid"]:
+                self.available_fixtures.remove(fixture)
+        current_item.parent().removeChild(current_item)
 
     def setup_console_page(self) -> None:
         """
