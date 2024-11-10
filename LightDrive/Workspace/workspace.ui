@@ -116,9 +116,23 @@
            <height>32</height>
           </size>
          </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>500</number>
+         </attribute>
          <column>
           <property name="text">
            <string>Fixtures</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Location</string>
+          </property>
+          <property name="toolTip">
+           <string>Format: &quot;{universe}&gt;{first address}-{last address}&quot;</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -140,8 +154,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>82</width>
+            <height>20</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -306,8 +320,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>80</width>
+            <height>18</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">

@@ -77,13 +77,16 @@ class Workspace(QMainWindow):
         parent_item.setExpanded(True)
         for _ in range(dlg.ui.amount_spin.value()):
             fixture_item = QTreeWidgetItem(parent_item)
-            fixture_item.setText(0, fixture_data["name"])
             fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
+            fixture_item.setText(0, fixture_data["name"])
+            fixture_universe = dlg.ui.universe_combo.currentIndex() + 1
+            fixture_address = dlg.ui.address_spin.value()
+            fixture_item.setText(1, f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
-                "universe": dlg.ui.universe_combo.currentIndex() + 1,
-                "address": dlg.ui.address_spin.value()
+                "universe": fixture_universe,
+                "address": fixture_address
             })
 
     def setup_console_page(self) -> None:
