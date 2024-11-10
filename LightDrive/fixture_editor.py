@@ -9,17 +9,17 @@ from PySide6.QtCore import QFile
 import json
 import sys
 import os
+import re
 
-def is_alphanumeric_with_spaces(string) -> bool:
+def is_valid_id(string) -> bool:
     """
-    Checks if a string is alphanumeric (allows spaces)
+    Checks if a string matches the following pattern: "^[A-Za-z0-9_-]*$"
     :param string: The string to check
-    :return: Whether the string is alphanumeric
+    :return: Whether the string matches the pattern
     """
-    for char in string:
-        if not (char.isalnum() or char.isspace()):
-            return False
-    return True
+    if re.match("^[A-Za-z0-9_-]*$", string):
+        return True
+    return False
 
 class ChannelEntry(QWidget):
     def __init__(self, parent = None, channel_data: dict = None):
@@ -108,6 +108,8 @@ class FixtureEditor(QMainWindow):
         # Set the fixture data
         self.ui.name_edit.setText(fixture_data["name"])
         self.ui.manufacturer_edit.setText(fixture_data["manufacturer"])
+        self.ui.id_edit.setText(fixture_data["id"])
+        self.ui.author_edit.setText(fixture_data["author"])
         self.ui.width_spin.setValue(fixture_data["width"])
         self.ui.height_spin.setValue(fixture_data["height"])
         self.ui.length_spin.setValue(fixture_data["length"])
@@ -134,16 +136,15 @@ class FixtureEditor(QMainWindow):
         :return: None
         """
         # Check if fixture can be saved
-        fixture_name = self.ui.name_edit.text()
-        print(fixture_name)
-        if fixture_name == "":
-            SaveErrorDialog("The fixture name can not be empty.").exec()
+        fixture_id = self.ui.id_edit.text()
+        if fixture_id == "":
+            SaveErrorDialog("The fixture id can not be empty.").exec()
             return
-        if not is_alphanumeric_with_spaces(fixture_name):
-            SaveErrorDialog("The fixture name needs to be alphanumeric (+ spaces).").exec()
+        if not is_valid_id(fixture_id):
+            SaveErrorDialog("The fixture id needs to match the following pattern: \"^[A-Za-z0-9_-]*$\"").exec()
             return
         fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
-        fixture_path = os.path.join(fixture_dir, f"{fixture_name}.json")
+        fixture_path = os.path.join(fixture_dir, f"{fixture_id}.json")
         if os.path.exists(fixture_path) and self.file_path != fixture_path:
             SaveErrorDialog("This fixture already exists. If you intended to edit it, open it first.").exec()
             return
@@ -152,8 +153,10 @@ class FixtureEditor(QMainWindow):
 
         # Create main fixture data dict
         fixture_data = {
-            "name": fixture_name,
+            "name": self.ui.name_edit.text(),
             "manufacturer": self.ui.manufacturer_edit.text(),
+            "id": fixture_id,
+            "author": self.ui.author_edit.text(),
             "width": self.ui.width_spin.value(),
             "height": self.ui.height_spin.value(),
             "length": self.ui.length_spin.value(),
