@@ -5,7 +5,7 @@ from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QFileDialog
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent, QPixmap, QAction
+from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile
 import json
 import uuid
@@ -26,6 +26,10 @@ class Workspace(QMainWindow):
         self.setup_fixture_page()
         self.setup_console_page()
         self.setup_io_page()
+
+        # Setup hotkeys
+        self.save_hotkey = QShortcut(QKeySequence.Save, self)
+        self.save_hotkey.activated.connect(lambda: self.save_workspace())
 
         # Setup output
         self.dmx_output = DmxOutput()
