@@ -30,6 +30,10 @@ class Workspace(QMainWindow):
         # Setup output
         self.dmx_output = DmxOutput()
 
+        # Open any workspace if rebooted after workspace was opened
+        if current_workspace_file:  # current_workspace_file is the path to the workspace to open or None
+            self.open_workspace(current_workspace_file)
+
         self.show()
 
     def setup_main_window(self):
@@ -63,7 +67,7 @@ class Workspace(QMainWindow):
         new_action.triggered.connect(lambda: self.new_workspace())
         open_action = QAction("Open", self)
         file_menu.addAction(open_action)
-        open_action.triggered.connect(lambda: self.open_workspace())
+        open_action.triggered.connect(lambda: self.show_open_workspace_dialog())
         save_action = QAction("Save", self)
         file_menu.addAction(save_action)
         save_as_action = QAction("Save As", self)
@@ -76,6 +80,8 @@ class Workspace(QMainWindow):
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
 
     def new_workspace(self):
+        global current_workspace_file
+        current_workspace_file = None
         app.exit(EXIT_CODE_REBOOT)
 
     def save_workspace_as(self):
@@ -88,24 +94,28 @@ class Workspace(QMainWindow):
             write_workspace_file(workspace_file_path=filename,
                                  fixtures=self.available_fixtures)
 
-    def open_workspace(self):
+    def show_open_workspace_dialog(self):
         dlg = QFileDialog(self)
         dlg.setNameFilter("Workspace (*.ldw)")
         dlg.setDefaultSuffix(".ldw")
         dlg.setFileMode(QFileDialog.ExistingFile)
         if dlg.exec():
-            fixtures = read_workspace_file(dlg.selectedFiles()[0])
+            global current_workspace_file
+            current_workspace_file = dlg.selectedFiles()[0]
+            app.exit(EXIT_CODE_REBOOT)  # Restart application (opens workspace while opening)
 
-            for fixture in fixtures:
-                # Read the fixture data
-                fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
-                with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
-                    fixture_data = json.load(f)
-                # Add the fixture
-                self.add_fixture(amount = 1,
-                                 fixture_data = fixture_data,
-                                 universe = fixture["universe"],
-                                 address = fixture["address"])
+    def open_workspace(self, workspace_file_path):
+        fixtures = read_workspace_file(workspace_file_path)
+        for fixture in fixtures:
+            # Read the fixture data
+            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+            with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
+                fixture_data = json.load(f)
+            # Add the fixture
+            self.add_fixture(amount = 1,
+                             fixture_data = fixture_data,
+                             universe = fixture["universe"],
+                             address = fixture["address"])
 
     def show_page(self, page_index: int) -> None:
         """
@@ -234,6 +244,7 @@ class Workspace(QMainWindow):
         super().closeEvent(event)
 
 if __name__ == "__main__":
+    current_workspace_file = None
     EXIT_CODE_REBOOT = -123987123
     exit_code = EXIT_CODE_REBOOT  # Execute at least once
     while exit_code == EXIT_CODE_REBOOT:
