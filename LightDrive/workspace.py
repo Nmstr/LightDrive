@@ -1,4 +1,4 @@
-from workspace_file_manager import write_workspace_file
+from workspace_file_manager import write_workspace_file, read_workspace_file
 from Backend.output import DmxOutput
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
@@ -7,8 +7,10 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeW
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction
 from PySide6.QtCore import QFile
+import json
 import uuid
 import sys
+import os
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
@@ -58,6 +60,7 @@ class Workspace(QMainWindow):
         file_menu.addAction(new_action)
         open_action = QAction("Open", self)
         file_menu.addAction(open_action)
+        open_action.triggered.connect(lambda: self.open_workspace())
         save_action = QAction("Save", self)
         file_menu.addAction(save_action)
         save_as_action = QAction("Save As", self)
@@ -73,10 +76,30 @@ class Workspace(QMainWindow):
         dlg = QFileDialog(self)
         dlg.setNameFilter("Workspace (*.ldw)")
         dlg.setDefaultSuffix(".ldw")
+        dlg.setAcceptMode(QFileDialog.AcceptSave)
         if dlg.exec():
             filename = dlg.selectedFiles()[0]
             write_workspace_file(workspace_file_path=filename,
                                  fixtures=self.available_fixtures)
+
+    def open_workspace(self):
+        dlg = QFileDialog(self)
+        dlg.setNameFilter("Workspace (*.ldw)")
+        dlg.setDefaultSuffix(".ldw")
+        dlg.setFileMode(QFileDialog.ExistingFile)
+        if dlg.exec():
+            fixtures = read_workspace_file(dlg.selectedFiles()[0])
+
+            for fixture in fixtures:
+                # Read the fixture data
+                fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+                with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
+                    fixture_data = json.load(f)
+                # Add the fixture
+                self.add_fixture(amount = 1,
+                                 fixture_data = fixture_data,
+                                 universe = fixture["universe"],
+                                 address = fixture["address"])
 
     def show_page(self, page_index: int) -> None:
         """
@@ -91,7 +114,7 @@ class Workspace(QMainWindow):
         Creates the fixture page
         :return: None
         """
-        self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
+        self.ui.fixture_add_btn.clicked.connect(self.show_add_fixture_dialog)
         self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
         for i in range(10):
             universe_fixture_item = QTreeWidgetItem()
@@ -99,7 +122,7 @@ class Workspace(QMainWindow):
             universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
             self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
-    def add_fixture(self) -> None:
+    def show_add_fixture_dialog(self) -> None:
         """
         Show the dialog to add a fixture and if successful, add the fixture
         :return: None
@@ -108,15 +131,31 @@ class Workspace(QMainWindow):
         if not dlg.exec() or not dlg.current_selected_fixture_item:
             return
         fixture_data = dlg.current_selected_fixture_item.extra_data
-        parent_item = self.ui.fixture_tree_widget.topLevelItem(dlg.ui.universe_combo.currentIndex())
-        parent_item.setExpanded(True)
-        for _ in range(dlg.ui.amount_spin.value()):
+        amount = dlg.ui.amount_spin.value()
+        universe = dlg.ui.universe_combo.currentIndex() + 1
+        address = dlg.ui.address_spin.value()
+        self.add_fixture(amount, fixture_data, universe, address)
+
+    def add_fixture(self, amount, fixture_data, universe, address) -> None:
+        """
+        Add the fixture
+        :param amount: The amount of the fixture
+        :param fixture_data: The fixture data
+        :param universe: The universe of the fixture
+        :param address: The address of the fixture
+        :return: None
+        """
+        for _ in range(amount):
+            parent_item = self.ui.fixture_tree_widget.topLevelItem(universe - 1)
+            parent_item.setExpanded(True)
+
             fixture_item = QTreeWidgetItem(parent_item)
             fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
             fixture_item.setText(0, fixture_data["name"])
-            fixture_universe = dlg.ui.universe_combo.currentIndex() + 1
-            fixture_address = dlg.ui.address_spin.value()
-            fixture_item.setText(1, f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
+            fixture_universe = universe
+            fixture_address = address
+            fixture_item.setText(1,
+                                 f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
             fixture_uuid = str(uuid.uuid4())
             fixture_item.uuid = fixture_uuid
             self.available_fixtures.append({
