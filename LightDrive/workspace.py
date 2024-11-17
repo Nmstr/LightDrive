@@ -2,10 +2,10 @@ from Backend.output import DmxOutput
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu
 from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent, QPixmap
+from PySide6.QtGui import QCloseEvent, QPixmap, QAction
 from PySide6.QtCore import QFile
 import uuid
 import sys
@@ -18,6 +18,21 @@ class Workspace(QMainWindow):
         self.value_sliders = []
         self.available_fixtures =  []
         super().__init__()
+
+        self.setup_main_window()
+        # Setup pages
+        self.setup_fixture_page()
+        self.setup_console_page()
+        self.setup_io_page()
+
+        # Setup output
+        self.dmx_output = DmxOutput()
+
+    def setup_main_window(self):
+        """
+        Sets up the main window
+        :return: None
+        """
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
 
@@ -33,17 +48,25 @@ class Workspace(QMainWindow):
         self.setGeometry(self.ui.geometry())
         self.showMaximized()
 
+        # Create a menu bar
+        menu_bar = QMenuBar(self)
+        self.setMenuBar(menu_bar)
+        # Add File entry
+        file_menu = QMenu("File", self)
+        menu_bar.addMenu(file_menu)
+        new_action = QAction("New", self)
+        file_menu.addAction(new_action)
+        open_action = QAction("Open", self)
+        file_menu.addAction(open_action)
+        save_action = QAction("Save", self)
+        file_menu.addAction(save_action)
+        save_as_action = QAction("Save As", self)
+        file_menu.addAction(save_as_action)
+
+        # Connect buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
-
-        # Setup pages
-        self.setup_fixture_page()
-        self.setup_console_page()
-        self.setup_io_page()
-
-        # Setup output
-        self.dmx_output = DmxOutput()
 
     def show_page(self, page_index: int) -> None:
         """
