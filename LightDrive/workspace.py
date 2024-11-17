@@ -1,9 +1,9 @@
+from workspace_file_manager import write_workspace_file
 from Backend.output import DmxOutput
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu
-from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QFileDialog
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction
 from PySide6.QtCore import QFile
@@ -62,11 +62,22 @@ class Workspace(QMainWindow):
         file_menu.addAction(save_action)
         save_as_action = QAction("Save As", self)
         file_menu.addAction(save_as_action)
+        save_as_action.triggered.connect(lambda: self.save_workspace_as())
 
         # Connect buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
+
+    def save_workspace_as(self):
+        dlg = QFileDialog(self)
+        dlg.setNameFilter("Workspace (*.ldw)")
+        dlg.setDefaultSuffix(".ldw")
+        if dlg.exec():
+            filename = dlg.selectedFiles()[0]
+            write_workspace_file(workspace_file_path=filename,
+                                 fixtures=self.available_fixtures)
+
 
     def show_page(self, page_index: int) -> None:
         """
@@ -107,7 +118,7 @@ class Workspace(QMainWindow):
             fixture_universe = dlg.ui.universe_combo.currentIndex() + 1
             fixture_address = dlg.ui.address_spin.value()
             fixture_item.setText(1, f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
-            fixture_uuid = uuid.uuid4()
+            fixture_uuid = str(uuid.uuid4())
             fixture_item.uuid = fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
