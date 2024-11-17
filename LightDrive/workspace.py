@@ -1,14 +1,16 @@
+from workspace_file_manager import write_workspace_file, read_workspace_file
 from Backend.output import DmxOutput
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QFileDialog
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent, QPixmap
+from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile
+import json
 import uuid
 import sys
+import os
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
@@ -18,6 +20,31 @@ class Workspace(QMainWindow):
         self.value_sliders = []
         self.available_fixtures =  []
         super().__init__()
+
+        self.setup_main_window()
+        # Setup pages
+        self.setup_fixture_page()
+        self.setup_console_page()
+        self.setup_io_page()
+
+        # Setup hotkeys
+        self.save_hotkey = QShortcut(QKeySequence.Save, self)
+        self.save_hotkey.activated.connect(lambda: self.save_workspace())
+
+        # Setup output
+        self.dmx_output = DmxOutput()
+
+        # Open any workspace if rebooted after workspace was opened
+        if current_workspace_file:  # current_workspace_file is the path to the workspace to open or None
+            self.open_workspace(current_workspace_file)
+
+        self.show()
+
+    def setup_main_window(self):
+        """
+        Sets up the main window
+        :return: None
+        """
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
 
@@ -33,17 +60,80 @@ class Workspace(QMainWindow):
         self.setGeometry(self.ui.geometry())
         self.showMaximized()
 
+        # Create a menu bar
+        menu_bar = QMenuBar(self)
+        self.setMenuBar(menu_bar)
+        # Add File entry
+        file_menu = QMenu("File", self)
+        menu_bar.addMenu(file_menu)
+        new_action = QAction("New", self)
+        file_menu.addAction(new_action)
+        new_action.triggered.connect(lambda: self.new_workspace())
+        open_action = QAction("Open", self)
+        file_menu.addAction(open_action)
+        open_action.triggered.connect(lambda: self.show_open_workspace_dialog())
+        save_action = QAction("Save", self)
+        file_menu.addAction(save_action)
+        save_action.triggered.connect(lambda: self.save_workspace())
+        save_as_action = QAction("Save As", self)
+        file_menu.addAction(save_as_action)
+        save_as_action.triggered.connect(lambda: self.save_workspace_as())
+
+        # Connect buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
 
-        # Setup pages
-        self.setup_fixture_page()
-        self.setup_console_page()
-        self.setup_io_page()
+    def new_workspace(self):
+        global current_workspace_file
+        current_workspace_file = None
+        app.exit(EXIT_CODE_REBOOT)
 
-        # Setup output
-        self.dmx_output = DmxOutput()
+    def save_workspace_as(self):
+        dlg = QFileDialog(self, directory=os.path.expanduser("~"))
+        dlg.setNameFilter("Workspace (*.ldw)")
+        dlg.setDefaultSuffix(".ldw")
+        dlg.setAcceptMode(QFileDialog.AcceptSave)
+        if dlg.exec():
+            filename = dlg.selectedFiles()[0]
+            global current_workspace_file
+            current_workspace_file = filename
+            self.save_workspace()
+
+    def save_workspace(self):
+        global current_workspace_file
+        if not current_workspace_file:
+            self.save_workspace_as()
+        else:
+            write_workspace_file(workspace_file_path=current_workspace_file,
+                                 fixtures=self.available_fixtures,
+                                 dmx_output_configuration=self.dmx_output.output_configuration)
+
+    def show_open_workspace_dialog(self):
+        dlg = QFileDialog(self, directory=os.path.expanduser("~"))
+        dlg.setNameFilter("Workspace (*.ldw)")
+        dlg.setDefaultSuffix(".ldw")
+        dlg.setFileMode(QFileDialog.ExistingFile)
+        if dlg.exec():
+            global current_workspace_file
+            current_workspace_file = dlg.selectedFiles()[0]
+            app.exit(EXIT_CODE_REBOOT)  # Restart application (opens workspace while opening)
+
+    def open_workspace(self, workspace_file_path):
+        fixtures, dmx_output_configuration = read_workspace_file(workspace_file_path)
+        # Add the fixtures
+        for fixture in fixtures:
+            # Read the fixture data
+            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+            with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
+                fixture_data = json.load(f)
+            # Add the fixture
+            self.add_fixture(amount = 1,
+                             fixture_data = fixture_data,
+                             universe = fixture["universe"],
+                             address = fixture["address"])
+        # Configure the dmx output
+        self.dmx_output.write_universe_configuration(dmx_output_configuration)
 
     def show_page(self, page_index: int) -> None:
         """
@@ -58,7 +148,7 @@ class Workspace(QMainWindow):
         Creates the fixture page
         :return: None
         """
-        self.ui.fixture_add_btn.clicked.connect(self.add_fixture)
+        self.ui.fixture_add_btn.clicked.connect(self.show_add_fixture_dialog)
         self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
         for i in range(10):
             universe_fixture_item = QTreeWidgetItem()
@@ -66,7 +156,7 @@ class Workspace(QMainWindow):
             universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
             self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
-    def add_fixture(self) -> None:
+    def show_add_fixture_dialog(self) -> None:
         """
         Show the dialog to add a fixture and if successful, add the fixture
         :return: None
@@ -75,16 +165,32 @@ class Workspace(QMainWindow):
         if not dlg.exec() or not dlg.current_selected_fixture_item:
             return
         fixture_data = dlg.current_selected_fixture_item.extra_data
-        parent_item = self.ui.fixture_tree_widget.topLevelItem(dlg.ui.universe_combo.currentIndex())
-        parent_item.setExpanded(True)
-        for _ in range(dlg.ui.amount_spin.value()):
+        amount = dlg.ui.amount_spin.value()
+        universe = dlg.ui.universe_combo.currentIndex() + 1
+        address = dlg.ui.address_spin.value()
+        self.add_fixture(amount, fixture_data, universe, address)
+
+    def add_fixture(self, amount, fixture_data, universe, address) -> None:
+        """
+        Add the fixture
+        :param amount: The amount of the fixture
+        :param fixture_data: The fixture data
+        :param universe: The universe of the fixture
+        :param address: The address of the fixture
+        :return: None
+        """
+        for _ in range(amount):
+            parent_item = self.ui.fixture_tree_widget.topLevelItem(universe - 1)
+            parent_item.setExpanded(True)
+
             fixture_item = QTreeWidgetItem(parent_item)
             fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
             fixture_item.setText(0, fixture_data["name"])
-            fixture_universe = dlg.ui.universe_combo.currentIndex() + 1
-            fixture_address = dlg.ui.address_spin.value()
-            fixture_item.setText(1, f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
-            fixture_uuid = uuid.uuid4()
+            fixture_universe = universe
+            fixture_address = address
+            fixture_item.setText(1,
+                                 f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
+            fixture_uuid = str(uuid.uuid4())
             fixture_item.uuid = fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
@@ -156,7 +262,12 @@ class Workspace(QMainWindow):
         super().closeEvent(event)
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Workspace()
-    window.show()
-    sys.exit(app.exec())
+    current_workspace_file = None
+    EXIT_CODE_REBOOT = -123987123
+    exit_code = EXIT_CODE_REBOOT  # Execute at least once
+    while exit_code == EXIT_CODE_REBOOT:
+        app = QApplication(sys.argv)
+        window = Workspace()
+        exit_code = app.exec()
+        app.shutdown()
+    sys.exit(exit_code)

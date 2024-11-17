@@ -48,15 +48,3 @@ class ArtnetOutput:
         self.device.blackout()
         self.device.stop()
         del self.device
-
-    def get_universe_data(self) -> dict:
-        """
-        Gets the universe's data
-        :return: A dictionary with the universe's data
-        """
-        universe_data = {
-            "backend": "ArtNet",
-            "target_ip": self.target_ip,
-            "artnet_universe": self.artnet_universe,
-        }
-        return universe_data
