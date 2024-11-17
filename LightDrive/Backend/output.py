@@ -114,8 +114,7 @@ class DmxOutput:
         :param universe: The universe to get the data from
         :return: The data about the universe
         """
-        backend = self.universes.get(universe)
-        if backend is None:
+        universe_data = self.output_configuration.get(universe)
+        if universe_data is None:
             return {}
-        universe_data = backend.get_universe_data()
         return universe_data

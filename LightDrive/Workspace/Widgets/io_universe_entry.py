@@ -20,11 +20,13 @@ class UniverseConfigurationDialog(QDialog):
         ui_file.close()
 
         self.ui.artnet_frame.setDisabled(True)
-        if universe_data.get("backend") == "ArtNet":
-            self.ui.artnet_frame.setDisabled(False)
-            self.ui.enable_artnet_checkbox.setChecked(True)
-            self.ui.target_ip_edit.setText(universe_data.get("target_ip"))
-            self.ui.universe_spin.setValue(universe_data.get("artnet_universe"))
+        if universe_data:
+            match universe_data[0]:
+                case "ArtNet":
+                    self.ui.artnet_frame.setDisabled(False)
+                    self.ui.enable_artnet_checkbox.setChecked(True)
+                    self.ui.target_ip_edit.setText(universe_data[1].get("target_ip"))
+                    self.ui.universe_spin.setValue(universe_data[1].get("artnet_universe"))
 
         self.ui.enable_artnet_checkbox.checkStateChanged.connect(self.switch_artnet_state)
         self.ui.apply_btn.clicked.connect(self.apply)
@@ -93,7 +95,7 @@ class UniverseEntry(QWidget):
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
         universe_data = self.workspace_window.dmx_output.get_universe_data(self.universe_index + 1)
-        dlg = UniverseConfigurationDialog(self.universe_index + 1, universe_data)
+        dlg = UniverseConfigurationDialog(self.universe_index, universe_data)
         if dlg.exec_():
             if dlg.ui.enable_artnet_checkbox.isChecked():
                 self.workspace_window.dmx_output.setup_universe(universe = self.universe_index + 1,
