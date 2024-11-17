@@ -90,7 +90,7 @@ class Workspace(QMainWindow):
         app.exit(EXIT_CODE_REBOOT)
 
     def save_workspace_as(self):
-        dlg = QFileDialog(self)
+        dlg = QFileDialog(self, directory=os.path.expanduser("~"))
         dlg.setNameFilter("Workspace (*.ldw)")
         dlg.setDefaultSuffix(".ldw")
         dlg.setAcceptMode(QFileDialog.AcceptSave)
@@ -110,7 +110,7 @@ class Workspace(QMainWindow):
                                  dmx_output_configuration=self.dmx_output.output_configuration)
 
     def show_open_workspace_dialog(self):
-        dlg = QFileDialog(self)
+        dlg = QFileDialog(self, directory=os.path.expanduser("~"))
         dlg.setNameFilter("Workspace (*.ldw)")
         dlg.setDefaultSuffix(".ldw")
         dlg.setFileMode(QFileDialog.ExistingFile)
