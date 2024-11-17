@@ -30,6 +30,8 @@ class Workspace(QMainWindow):
         # Setup output
         self.dmx_output = DmxOutput()
 
+        self.show()
+
     def setup_main_window(self):
         """
         Sets up the main window
@@ -58,6 +60,7 @@ class Workspace(QMainWindow):
         menu_bar.addMenu(file_menu)
         new_action = QAction("New", self)
         file_menu.addAction(new_action)
+        new_action.triggered.connect(lambda: self.new_workspace())
         open_action = QAction("Open", self)
         file_menu.addAction(open_action)
         open_action.triggered.connect(lambda: self.open_workspace())
@@ -71,6 +74,9 @@ class Workspace(QMainWindow):
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
+
+    def new_workspace(self):
+        app.exit(EXIT_CODE_REBOOT)
 
     def save_workspace_as(self):
         dlg = QFileDialog(self)
@@ -228,7 +234,11 @@ class Workspace(QMainWindow):
         super().closeEvent(event)
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Workspace()
-    window.show()
-    sys.exit(app.exec())
+    EXIT_CODE_REBOOT = -123987123
+    exit_code = EXIT_CODE_REBOOT  # Execute at least once
+    while exit_code == EXIT_CODE_REBOOT:
+        app = QApplication(sys.argv)
+        window = Workspace()
+        exit_code = app.exec()
+        app.shutdown()
+    sys.exit(exit_code)
