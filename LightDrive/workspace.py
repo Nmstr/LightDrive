@@ -70,6 +70,7 @@ class Workspace(QMainWindow):
         open_action.triggered.connect(lambda: self.show_open_workspace_dialog())
         save_action = QAction("Save", self)
         file_menu.addAction(save_action)
+        save_action.triggered.connect(lambda: self.save_workspace())
         save_as_action = QAction("Save As", self)
         file_menu.addAction(save_as_action)
         save_as_action.triggered.connect(lambda: self.save_workspace_as())
@@ -92,6 +93,17 @@ class Workspace(QMainWindow):
         if dlg.exec():
             filename = dlg.selectedFiles()[0]
             write_workspace_file(workspace_file_path=filename,
+                                 fixtures=self.available_fixtures)
+            global current_workspace_file
+            current_workspace_file = filename
+            self.save_workspace()
+
+    def save_workspace(self):
+        global current_workspace_file
+        if not current_workspace_file:
+            self.save_workspace_as()
+        else:
+            write_workspace_file(workspace_file_path=current_workspace_file,
                                  fixtures=self.available_fixtures)
 
     def show_open_workspace_dialog(self):
