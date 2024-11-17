@@ -78,7 +78,6 @@ class Workspace(QMainWindow):
             write_workspace_file(workspace_file_path=filename,
                                  fixtures=self.available_fixtures)
 
-
     def show_page(self, page_index: int) -> None:
         """
         Changes the current page in the content_page QStacked widget
