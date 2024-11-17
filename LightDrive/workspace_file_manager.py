@@ -4,12 +4,19 @@ import shutil
 import json
 import os
 
-def read_workspace_file(workspace_file_path: str):
+def read_workspace_file(workspace_file_path: str) -> dict:
+    """
+    Reads a workspace file and returns its contents.
+    :param workspace_file_path: The path to the workspace file
+    :return: The contents of the workspace file
+    """
     tmp_dir = tempfile.mkdtemp()
 
+    # Extract the file to a temporary location
     with tarfile.open(workspace_file_path) as tar:
         tar.extractall(path=tmp_dir)
 
+    # Open the contents of the files and write them to variables
     with open(os.path.join(tmp_dir, 'fixtures.json')) as f:
         fixtures = json.load(f)
 
