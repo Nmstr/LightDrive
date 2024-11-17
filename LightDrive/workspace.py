@@ -96,8 +96,6 @@ class Workspace(QMainWindow):
         dlg.setAcceptMode(QFileDialog.AcceptSave)
         if dlg.exec():
             filename = dlg.selectedFiles()[0]
-            write_workspace_file(workspace_file_path=filename,
-                                 fixtures=self.available_fixtures)
             global current_workspace_file
             current_workspace_file = filename
             self.save_workspace()
@@ -108,7 +106,8 @@ class Workspace(QMainWindow):
             self.save_workspace_as()
         else:
             write_workspace_file(workspace_file_path=current_workspace_file,
-                                 fixtures=self.available_fixtures)
+                                 fixtures=self.available_fixtures,
+                                 dmx_output_configuration=self.dmx_output.output_configuration)
 
     def show_open_workspace_dialog(self):
         dlg = QFileDialog(self)
@@ -121,7 +120,8 @@ class Workspace(QMainWindow):
             app.exit(EXIT_CODE_REBOOT)  # Restart application (opens workspace while opening)
 
     def open_workspace(self, workspace_file_path):
-        fixtures = read_workspace_file(workspace_file_path)
+        fixtures, dmx_output_configuration = read_workspace_file(workspace_file_path)
+        # Add the fixtures
         for fixture in fixtures:
             # Read the fixture data
             fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
@@ -132,6 +132,8 @@ class Workspace(QMainWindow):
                              fixture_data = fixture_data,
                              universe = fixture["universe"],
                              address = fixture["address"])
+        # Configure the dmx output
+        self.dmx_output.write_universe_configuration(dmx_output_configuration)
 
     def show_page(self, page_index: int) -> None:
         """

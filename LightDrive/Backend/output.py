@@ -9,6 +9,7 @@ class DmxOutput:
         """
         self.packet_size = 512
         self.universes = {}
+        self.output_configuration = {}
 
     def set_single_value(self, universe: int, channel: int, value: int) -> None:
         """
@@ -52,6 +53,14 @@ class DmxOutput:
             return
         backend.blackout()
 
+    def stop(self) -> None:
+        """
+        Gracefully stops the output
+        :return: None
+        """
+        for universe in self.universes:
+            self.universes.get(universe).stop()
+
     def setup_universe(self, universe: int, backend: str, **kwargs) -> None:
         """
         Sets up a universe
@@ -70,26 +79,7 @@ class DmxOutput:
             case "ArtNet":
                 artnet = ArtnetOutput(kwargs["target_ip"], kwargs["artnet_universe"])
                 self.universes[universe] = artnet
-
-    def stop(self) -> None:
-        """
-        Gracefully stops the output
-        :return: None
-        """
-        for universe in self.universes:
-            self.universes.get(universe).stop()
-
-    def get_universe_data(self, universe: int) -> dict:
-        """
-        Gets the data about a specific universe
-        :param universe: The universe to get the data from
-        :return: The data about the universe
-        """
-        backend = self.universes.get(universe)
-        if backend is None:
-            return {}
-        universe_data = backend.get_universe_data()
-        return universe_data
+                self.output_configuration[universe] = [backend, kwargs]
 
     def remove_universe(self, universe: int) -> None:
         """
@@ -102,3 +92,30 @@ class DmxOutput:
             return
         backend.stop()
         self.universes.pop(universe)
+        self.output_configuration.pop(universe)
+
+    def write_universe_configuration(self, configuration: dict) -> None:
+        """
+        Writes a whole universe configuration. This is used to load a configuration when loading a workspace
+        :param configuration: The configuration to write
+        :return: None
+        """
+        for entry in configuration:
+            match configuration[entry][0]:
+                case "ArtNet":
+                    self.setup_universe(universe=int(entry),
+                                        backend="ArtNet",
+                                        target_ip=configuration[entry][1]["target_ip"],
+                                        artnet_universe=configuration[entry][1]["artnet_universe"])
+
+    def get_universe_data(self, universe: int) -> dict:
+        """
+        Gets the data about a specific universe
+        :param universe: The universe to get the data from
+        :return: The data about the universe
+        """
+        backend = self.universes.get(universe)
+        if backend is None:
+            return {}
+        universe_data = backend.get_universe_data()
+        return universe_data
