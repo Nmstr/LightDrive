@@ -83,6 +83,7 @@ class Workspace(QMainWindow):
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
+        self.ui.snippet_btn.clicked.connect(lambda: self.show_page(3))
 
     def new_workspace(self):
         global current_workspace_file
