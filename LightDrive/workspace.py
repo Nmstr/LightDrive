@@ -300,7 +300,6 @@ class Workspace(QMainWindow):
         self.current_snippet.setText(0, self.ui.directory_name_edit.text())
 
     def snippet_show_editor(self, item) -> None:
-        print(item, item.extra_data)
         match item.extra_data["type"]:
             case "directory":
                 self.ui.snippet_editor.setCurrentIndex(1)
