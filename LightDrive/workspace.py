@@ -3,14 +3,31 @@ from Backend.output import DmxOutput
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidget, QTreeWidgetItem, QFileDialog
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
-from PySide6.QtCore import QFile
+from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence, QFont
+from PySide6.QtCore import QFile, QSize
 import json
 import uuid
 import sys
 import os
+
+class SnippetSelectorTree(QTreeWidget):
+    def __init__(self):
+        super().__init__()
+        self.setIconSize(QSize(32, 32))
+        self.setFont(QFont('Noto Sans', 24))
+        self.header().setVisible(False)
+        self.setAcceptDrops(True)
+        self.setDragEnabled(True)
+        self.setDragDropMode(QTreeWidget.InternalMove)
+
+    def dropEvent(self, event):
+        target_item = self.itemAt(event.pos())
+        if target_item and target_item.extra_data["type"] != "directory":
+            event.ignore()
+        else:
+            super().dropEvent(event)
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
@@ -318,6 +335,9 @@ class Workspace(QMainWindow):
         Creates the snippet page
         :return: None
         """
+        self.ui.snippet_selector_tree = SnippetSelectorTree()
+        self.ui.snippet_selector_frame.layout().addWidget(self.ui.snippet_selector_tree)
+
         self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_show_editor)
 
         self.ui.cue_btn.clicked.connect(self.snippet_create_cue)
