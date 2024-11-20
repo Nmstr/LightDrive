@@ -19,6 +19,7 @@ class Workspace(QMainWindow):
         self.console_current_universe = 1
         self.value_sliders = []
         self.available_fixtures =  []
+        self.current_snippet = None
         super().__init__()
 
         self.setup_main_window()
@@ -26,6 +27,7 @@ class Workspace(QMainWindow):
         self.setup_fixture_page()
         self.setup_console_page()
         self.setup_io_page()
+        self.setup_snippet_page()
 
         # Setup hotkeys
         self.save_hotkey = QShortcut(QKeySequence.Save, self)
@@ -252,6 +254,58 @@ class Workspace(QMainWindow):
         if self.selected_universe_entry:
             self.selected_universe_entry.deselect()
         self.selected_universe_entry = self.universe_entries[universe_number]
+
+    def setup_snippet_page(self) -> None:
+        """
+        Creates the snippet page
+        :return: None
+        """
+        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_show_editor)
+
+        self.ui.cue_btn.clicked.connect(lambda: print("cue"))
+        self.ui.scene_btn.clicked.connect(lambda: print("scene"))
+        self.ui.efx_2d_btn.clicked.connect(lambda: print("2d efx"))
+        self.ui.rgb_matrix_btn.clicked.connect(lambda: print("rgb matrix"))
+        self.ui.script_btn.clicked.connect(lambda: print("script"))
+        self.ui.directory_btn.clicked.connect(self.snippet_create_dir)
+
+        self.ui.directory_name_edit.editingFinished.connect(self.snippet_rename_dir)
+
+    def snippet_create_dir(self) -> None:
+        """
+        Creates a directory in the snippet selector tree
+        :return: None
+        """
+        selector_tree = self.ui.snippet_selector_tree
+        new_dir = QTreeWidgetItem()
+        new_dir.setIcon(0, QPixmap("Assets/Icons/directory.svg"))
+        new_dir.setText(0, "New Directory")
+        new_dir.extra_data = {
+            "type": "directory",
+            "uuid": str(uuid.uuid4()),
+            "name": "New Directory",
+        }
+        if selector_tree.selectedItems():
+            selector_tree.selectedItems()[0].addChild(new_dir)
+            selector_tree.selectedItems()[0].setExpanded(True)
+        else:
+            selector_tree.addTopLevelItem(new_dir)
+
+    def snippet_rename_dir(self) -> None:
+        """
+        Renames the directory to the new name
+        :return:
+        """
+        self.current_snippet.extra_data["name"] = self.ui.directory_name_edit.text()
+        self.current_snippet.setText(0, self.ui.directory_name_edit.text())
+
+    def snippet_show_editor(self, item) -> None:
+        print(item, item.extra_data)
+        match item.extra_data["type"]:
+            case "directory":
+                self.ui.snippet_editor.setCurrentIndex(1)
+                self.ui.directory_name_edit.setText(item.extra_data["name"])
+        self.current_snippet = item
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """
