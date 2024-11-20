@@ -22,7 +22,7 @@ class SnippetSelectorTree(QTreeWidget):
         self.setDragEnabled(True)
         self.setDragDropMode(QTreeWidget.InternalMove)
 
-    def dropEvent(self, event):
+    def dropEvent(self, event):  # noqa: N802
         target_item = self.itemAt(event.pos())
         if target_item and target_item.extra_data["type"] != "directory":
             event.ignore()
