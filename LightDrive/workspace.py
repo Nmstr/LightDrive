@@ -294,7 +294,7 @@ class Workspace(QMainWindow):
     def snippet_rename_dir(self) -> None:
         """
         Renames the directory to the new name
-        :return:
+        :return: None
         """
         self.current_snippet.extra_data["name"] = self.ui.directory_name_edit.text()
         self.current_snippet.setText(0, self.ui.directory_name_edit.text())
