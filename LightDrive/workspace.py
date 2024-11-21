@@ -1,4 +1,4 @@
-from workspace_file_manager import write_workspace_file, read_workspace_file
+from workspace_file_manager import write_workspace_file, read_workspace_file, WorkspaceFileManager
 from Backend.output import DmxOutput
 from Functions.snippet_manager import SnippetManager
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
@@ -32,14 +32,15 @@ class Workspace(QMainWindow):
 
         # Setup hotkeys
         self.save_hotkey = QShortcut(QKeySequence.Save, self)
-        self.save_hotkey.activated.connect(lambda: self.save_workspace())
+        self.save_hotkey.activated.connect(lambda: self.workspace_file_manager.save_workspace())
 
         # Setup output
         self.dmx_output = DmxOutput()
 
+        self.workspace_file_manager = WorkspaceFileManager(self, app, EXIT_CODE_REBOOT, current_workspace_file)
         # Open any workspace if rebooted after workspace was opened
         if current_workspace_file:  # current_workspace_file is the path to the workspace to open or None
-            self.open_workspace(current_workspace_file)
+            self.workspace_file_manager.open_workspace(current_workspace_file)
 
         self.show()
 
@@ -71,131 +72,22 @@ class Workspace(QMainWindow):
         menu_bar.addMenu(file_menu)
         new_action = QAction("New", self)
         file_menu.addAction(new_action)
-        new_action.triggered.connect(lambda: self.new_workspace())
+        new_action.triggered.connect(lambda: self.workspace_file_manager.new_workspace())
         open_action = QAction("Open", self)
         file_menu.addAction(open_action)
-        open_action.triggered.connect(lambda: self.show_open_workspace_dialog())
+        open_action.triggered.connect(lambda: self.workspace_file_manager.show_open_workspace_dialog())
         save_action = QAction("Save", self)
         file_menu.addAction(save_action)
-        save_action.triggered.connect(lambda: self.save_workspace())
+        save_action.triggered.connect(lambda: self.workspace_file_manager.save_workspace())
         save_as_action = QAction("Save As", self)
         file_menu.addAction(save_as_action)
-        save_as_action.triggered.connect(lambda: self.save_workspace_as())
+        save_as_action.triggered.connect(lambda: self.workspace_file_manager.save_workspace_as())
 
         # Connect buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
         self.ui.snippet_btn.clicked.connect(lambda: self.show_page(3))
-
-    def new_workspace(self):
-        global current_workspace_file
-        current_workspace_file = None
-        app.exit(EXIT_CODE_REBOOT)
-
-    def save_workspace_as(self):
-        dlg = QFileDialog(self, directory=os.path.expanduser("~"))
-        dlg.setNameFilter("Workspace (*.ldw)")
-        dlg.setDefaultSuffix(".ldw")
-        dlg.setAcceptMode(QFileDialog.AcceptSave)
-        if dlg.exec():
-            filename = dlg.selectedFiles()[0]
-            global current_workspace_file
-            current_workspace_file = filename
-            self.save_workspace()
-
-    def save_workspace(self):
-        global current_workspace_file
-        if not current_workspace_file:
-            self.save_workspace_as()
-        else:
-            snippet_configuration = self.get_snippet_configuration()
-            write_workspace_file(workspace_file_path=current_workspace_file,
-                                 fixtures=self.available_fixtures,
-                                 dmx_output_configuration=self.dmx_output.output_configuration,
-                                 snippet_configuration=snippet_configuration)
-
-    def get_snippet_configuration(self):
-        snippet_selector = self.ui.snippet_selector_tree
-        snippet_configuration = {}
-
-        def add_directory_content(item):
-            if item.extra_data["type"] == "directory":
-                item.extra_data["content"] = []
-                for j in range(item.childCount()):
-                    child = item.child(j)
-                    item.extra_data["content"].append(child.extra_data)
-                    add_directory_content(child)
-
-        for i in range(snippet_selector.topLevelItemCount()):
-            item = snippet_selector.topLevelItem(i)
-            snippet_configuration[str(i)] = item.extra_data
-            add_directory_content(item)
-        return snippet_configuration
-
-    def show_open_workspace_dialog(self):
-        dlg = QFileDialog(self, directory=os.path.expanduser("~"))
-        dlg.setNameFilter("Workspace (*.ldw)")
-        dlg.setDefaultSuffix(".ldw")
-        dlg.setFileMode(QFileDialog.ExistingFile)
-        if dlg.exec():
-            global current_workspace_file
-            current_workspace_file = dlg.selectedFiles()[0]
-            app.exit(EXIT_CODE_REBOOT)  # Restart application (opens workspace while opening)
-
-    def open_workspace(self, workspace_file_path):
-        fixtures, dmx_output_configuration, snippets = read_workspace_file(workspace_file_path)
-        # Add the fixtures
-        for fixture in fixtures:
-            # Read the fixture data
-            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
-            with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
-                fixture_data = json.load(f)
-            # Add the fixture
-            self.add_fixture(amount = 1,
-                             fixture_data = fixture_data,
-                             universe = fixture["universe"],
-                             address = fixture["address"])
-
-        # Configure the dmx output
-        self.dmx_output.write_universe_configuration(dmx_output_configuration)
-
-        # Add the snippets
-        def add_snippets_to_parent(snippets, parent):
-            for snippet in snippets:
-                match snippet["type"]:
-                    case "cue":
-                        self.snippet_manager.snippet_create_cue(extra_data=snippet, parent=parent)
-                    case "scene":
-                        self.snippet_manager.snippet_create_scene(extra_data=snippet, parent=parent)
-                    case "efx_2d":
-                        self.snippet_manager.snippet_create_efx_2d(extra_data=snippet, parent=parent)
-                    case "rbg_matrix":
-                        self.snippet_manager.snippet_create_rgb_matrix(extra_data=snippet, parent=parent)
-                    case "script":
-                        self.snippet_manager.snippet_create_script(extra_data=snippet, parent=parent)
-                    case "directory":
-                        new_parent = self.snippet_manager.snippet_create_dir(extra_data=snippet, parent=parent)
-                        if "content" in snippet:
-                            add_snippets_to_parent(snippet["content"], new_parent)
-
-        for i, snippet in snippets.items():
-            print(i, snippet)
-            match snippet["type"]:
-                case "cue":
-                    self.snippet_manager.snippet_create_cue(extra_data=snippet)
-                case "scene":
-                    self.snippet_manager.snippet_create_scene(extra_data=snippet)
-                case "efx_2d":
-                    self.snippet_manager.snippet_create_efx_2d(extra_data=snippet)
-                case "rbg_matrix":
-                    self.snippet_manager.snippet_create_rgb_matrix(extra_data=snippet)
-                case "script":
-                    self.snippet_manager.snippet_create_script(extra_data=snippet)
-                case "directory":
-                    parent = self.snippet_manager.snippet_create_dir(extra_data=snippet)
-                    if "content" in snippet:
-                        add_snippets_to_parent(snippet["content"], parent)
 
     def show_page(self, page_index: int) -> None:
         """
@@ -348,4 +240,5 @@ if __name__ == "__main__":
         window = Workspace()
         exit_code = app.exec()
         app.shutdown()
+        current_workspace_file = window.workspace_file_manager.current_workspace_file
     sys.exit(exit_code)
