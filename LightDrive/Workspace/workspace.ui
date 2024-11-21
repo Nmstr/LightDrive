@@ -502,79 +502,74 @@
              </layout>
             </widget>
             <widget class="QWidget" name="cue_page">
-             <widget class="QLabel" name="label">
-              <property name="geometry">
-               <rect>
-                <x>310</x>
-                <y>300</y>
-                <width>171</width>
-                <height>81</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Cue</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>The Cue configurations are currently WIP</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="efx_2d_page">
-             <widget class="QLabel" name="label_3">
-              <property name="geometry">
-               <rect>
-                <x>220</x>
-                <y>340</y>
-                <width>58</width>
-                <height>18</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>2D efx</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>The 2D EFX configurations are currently WIP</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="rgb_matrix_page">
-             <widget class="QLabel" name="label_4">
-              <property name="geometry">
-               <rect>
-                <x>270</x>
-                <y>380</y>
-                <width>101</width>
-                <height>18</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>RGB Matrix</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>The RGB Matrix configurations are currently WIP</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="script_page">
-             <widget class="QLabel" name="label_5">
-              <property name="geometry">
-               <rect>
-                <x>180</x>
-                <y>350</y>
-                <width>58</width>
-                <height>18</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Script</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>The Script configurations are currently WIP</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="scene_page">
-             <widget class="QLabel" name="label_6">
-              <property name="geometry">
-               <rect>
-                <x>160</x>
-                <y>350</y>
-                <width>58</width>
-                <height>18</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Scene</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>The Scene configurations are currently WIP</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </widget>
           </item>
