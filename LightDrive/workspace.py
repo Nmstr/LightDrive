@@ -1,12 +1,13 @@
 from workspace_file_manager import write_workspace_file, read_workspace_file
 from Backend.output import DmxOutput
+from Functions.snippet_manager import SnippetManager
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QFileDialog
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
-from PySide6.QtCore import QFile, Qt
+from PySide6.QtCore import QFile
 import json
 import uuid
 import sys
@@ -19,7 +20,7 @@ class Workspace(QMainWindow):
         self.console_current_universe = 1
         self.value_sliders = []
         self.available_fixtures =  []
-        self.current_snippet = None
+        self.snippet_manager = SnippetManager(self)
         super().__init__()
 
         self.setup_main_window()
@@ -164,17 +165,17 @@ class Workspace(QMainWindow):
             for snippet in snippets:
                 match snippet["type"]:
                     case "cue":
-                        self.snippet_create_cue(extra_data=snippet, parent=parent)
+                        self.snippet_manager.snippet_create_cue(extra_data=snippet, parent=parent)
                     case "scene":
-                        self.snippet_create_scene(extra_data=snippet, parent=parent)
+                        self.snippet_manager.snippet_create_scene(extra_data=snippet, parent=parent)
                     case "efx_2d":
-                        self.snippet_create_efx_2d(extra_data=snippet, parent=parent)
+                        self.snippet_manager.snippet_create_efx_2d(extra_data=snippet, parent=parent)
                     case "rbg_matrix":
-                        self.snippet_create_rgb_matrix(extra_data=snippet, parent=parent)
+                        self.snippet_manager.snippet_create_rgb_matrix(extra_data=snippet, parent=parent)
                     case "script":
-                        self.snippet_create_script(extra_data=snippet, parent=parent)
+                        self.snippet_manager.snippet_create_script(extra_data=snippet, parent=parent)
                     case "directory":
-                        new_parent = self.snippet_create_dir(extra_data=snippet, parent=parent)
+                        new_parent = self.snippet_manager.snippet_create_dir(extra_data=snippet, parent=parent)
                         if "content" in snippet:
                             add_snippets_to_parent(snippet["content"], new_parent)
 
@@ -182,17 +183,17 @@ class Workspace(QMainWindow):
             print(i, snippet)
             match snippet["type"]:
                 case "cue":
-                    self.snippet_create_cue(extra_data=snippet)
+                    self.snippet_manager.snippet_create_cue(extra_data=snippet)
                 case "scene":
-                    self.snippet_create_scene(extra_data=snippet)
+                    self.snippet_manager.snippet_create_scene(extra_data=snippet)
                 case "efx_2d":
-                    self.snippet_create_efx_2d(extra_data=snippet)
+                    self.snippet_manager.snippet_create_efx_2d(extra_data=snippet)
                 case "rbg_matrix":
-                    self.snippet_create_rgb_matrix(extra_data=snippet)
+                    self.snippet_manager.snippet_create_rgb_matrix(extra_data=snippet)
                 case "script":
-                    self.snippet_create_script(extra_data=snippet)
+                    self.snippet_manager.snippet_create_script(extra_data=snippet)
                 case "directory":
-                    parent = self.snippet_create_dir(extra_data=snippet)
+                    parent = self.snippet_manager.snippet_create_dir(extra_data=snippet)
                     if "content" in snippet:
                         add_snippets_to_parent(snippet["content"], parent)
 
@@ -318,181 +319,16 @@ class Workspace(QMainWindow):
         Creates the snippet page
         :return: None
         """
-        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_show_editor)
+        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.snippet_show_editor)
 
-        self.ui.cue_btn.clicked.connect(self.snippet_create_cue)
-        self.ui.scene_btn.clicked.connect(self.snippet_create_scene)
-        self.ui.efx_2d_btn.clicked.connect(self.snippet_create_efx_2d)
-        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_create_rgb_matrix)
-        self.ui.script_btn.clicked.connect(self.snippet_create_script)
-        self.ui.directory_btn.clicked.connect(self.snippet_create_dir)
+        self.ui.cue_btn.clicked.connect(self.snippet_manager.snippet_create_cue)
+        self.ui.scene_btn.clicked.connect(self.snippet_manager.snippet_create_scene)
+        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.snippet_create_efx_2d)
+        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.snippet_create_rgb_matrix)
+        self.ui.script_btn.clicked.connect(self.snippet_manager.snippet_create_script)
+        self.ui.directory_btn.clicked.connect(self.snippet_manager.snippet_create_dir)
 
-        self.ui.directory_name_edit.editingFinished.connect(self.snippet_rename_dir)
-
-    def snippet_create_cue(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
-        """
-        Creates a cue in the snippet selector tree
-        :param extra_data: Any extra data for the cue (only if importing)
-        :param parent: The parent QTreeWidgetITem for the new item (only if importing)
-        :return: None
-        """
-        new_cue = QTreeWidgetItem()
-        new_cue.setIcon(0, QPixmap("Assets/Icons/cue.svg"))
-        if extra_data:
-            new_cue.extra_data = extra_data
-        else:
-            new_cue.extra_data = {
-                "type": "cue",
-                "uuid": str(uuid.uuid4()),
-                "name": "New Cue",
-            }
-        new_cue.setText(0, new_cue.extra_data["name"])
-        self.snippet_add_item(new_cue, parent)
-
-    def snippet_create_scene(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
-        """
-        Creates a scene in the snippet selector tree
-        :param extra_data: Any extra data for the scene (only if importing)
-        :param parent: The parent QTreeWidgetITem for the new item (only if importing)
-        :return: None
-        """
-        new_scene = QTreeWidgetItem()
-        new_scene.setIcon(0, QPixmap("Assets/Icons/scene.svg"))
-        if extra_data:
-            new_scene.extra_data = extra_data
-        else:
-            new_scene.extra_data = {
-                "type": "scene",
-                "uuid": str(uuid.uuid4()),
-                "name": "New Scene",
-            }
-        new_scene.setText(0, new_scene.extra_data["name"])
-        self.snippet_add_item(new_scene, parent)
-
-    def snippet_create_efx_2d(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
-        """
-        Creates a 2d efx in the snippet selector tree
-        :param extra_data: Any extra data for the 2d efx (only if importing)
-        :param parent: The parent QTreeWidgetITem for the new item (only if importing)
-        :return: None
-        """
-        new_efx_2d = QTreeWidgetItem()
-        new_efx_2d.setIcon(0, QPixmap("Assets/Icons/efx_2d.svg"))
-        if extra_data:
-            new_efx_2d.extra_data = extra_data
-        else:
-            new_efx_2d.extra_data = {
-                "type": "efx_2d",
-                "uuid": str(uuid.uuid4()),
-                "name": "New 2D EFX",
-            }
-        new_efx_2d.setText(0, new_efx_2d.extra_data["name"])
-        self.snippet_add_item(new_efx_2d, parent)
-
-    def snippet_create_rgb_matrix(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
-        """
-        Creates a rgb matrix in the snippet selector tree
-        :param extra_data: Any extra data for the rgb matrix (only if importing)
-        :param parent: The parent QTreeWidgetITem for the new item (only if importing)
-        :return: None
-        """
-        new_rgb_matrix = QTreeWidgetItem()
-        new_rgb_matrix.setIcon(0, QPixmap("Assets/Icons/rgb_matrix.svg"))
-        if extra_data:
-            new_rgb_matrix.extra_data = extra_data
-        else:
-            new_rgb_matrix.extra_data = {
-                "type": "rgb_matrix",
-                "uuid": str(uuid.uuid4()),
-                "name": "New RGB Matrix",
-            }
-        new_rgb_matrix.setText(0, new_rgb_matrix.extra_data["name"])
-        self.snippet_add_item(new_rgb_matrix, parent)
-
-    def snippet_create_script(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
-        """
-        Creates a script in the snippet selector tree
-        :param extra_data: Any extra data for the script (only if importing)
-        :param parent: The parent QTreeWidgetITem for the new item (only if importing)
-        :return: None
-        """
-        new_script = QTreeWidgetItem()
-        new_script.setIcon(0, QPixmap("Assets/Icons/script.svg"))
-        if extra_data:
-            new_script.extra_data = extra_data
-        else:
-            new_script.extra_data = {
-                "type": "script",
-                "uuid": str(uuid.uuid4()),
-                "name": "New Script",
-            }
-        new_script.setText(0, new_script.extra_data["name"])
-        self.snippet_add_item(new_script, parent)
-
-    def snippet_create_dir(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> QTreeWidgetItem:
-        """
-        Creates a directory in the snippet selector tree
-        :param extra_data: Any extra data for the directory (only if importing)
-        :param parent: The parent QTreeWidgetITem for the new item (only if importing)
-        :return: The created directory item
-        """
-        new_dir = QTreeWidgetItem()
-        new_dir.setIcon(0, QPixmap("Assets/Icons/directory.svg"))
-        if extra_data:
-            new_dir.extra_data = extra_data
-        else:
-            new_dir.extra_data = {
-                "type": "directory",
-                "uuid": str(uuid.uuid4()),
-                "name": "New Directory",
-            }
-        new_dir.setText(0, new_dir.extra_data["name"])
-        self.snippet_add_item(new_dir, parent)
-        return new_dir
-
-    def snippet_add_item(self, item: QTreeWidgetItem, parent: QTreeWidgetItem = None) -> None:
-        """
-        Adds the provided item to the snippet selector tree
-        :param item: The item to add
-        :return: None
-        """
-        selector_tree = self.ui.snippet_selector_tree
-        if parent:  # Used for importing snippets
-            parent.addChild(item)
-            parent.setExpanded(True)
-            return
-        if selector_tree.selectedItems() and selector_tree.selectedItems()[0].extra_data["type"] == "directory":
-            selector_tree.selectedItems()[0].addChild(item)
-            selector_tree.selectedItems()[0].setExpanded(True)
-        else:
-            selector_tree.addTopLevelItem(item)
-        self.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
-
-    def snippet_rename_dir(self) -> None:
-        """
-        Renames the directory to the new name
-        :return: None
-        """
-        self.current_snippet.extra_data["name"] = self.ui.directory_name_edit.text()
-        self.current_snippet.setText(0, self.ui.directory_name_edit.text())
-        self.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
-
-    def snippet_show_editor(self, item) -> None:
-        match item.extra_data["type"]:
-            case "directory":
-                self.ui.snippet_editor.setCurrentIndex(1)
-                self.ui.directory_name_edit.setText(item.extra_data["name"])
-            case "cue":
-                self.ui.snippet_editor.setCurrentIndex(2)
-            case "scene":
-                self.ui.snippet_editor.setCurrentIndex(6)
-            case "efx_2d":
-                self.ui.snippet_editor.setCurrentIndex(3)
-            case "rgb_matrix":
-                self.ui.snippet_editor.setCurrentIndex(4)
-            case "script":
-                self.ui.snippet_editor.setCurrentIndex(5)
-        self.current_snippet = item
+        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.snippet_rename_dir)
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """
