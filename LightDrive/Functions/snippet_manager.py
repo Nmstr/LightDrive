@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QTreeWidgetItem, QTreeWidget
+from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 import uuid
