@@ -196,7 +196,6 @@ class WorkspaceFileManager:
                             add_snippets_to_parent(snippet["content"], new_parent)
 
         for i, snippet in snippets.items():
-            print(i, snippet)
             match snippet["type"]:
                 case "cue":
                     self.window.snippet_manager.snippet_create_cue(extra_data=snippet)
