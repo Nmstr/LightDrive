@@ -1,6 +1,6 @@
 [project]
 name = "LightDrive"
-description = "Create Your Own Lights Shows"
+description = "Create Your Own Light Shows"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
