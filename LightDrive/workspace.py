@@ -3,31 +3,14 @@ from Backend.output import DmxOutput
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidget, QTreeWidgetItem, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QFileDialog
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence, QFont
-from PySide6.QtCore import QFile, QSize
+from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
+from PySide6.QtCore import QFile, Qt
 import json
 import uuid
 import sys
 import os
-
-class SnippetSelectorTree(QTreeWidget):
-    def __init__(self):
-        super().__init__()
-        self.setIconSize(QSize(32, 32))
-        self.setFont(QFont('Noto Sans', 24))
-        self.header().setVisible(False)
-        self.setAcceptDrops(True)
-        self.setDragEnabled(True)
-        self.setDragDropMode(QTreeWidget.InternalMove)
-
-    def dropEvent(self, event):  # noqa: N802
-        target_item = self.itemAt(event.pos())
-        if target_item and target_item.extra_data["type"] != "directory":
-            event.ignore()
-        else:
-            super().dropEvent(event)
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
@@ -335,9 +318,6 @@ class Workspace(QMainWindow):
         Creates the snippet page
         :return: None
         """
-        self.ui.snippet_selector_tree = SnippetSelectorTree()
-        self.ui.snippet_selector_frame.layout().addWidget(self.ui.snippet_selector_tree)
-
         self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_show_editor)
 
         self.ui.cue_btn.clicked.connect(self.snippet_create_cue)
@@ -486,6 +466,7 @@ class Workspace(QMainWindow):
             selector_tree.selectedItems()[0].setExpanded(True)
         else:
             selector_tree.addTopLevelItem(item)
+        self.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
     def snippet_rename_dir(self) -> None:
         """
@@ -494,6 +475,7 @@ class Workspace(QMainWindow):
         """
         self.current_snippet.extra_data["name"] = self.ui.directory_name_edit.text()
         self.current_snippet.setText(0, self.ui.directory_name_edit.text())
+        self.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
     def snippet_show_editor(self, item) -> None:
         match item.extra_data["type"]:

@@ -161,8 +161,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
-            <height>20</height>
+            <width>1564</width>
+            <height>403</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -327,8 +327,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>66</width>
-            <height>18</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -436,20 +436,26 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QFrame" name="snippet_selector_frame">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <widget class="QTreeWidget" name="snippet_selector_tree">
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::Shape::StyledPanel</enum>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Shadow::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_9"/>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
            </widget>
           </item>
           <item>
