@@ -42,7 +42,7 @@ class Workspace(QMainWindow):
 
         self.show()
 
-    def setup_main_window(self):
+    def setup_main_window(self) -> None:
         """
         Sets up the main window
         :return: None
@@ -122,7 +122,7 @@ class Workspace(QMainWindow):
         address = dlg.ui.address_spin.value()
         self.add_fixture(amount, fixture_data, universe, address)
 
-    def add_fixture(self, amount, fixture_data, universe, address) -> None:
+    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int) -> None:
         """
         Add the fixture
         :param amount: The amount of the fixture
@@ -153,6 +153,10 @@ class Workspace(QMainWindow):
             })
 
     def remove_fixture(self) -> None:
+        """
+        Removes a fixture from the workspace
+        :return: None
+        """
         current_item = self.ui.fixture_tree_widget.selectedItems()[0]
         for fixture in self.available_fixtures:
             if current_item.uuid == fixture["fixture_uuid"]:

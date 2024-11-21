@@ -70,17 +70,32 @@ def write_workspace_file(workspace_file_path: str, fixtures: list, dmx_output_co
         shutil.rmtree(tmp_dir)
 
 class WorkspaceFileManager:
-    def __init__(self, window, app, reboot_exit_code, current_workspace_file) -> None:
+    def __init__(self, window, app, reboot_exit_code: int, current_workspace_file: str) -> None:
+        """
+        Creates the workspace file manager
+        :param window: The main window of the application
+        :param app: The app
+        :param reboot_exit_code: The exit code for a reboot to start
+        :param current_workspace_file: The current workspace file (provided when rebooting)
+        """
         self.window = window
         self.app = app
         self.reboot_exit_code = reboot_exit_code
         self.current_workspace_file = current_workspace_file
 
-    def new_workspace(self):
+    def new_workspace(self) -> None:
+        """
+        Creates a new workspace file by restarting the application empty
+        :return: None
+        """
         self.current_workspace_file = None
         self.app.exit(self.reboot_exit_code)
 
-    def save_workspace_as(self):
+    def save_workspace_as(self) -> None:
+        """
+        Opens a file dialog to save the current workspace file
+        :return: None
+        """
         dlg = QFileDialog(self.window, directory=os.path.expanduser("~"))
         dlg.setNameFilter("Workspace (*.ldw)")
         dlg.setDefaultSuffix(".ldw")
@@ -90,7 +105,11 @@ class WorkspaceFileManager:
             self.current_workspace_file = filename
             self.save_workspace()
 
-    def save_workspace(self):
+    def save_workspace(self) -> None:
+        """
+        Saves the current workspace by either saving it to current_workspace_file or prompting the use using save_workspace_as
+        :return: None
+        """
         if not self.current_workspace_file:
             self.save_workspace_as()
         else:
@@ -100,7 +119,11 @@ class WorkspaceFileManager:
                                  dmx_output_configuration=self.window.dmx_output.output_configuration,
                                  snippet_configuration=snippet_configuration)
 
-    def get_snippet_configuration(self):
+    def get_snippet_configuration(self) -> dict:
+        """
+        Gets the current snippet configuration
+        :return: The current snippet configuration (dictionary)
+        """
         snippet_selector = self.window.ui.snippet_selector_tree
         snippet_configuration = {}
 
@@ -118,7 +141,11 @@ class WorkspaceFileManager:
             add_directory_content(item)
         return snippet_configuration
 
-    def show_open_workspace_dialog(self):
+    def show_open_workspace_dialog(self) -> None:
+        """
+        Shows the dialog to open a workspace file. It sets the workspace as the current_workspace_file and then restart the application, causing it to load the workspace using open_workspace
+        :return: None
+        """
         dlg = QFileDialog(self.window, directory=os.path.expanduser("~"))
         dlg.setNameFilter("Workspace (*.ldw)")
         dlg.setDefaultSuffix(".ldw")
@@ -127,7 +154,12 @@ class WorkspaceFileManager:
             self.current_workspace_file = dlg.selectedFiles()[0]
             self.app.exit(self.reboot_exit_code)  # Restart application (opens workspace while opening)
 
-    def open_workspace(self, workspace_file_path):
+    def open_workspace(self, workspace_file_path: str) -> None:
+        """
+        Loads the current workspace file (this runs on reboot)
+        :param workspace_file_path: The path to the workspace file
+        :return: None
+        """
         fixtures, dmx_output_configuration, snippets = read_workspace_file(workspace_file_path)
         # Add the fixtures
         for fixture in fixtures:

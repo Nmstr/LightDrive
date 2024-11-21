@@ -5,6 +5,10 @@ import uuid
 
 class SnippetManager:
     def __init__(self, window = None):
+        """
+        Creates the snippet manager
+        :param window: The application's main window
+        """
         self.current_snippet = None
         self.window = window
 
@@ -149,6 +153,11 @@ class SnippetManager:
         self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
     def snippet_show_editor(self, item) -> None:
+        """
+        Shows the snippet editor for the selected snippet
+        :param item: The snippet to edit
+        :return: None
+        """
         match item.extra_data["type"]:
             case "directory":
                 self.window.ui.snippet_editor.setCurrentIndex(1)
