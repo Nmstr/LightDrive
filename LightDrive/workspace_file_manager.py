@@ -172,7 +172,7 @@ class WorkspaceFileManager:
                              fixture_data = fixture_data,
                              universe = fixture["universe"],
                              address = fixture["address"],
-                             fixture_uuid = fixture["fixture_uuid"])
+                             provided_uuid = fixture["fixture_uuid"])
 
         # Configure the dmx output
         self.window.dmx_output.write_universe_configuration(dmx_output_configuration)
