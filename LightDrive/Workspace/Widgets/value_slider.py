@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QSlider, QVBoxLayout, QSizePolicy, QSpinBox, QLabel
+from PySide6.QtWidgets import QWidget, QSlider, QVBoxLayout, QSizePolicy, QSpinBox, QLabel, QCheckBox
 from PySide6.QtGui import QPainter, QPixmap, QPalette, QColor
 from PySide6.QtCore import Qt
 import json
@@ -43,7 +43,7 @@ class SliderIcon(QWidget):
         self.icon = None
         self.update_icon()
 
-    def update_icon(self, fixture_id: int = None, fixture_address: int = None) -> None:
+    def update_icon(self, fixture_id: str = None, fixture_address: int = None) -> None:
         """
         Updates the icon of the widget
         :param fixture_id: The id of the fixture
@@ -174,3 +174,96 @@ class ValueSlider(QWidget):
             if not fixture["universe"] == self.workspace_window.console_current_universe:
                 continue
             self.icon.update_icon(fixture["id"], fixture["address"])
+
+class SceneSlider(QWidget):
+    def __init__(self, parent=None, index: int = 0, fixture_data: dict = None) -> None:
+        self.window = parent
+        self.snippet_manager = self.window.snippet_manager
+        self.index = index
+        if not fixture_data:
+            fixture_data = {}
+        self.fixture_data = fixture_data
+        super().__init__(parent)
+        self.setAutoFillBackground(True)
+
+        layout = QVBoxLayout()
+
+        self.activation_box = QCheckBox(self)
+        self.activation_box.checkStateChanged.connect(self.change_activation)
+        layout.addWidget(self.activation_box)
+
+        self.number_display = QSpinBox(self)
+        self.number_display.setRange(0, 255)
+        self.number_display.valueChanged.connect(self.set_value)
+        self.number_display.setEnabled(False)
+        layout.addWidget(self.number_display)
+
+        self.slider = JumpSlider(self)
+        self.slider.setRange(0, 255)
+        self.slider.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        self.slider.valueChanged.connect(self.set_value)
+        self.slider.setEnabled(False)
+        layout.addWidget(self.slider)
+
+        label = QLabel(self)
+        label.setText(str(self.index + 1))
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(label)
+
+        self.icon = SliderIcon(self)
+        layout.addWidget(self.icon)
+
+        self.setLayout(layout)
+        self.update_icon()
+
+        # Add any maybe missing required attributes to the scene
+        if not self.snippet_manager.current_snippet.extra_data.get("fixture_configs"):
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"] = {}
+        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"].get(self.fixture_data["fixture_uuid"]):
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]] = {}
+        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]].get(str(self.index)):
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)] = {}
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = 0
+        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"]:
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
+        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"]:
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = 0
+
+        # Load values
+        self.set_value(self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)].get("value", 0))
+        if self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)].get("checked", False):
+            self.activation_box.setChecked(True)
+
+    def set_value(self, value: int) -> None:
+        """
+        Sets the value of the slider
+        :param value: The integer value to be set
+        :return: None
+        """
+        self.slider.setValue(value)
+        self.number_display.setValue(value)
+        self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = value
+
+    def change_activation(self, state) -> None:
+        """
+        Activates or deactivates the slider (and spin box) depending on the state of the activation box
+        :param state: The state of the activation box
+        :return: None
+        """
+        if state == Qt.CheckState.Checked:
+            self.number_display.setEnabled(True)
+            self.slider.setEnabled(True)
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = True
+        else:
+            self.number_display.setEnabled(False)
+            self.slider.setEnabled(False)
+            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
+
+    def update_icon(self):
+        """
+        Updates the icon of the slider
+        :return: None
+        """
+        self.icon.update_icon()
+        self.icon.update_icon(self.fixture_data["id"], 1)

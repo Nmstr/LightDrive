@@ -1,8 +1,45 @@
 from Workspace.Dialogs.snippet_dialogs import SnippetAddFixtureDialog
-from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem
+from Workspace.Widgets.value_slider import SceneSlider
+from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem, QWidget, QHBoxLayout, QSpacerItem, QSizePolicy, \
+    QScrollArea
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 import uuid
+import json
+import os
+
+class SceneFixtureConfigScreen(QWidget):
+    def __init__(self, parent=None, fixture_data=None):
+        self.window = parent
+        self.fixture_data = fixture_data
+        super().__init__(parent)
+
+        layout = QHBoxLayout()
+
+        self.scroll = QScrollArea()
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setWidgetResizable(True)
+        layout.addWidget(self.scroll)
+
+        self.scroll_widget = QWidget()
+        self.scroll.setWidget(self.scroll_widget)
+
+        scroll_layout = QHBoxLayout()
+        self.scroll_widget.setLayout(scroll_layout)
+
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(fixture_dir, fixture_data["id"] + ".json")) as f:
+            amount_channels = len(json.load(f)["channels"])  # Get the amount of channels
+        self.sliders = []
+        for i in range(amount_channels):
+            self.sliders.append(SceneSlider(self.window, i, fixture_data))
+            scroll_layout.addWidget(self.sliders[i])
+
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        scroll_layout.addItem(self.spacer)
+
+        self.setLayout(layout)
 
 class SnippetManager:
     def __init__(self, window = None):
@@ -49,7 +86,8 @@ class SnippetManager:
                 "type": "scene",
                 "uuid": str(uuid.uuid4()),
                 "name": "New Scene",
-                "fixtures": []
+                "fixtures": [],
+                "fixture_configs": {}
             }
         new_scene.setText(0, new_scene.extra_data["name"])
         self._add_item(new_scene, parent)
@@ -194,6 +232,9 @@ class SnippetManager:
         :return: None
         """
         self.window.ui.scene_fixture_list.clear()  # First delete old data
+        for i in reversed(range(self.window.ui.scene_config_tab.count() - 1)):
+            self.window.ui.scene_config_tab.removeTab(i + 1)
+
         scene_fixtures = []
         for fixture_uuid in fixture_ids:  # Get the data from all the fixtures in the scene
             matching_fixture = [item for item in self.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0]
@@ -202,6 +243,15 @@ class SnippetManager:
             fixture_item = QListWidgetItem(fixture["name"])
             fixture_item.extra_data = fixture
             self.window.ui.scene_fixture_list.addItem(fixture_item)
+            self._scene_load_fixture_tab(fixture)
+
+    def _scene_load_fixture_tab(self, fixture_data: dict) -> None:
+        """
+        Creates the tab to configure a fixture
+        :param fixture_data: The data of the fixture
+        :return: None
+        """
+        self.window.ui.scene_config_tab.addTab(SceneFixtureConfigScreen(self.window, fixture_data), fixture_data["name"])
 
     def scene_add_fixture(self) -> None:
         """
