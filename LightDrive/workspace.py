@@ -122,14 +122,14 @@ class Workspace(QMainWindow):
         address = dlg.ui.address_spin.value()
         self.add_fixture(amount, fixture_data, universe, address)
 
-    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int, fixture_uuid: str = None) -> None:
+    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int, provided_uuid: str = None) -> None:
         """
         Add the fixture
         :param amount: The amount of the fixture
         :param fixture_data: The fixture data
         :param universe: The universe of the fixture
         :param address: The address of the fixture
-        :param fixture_uuid: The uuid of the fixture (used when loading workspace; defaults to None, setting a new one)
+        :param provided_uuid: The uuid of the fixture (used when loading workspace; defaults to None, setting a new one)
         :return: None
         """
         for _ in range(amount):
@@ -143,15 +143,14 @@ class Workspace(QMainWindow):
             fixture_address = address
             fixture_item.setText(1,
                                  f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
-            if not fixture_uuid:
-                fixture_uuid = str(uuid.uuid4())
-            fixture_item.uuid = fixture_uuid
+            fixture_uuid = str(uuid.uuid4())
+            fixture_item.uuid = provided_uuid if provided_uuid else fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
                 "universe": fixture_universe,
                 "address": fixture_address,
-                "fixture_uuid": fixture_uuid,
+                "fixture_uuid": provided_uuid if provided_uuid else fixture_uuid,
             })
 
     def remove_fixture(self) -> None:
