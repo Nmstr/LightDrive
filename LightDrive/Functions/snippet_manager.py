@@ -216,9 +216,7 @@ class SnippetManager:
             self.current_snippet.extra_data["fixtures"] = []
         for fixture in dlg.selected_fixtures:
             self.current_snippet.extra_data["fixtures"].append(fixture.extra_data["fixture_uuid"])
-            fixture_item = QListWidgetItem(fixture.extra_data["name"])
-            fixture_item.extra_data = fixture.extra_data
-            self.window.ui.scene_fixture_list.addItem(fixture_item)
+            self.snippet_scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
 
     def snippet_scene_remove_fixture(self) -> None:
         """
