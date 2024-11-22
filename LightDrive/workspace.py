@@ -214,20 +214,20 @@ class Workspace(QMainWindow):
         Creates the snippet page
         :return: None
         """
-        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.snippet_show_editor)
+        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.show_editor)
 
-        self.ui.cue_btn.clicked.connect(self.snippet_manager.snippet_create_cue)
-        self.ui.scene_btn.clicked.connect(self.snippet_manager.snippet_create_scene)
-        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.snippet_create_efx_2d)
-        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.snippet_create_rgb_matrix)
-        self.ui.script_btn.clicked.connect(self.snippet_manager.snippet_create_script)
-        self.ui.directory_btn.clicked.connect(self.snippet_manager.snippet_create_dir)
+        self.ui.cue_btn.clicked.connect(self.snippet_manager.create_cue)
+        self.ui.scene_btn.clicked.connect(self.snippet_manager.create_scene)
+        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.create_efx_2d)
+        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.create_rgb_matrix)
+        self.ui.script_btn.clicked.connect(self.snippet_manager.create_script)
+        self.ui.directory_btn.clicked.connect(self.snippet_manager.create_dir)
 
-        self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.snippet_scene_add_fixture)
-        self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.snippet_scene_remove_fixture)
-        self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.snippet_rename_scene)
+        self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_add_fixture)
+        self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_remove_fixture)
+        self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
 
-        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.snippet_rename_dir)
+        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """

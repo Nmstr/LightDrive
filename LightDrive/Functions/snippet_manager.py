@@ -13,7 +13,7 @@ class SnippetManager:
         self.current_snippet = None
         self.window = window
 
-    def snippet_create_cue(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
+    def create_cue(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
         """
         Creates a cue in the snippet selector tree
         :param extra_data: Any extra data for the cue (only if importing)
@@ -31,9 +31,9 @@ class SnippetManager:
                 "name": "New Cue",
             }
         new_cue.setText(0, new_cue.extra_data["name"])
-        self.snippet_add_item(new_cue, parent)
+        self._add_item(new_cue, parent)
 
-    def snippet_create_scene(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
+    def create_scene(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
         """
         Creates a scene in the snippet selector tree
         :param extra_data: Any extra data for the scene (only if importing)
@@ -52,9 +52,9 @@ class SnippetManager:
                 "fixtures": []
             }
         new_scene.setText(0, new_scene.extra_data["name"])
-        self.snippet_add_item(new_scene, parent)
+        self._add_item(new_scene, parent)
 
-    def snippet_create_efx_2d(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
+    def create_efx_2d(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
         """
         Creates a 2d efx in the snippet selector tree
         :param extra_data: Any extra data for the 2d efx (only if importing)
@@ -72,9 +72,9 @@ class SnippetManager:
                 "name": "New 2D EFX",
             }
         new_efx_2d.setText(0, new_efx_2d.extra_data["name"])
-        self.snippet_add_item(new_efx_2d, parent)
+        self._add_item(new_efx_2d, parent)
 
-    def snippet_create_rgb_matrix(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
+    def create_rgb_matrix(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
         """
         Creates a rgb matrix in the snippet selector tree
         :param extra_data: Any extra data for the rgb matrix (only if importing)
@@ -92,9 +92,9 @@ class SnippetManager:
                 "name": "New RGB Matrix",
             }
         new_rgb_matrix.setText(0, new_rgb_matrix.extra_data["name"])
-        self.snippet_add_item(new_rgb_matrix, parent)
+        self._add_item(new_rgb_matrix, parent)
 
-    def snippet_create_script(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
+    def create_script(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
         """
         Creates a script in the snippet selector tree
         :param extra_data: Any extra data for the script (only if importing)
@@ -112,9 +112,9 @@ class SnippetManager:
                 "name": "New Script",
             }
         new_script.setText(0, new_script.extra_data["name"])
-        self.snippet_add_item(new_script, parent)
+        self._add_item(new_script, parent)
 
-    def snippet_create_dir(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> QTreeWidgetItem:
+    def create_dir(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> QTreeWidgetItem:
         """
         Creates a directory in the snippet selector tree
         :param extra_data: Any extra data for the directory (only if importing)
@@ -132,10 +132,10 @@ class SnippetManager:
                 "name": "New Directory",
             }
         new_dir.setText(0, new_dir.extra_data["name"])
-        self.snippet_add_item(new_dir, parent)
+        self._add_item(new_dir, parent)
         return new_dir
 
-    def snippet_add_item(self, item: QTreeWidgetItem, parent: QTreeWidgetItem = None) -> None:
+    def _add_item(self, item: QTreeWidgetItem, parent: QTreeWidgetItem = None) -> None:
         """
         Adds the provided item to the snippet selector tree
         :param item: The item to add
@@ -154,7 +154,7 @@ class SnippetManager:
             selector_tree.addTopLevelItem(item)
         self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
-    def snippet_show_editor(self, item) -> None:
+    def show_editor(self, item) -> None:
         """
         Shows the snippet editor for the selected snippet
         :param item: The snippet to edit
@@ -170,7 +170,7 @@ class SnippetManager:
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
                 self.window.ui.scene_name_edit.setText(self.current_snippet.extra_data["name"])
-                self.snippet_scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+                self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
             case "efx_2d":
                 self.window.ui.snippet_editor.setCurrentIndex(3)
             case "rgb_matrix":
@@ -178,7 +178,7 @@ class SnippetManager:
             case "script":
                 self.window.ui.snippet_editor.setCurrentIndex(5)
 
-    def snippet_rename_scene(self) -> None:
+    def rename_scene(self) -> None:
         """
         Changes the name of the current scene to a new name from ui.scene_name_edit
         :return: None
@@ -187,7 +187,7 @@ class SnippetManager:
         self.current_snippet.setText(0, self.window.ui.scene_name_edit.text())
         self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
-    def snippet_scene_load_fixtures(self, fixture_ids: dict) -> None:
+    def _scene_load_fixtures(self, fixture_ids: dict) -> None:
         """
         Loads the fixtures that are in a scene to ui.scene_fixture_list
         :param fixture_ids: The ids of the fixtures to load
@@ -203,7 +203,7 @@ class SnippetManager:
             fixture_item.extra_data = fixture
             self.window.ui.scene_fixture_list.addItem(fixture_item)
 
-    def snippet_scene_add_fixture(self) -> None:
+    def scene_add_fixture(self) -> None:
         """
         Shows a dialog to add fixtures to the scene+ui.scene_fixture_list and adds them if successful
         :return: None
@@ -216,18 +216,18 @@ class SnippetManager:
             self.current_snippet.extra_data["fixtures"] = []
         for fixture in dlg.selected_fixtures:
             self.current_snippet.extra_data["fixtures"].append(fixture.extra_data["fixture_uuid"])
-            self.snippet_scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+            self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
 
-    def snippet_scene_remove_fixture(self) -> None:
+    def scene_remove_fixture(self) -> None:
         """
         Removes a fixture from the scene+ui.scene_fixture_list
         :return: None
         """
         selected_uuid = self.window.ui.scene_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
         self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
-        self.snippet_scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+        self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
 
-    def snippet_rename_dir(self) -> None:
+    def rename_dir(self) -> None:
         """
         Renames the directory to the new name
         :return: None
