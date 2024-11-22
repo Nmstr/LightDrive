@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QTreeWidgetItem
+from Workspace.Dialogs.snippet_dialogs import SnippetAddFixtureDialog
+from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 import uuid
@@ -48,6 +49,7 @@ class SnippetManager:
                 "type": "scene",
                 "uuid": str(uuid.uuid4()),
                 "name": "New Scene",
+                "fixtures": []
             }
         new_scene.setText(0, new_scene.extra_data["name"])
         self.snippet_add_item(new_scene, parent)
@@ -158,21 +160,74 @@ class SnippetManager:
         :param item: The snippet to edit
         :return: None
         """
-        match item.extra_data["type"]:
+        self.current_snippet = item
+        match self.current_snippet.extra_data["type"]:
             case "directory":
                 self.window.ui.snippet_editor.setCurrentIndex(1)
-                self.window.ui.directory_name_edit.setText(item.extra_data["name"])
+                self.window.ui.directory_name_edit.setText(self.current_snippet.extra_data["name"])
             case "cue":
                 self.window.ui.snippet_editor.setCurrentIndex(2)
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
+                self.window.ui.scene_name_edit.setText(self.current_snippet.extra_data["name"])
+                self.snippet_scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
             case "efx_2d":
                 self.window.ui.snippet_editor.setCurrentIndex(3)
             case "rgb_matrix":
                 self.window.ui.snippet_editor.setCurrentIndex(4)
             case "script":
                 self.window.ui.snippet_editor.setCurrentIndex(5)
-        self.current_snippet = item
+
+    def snippet_rename_scene(self) -> None:
+        """
+        Changes the name of the current scene to a new name from ui.scene_name_edit
+        :return: None
+        """
+        self.current_snippet.extra_data["name"] = self.window.ui.scene_name_edit.text()
+        self.current_snippet.setText(0, self.window.ui.scene_name_edit.text())
+        self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def snippet_scene_load_fixtures(self, fixture_ids: dict) -> None:
+        """
+        Loads the fixtures that are in a scene to ui.scene_fixture_list
+        :param fixture_ids: The ids of the fixtures to load
+        :return: None
+        """
+        self.window.ui.scene_fixture_list.clear()  # First delete old data
+        scene_fixtures = []
+        for fixture_uuid in fixture_ids:  # Get the data from all the fixtures in the scene
+            matching_fixture = [item for item in self.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0]
+            scene_fixtures.append(matching_fixture)
+        for fixture in scene_fixtures:  # Add the fixture to the QListWidget
+            fixture_item = QListWidgetItem(fixture["name"])
+            fixture_item.extra_data = fixture
+            self.window.ui.scene_fixture_list.addItem(fixture_item)
+
+    def snippet_scene_add_fixture(self) -> None:
+        """
+        Shows a dialog to add fixtures to the scene+ui.scene_fixture_list and adds them if successful
+        :return: None
+        """
+        dlg = SnippetAddFixtureDialog(self.window, self.current_snippet.extra_data.get("fixtures", []))
+        if not dlg.exec():
+            return
+
+        if not self.current_snippet.extra_data.get("fixtures"):  # Add fixtures to extra_data if it doesn't exist
+            self.current_snippet.extra_data["fixtures"] = []
+        for fixture in dlg.selected_fixtures:
+            self.current_snippet.extra_data["fixtures"].append(fixture.extra_data["fixture_uuid"])
+            fixture_item = QListWidgetItem(fixture.extra_data["name"])
+            fixture_item.extra_data = fixture.extra_data
+            self.window.ui.scene_fixture_list.addItem(fixture_item)
+
+    def snippet_scene_remove_fixture(self) -> None:
+        """
+        Removes a fixture from the scene+ui.scene_fixture_list
+        :return: None
+        """
+        selected_uuid = self.window.ui.scene_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
+        self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
+        self.snippet_scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
 
     def snippet_rename_dir(self) -> None:
         """
