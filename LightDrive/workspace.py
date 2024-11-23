@@ -101,7 +101,9 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.fixture_add_btn.clicked.connect(self.show_add_fixture_dialog)
+        self.ui.fixture_add_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
+        self.ui.fixture_remove_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
         for i in range(10):
             universe_fixture_item = QTreeWidgetItem()
             universe_fixture_item.setText(0, f"Universe: {i + 1}")
@@ -224,8 +226,11 @@ class Workspace(QMainWindow):
         self.ui.directory_btn.clicked.connect(self.snippet_manager.create_dir)
 
         self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_add_fixture)
+        self.ui.scene_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_remove_fixture)
+        self.ui.scene_remove_fixture.setIcon(QPixmap("Assets/Icons/remove.svg"))
         self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
+
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
 
