@@ -219,11 +219,17 @@ class Workspace(QMainWindow):
         self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.show_editor)
 
         self.ui.cue_btn.clicked.connect(self.snippet_manager.create_cue)
+        self.ui.cue_btn.setIcon(QPixmap("Assets/Icons/cue.svg"))
         self.ui.scene_btn.clicked.connect(self.snippet_manager.create_scene)
+        self.ui.scene_btn.setIcon(QPixmap("Assets/Icons/scene.svg"))
         self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.create_efx_2d)
+        self.ui.efx_2d_btn.setIcon(QPixmap("Assets/Icons/efx_2d.svg"))
         self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.create_rgb_matrix)
+        self.ui.rgb_matrix_btn.setIcon(QPixmap("Assets/Icons/rgb_matrix.svg"))
         self.ui.script_btn.clicked.connect(self.snippet_manager.create_script)
+        self.ui.script_btn.setIcon(QPixmap("Assets/Icons/script.svg"))
         self.ui.directory_btn.clicked.connect(self.snippet_manager.create_dir)
+        self.ui.directory_btn.setIcon(QPixmap("Assets/Icons/directory.svg"))
 
         self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_add_fixture)
         self.ui.scene_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
