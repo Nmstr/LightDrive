@@ -122,13 +122,14 @@ class Workspace(QMainWindow):
         address = dlg.ui.address_spin.value()
         self.add_fixture(amount, fixture_data, universe, address)
 
-    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int) -> None:
+    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int, provided_uuid: str = None) -> None:
         """
         Add the fixture
         :param amount: The amount of the fixture
         :param fixture_data: The fixture data
         :param universe: The universe of the fixture
         :param address: The address of the fixture
+        :param provided_uuid: The uuid of the fixture (used when loading workspace; defaults to None, setting a new one)
         :return: None
         """
         for _ in range(amount):
@@ -143,13 +144,13 @@ class Workspace(QMainWindow):
             fixture_item.setText(1,
                                  f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
             fixture_uuid = str(uuid.uuid4())
-            fixture_item.uuid = fixture_uuid
+            fixture_item.uuid = provided_uuid if provided_uuid else fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
                 "universe": fixture_universe,
                 "address": fixture_address,
-                "fixture_uuid": fixture_uuid,
+                "fixture_uuid": provided_uuid if provided_uuid else fixture_uuid,
             })
 
     def remove_fixture(self) -> None:
@@ -213,16 +214,20 @@ class Workspace(QMainWindow):
         Creates the snippet page
         :return: None
         """
-        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.snippet_show_editor)
+        self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.show_editor)
 
-        self.ui.cue_btn.clicked.connect(self.snippet_manager.snippet_create_cue)
-        self.ui.scene_btn.clicked.connect(self.snippet_manager.snippet_create_scene)
-        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.snippet_create_efx_2d)
-        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.snippet_create_rgb_matrix)
-        self.ui.script_btn.clicked.connect(self.snippet_manager.snippet_create_script)
-        self.ui.directory_btn.clicked.connect(self.snippet_manager.snippet_create_dir)
+        self.ui.cue_btn.clicked.connect(self.snippet_manager.create_cue)
+        self.ui.scene_btn.clicked.connect(self.snippet_manager.create_scene)
+        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.create_efx_2d)
+        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.create_rgb_matrix)
+        self.ui.script_btn.clicked.connect(self.snippet_manager.create_script)
+        self.ui.directory_btn.clicked.connect(self.snippet_manager.create_dir)
 
-        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.snippet_rename_dir)
+        self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_add_fixture)
+        self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_remove_fixture)
+        self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
+
+        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """

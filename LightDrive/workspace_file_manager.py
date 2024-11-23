@@ -171,7 +171,8 @@ class WorkspaceFileManager:
             self.window.add_fixture(amount = 1,
                              fixture_data = fixture_data,
                              universe = fixture["universe"],
-                             address = fixture["address"])
+                             address = fixture["address"],
+                             provided_uuid = fixture["fixture_uuid"])
 
         # Configure the dmx output
         self.window.dmx_output.write_universe_configuration(dmx_output_configuration)
@@ -181,34 +182,33 @@ class WorkspaceFileManager:
             for snippet in snippets:
                 match snippet["type"]:
                     case "cue":
-                        self.window.snippet_manager.snippet_create_cue(extra_data=snippet, parent=parent)
+                        self.window.snippet_manager.create_cue(extra_data=snippet, parent=parent)
                     case "scene":
-                        self.window.snippet_manager.snippet_create_scene(extra_data=snippet, parent=parent)
+                        self.window.snippet_manager.create_scene(extra_data=snippet, parent=parent)
                     case "efx_2d":
-                        self.window.snippet_manager.snippet_create_efx_2d(extra_data=snippet, parent=parent)
+                        self.window.snippet_manager.create_efx_2d(extra_data=snippet, parent=parent)
                     case "rbg_matrix":
-                        self.window.snippet_manager.snippet_create_rgb_matrix(extra_data=snippet, parent=parent)
+                        self.window.snippet_manager.create_rgb_matrix(extra_data=snippet, parent=parent)
                     case "script":
-                        self.window.snippet_manager.snippet_create_script(extra_data=snippet, parent=parent)
+                        self.window.snippet_manager.create_script(extra_data=snippet, parent=parent)
                     case "directory":
-                        new_parent = self.window.snippet_manager.snippet_create_dir(extra_data=snippet, parent=parent)
+                        new_parent = self.window.snippet_manager.create_dir(extra_data=snippet, parent=parent)
                         if "content" in snippet:
                             add_snippets_to_parent(snippet["content"], new_parent)
 
         for i, snippet in snippets.items():
-            print(i, snippet)
             match snippet["type"]:
                 case "cue":
-                    self.window.snippet_manager.snippet_create_cue(extra_data=snippet)
+                    self.window.snippet_manager.create_cue(extra_data=snippet)
                 case "scene":
-                    self.window.snippet_manager.snippet_create_scene(extra_data=snippet)
+                    self.window.snippet_manager.create_scene(extra_data=snippet)
                 case "efx_2d":
-                    self.window.snippet_manager.snippet_create_efx_2d(extra_data=snippet)
+                    self.window.snippet_manager.create_efx_2d(extra_data=snippet)
                 case "rbg_matrix":
-                    self.window.snippet_manager.snippet_create_rgb_matrix(extra_data=snippet)
+                    self.window.snippet_manager.create_rgb_matrix(extra_data=snippet)
                 case "script":
-                    self.window.snippet_manager.snippet_create_script(extra_data=snippet)
+                    self.window.snippet_manager.create_script(extra_data=snippet)
                 case "directory":
-                    parent = self.window.snippet_manager.snippet_create_dir(extra_data=snippet)
+                    parent = self.window.snippet_manager.create_dir(extra_data=snippet)
                     if "content" in snippet:
                         add_snippets_to_parent(snippet["content"], parent)

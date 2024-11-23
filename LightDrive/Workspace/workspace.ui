@@ -161,8 +161,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1564</width>
-            <height>403</height>
+            <width>100</width>
+            <height>30</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -558,15 +558,49 @@
              </layout>
             </widget>
             <widget class="QWidget" name="scene_page">
-             <layout class="QVBoxLayout" name="verticalLayout_12">
-              <item>
-               <widget class="QLabel" name="label_6">
+             <layout class="QGridLayout" name="gridLayout_2">
+              <item row="0" column="0">
+               <widget class="QLabel" name="scene_name_label">
                 <property name="text">
-                 <string>The Scene configurations are currently WIP</string>
+                 <string>Scene Name:</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="scene_name_edit"/>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QTabWidget" name="scene_config_tab">
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <widget class="QWidget" name="scene_config_page">
+                 <attribute name="title">
+                  <string>Scene Configuration</string>
+                 </attribute>
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="0" column="0">
+                   <widget class="QPushButton" name="scene_add_fixture">
+                    <property name="text">
+                     <string>Add Fixture</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QPushButton" name="scene_remove_fixture">
+                    <property name="text">
+                     <string>Remove Fixture</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" colspan="2">
+                   <widget class="QListWidget" name="scene_fixture_list"/>
+                  </item>
+                 </layout>
+                </widget>
                </widget>
               </item>
              </layout>
