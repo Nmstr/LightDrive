@@ -245,6 +245,14 @@ class SceneSlider(QWidget):
         self.number_display.setValue(value)
         self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = value
 
+    def set_activated(self, activated: bool) -> None:
+        """
+        Either activates or deactivates the slider
+        :param activated: Ture if the slider should be activated, false if it should be deactivated
+        :return: None
+        """
+        self.activation_box.setChecked(activated)
+
     def change_activation(self, state) -> None:
         """
         Activates or deactivates the slider (and spin box) depending on the state of the activation box

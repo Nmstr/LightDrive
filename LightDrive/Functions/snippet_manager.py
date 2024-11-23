@@ -1,11 +1,12 @@
 from Workspace.Dialogs.snippet_dialogs import SnippetAddFixtureDialog
 from Workspace.Widgets.value_slider import SceneSlider
-from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem, QWidget, QHBoxLayout, QSpacerItem, QSizePolicy, \
-    QScrollArea
+from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem, QWidget, QHBoxLayout, QVBoxLayout, QSpacerItem, \
+    QSizePolicy, QScrollArea, QPushButton, QFrame
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 import uuid
 import json
+import copy
 import os
 
 class SceneFixtureConfigScreen(QWidget):
@@ -14,7 +15,19 @@ class SceneFixtureConfigScreen(QWidget):
         self.fixture_data = fixture_data
         super().__init__(parent)
 
-        layout = QHBoxLayout()
+        layout = QVBoxLayout()
+
+        btn_layout = QHBoxLayout()
+        self.btn_frame = QFrame()
+        self.btn_frame.setLayout(btn_layout)
+        layout.addWidget(self.btn_frame)
+
+        self.copy_btn = QPushButton("Copy")
+        self.copy_btn.clicked.connect(self.copy_to_clipboard)
+        btn_layout.addWidget(self.copy_btn)
+        self.paste_btn = QPushButton("Paste")
+        self.paste_btn.clicked.connect(self.paste_clipboard)
+        btn_layout.addWidget(self.paste_btn)
 
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -41,6 +54,32 @@ class SceneFixtureConfigScreen(QWidget):
 
         self.setLayout(layout)
 
+    def copy_to_clipboard(self) -> None:
+        """
+        Copy the dmx values, that the current fixture in the scene is configured to, to the clipboard.
+        :return: None
+        """
+        scene_config = copy.deepcopy(self.window.snippet_manager.current_snippet.extra_data.get("fixture_configs"))
+        fixture_config = {
+            "type": self.window.snippet_manager.current_snippet.extra_data.get("type"),
+            "data": scene_config.get(self.fixture_data["fixture_uuid"])
+        }
+        self.window.snippet_manager.clipboard = fixture_config
+
+    def paste_clipboard(self):
+        """
+        Pastes the dmx values, that are currently in the clipboard, to the currently selected fixture in the scene.
+        :return: None
+        """
+        clipboard_data = self.window.snippet_manager.clipboard
+        if not isinstance(clipboard_data, dict):
+            return  # The clipboard is empty or contains invalid data
+        match clipboard_data.get("type"):
+            case "scene":
+                for channel_num, channel_data in clipboard_data.get("data", {}).items():
+                    self.sliders[int(channel_num)].set_value(channel_data.get("value", 0))
+                    self.sliders[int(channel_num)].set_activated(channel_data.get("checked", False))
+
 class SnippetManager:
     def __init__(self, window = None):
         """
@@ -48,6 +87,7 @@ class SnippetManager:
         :param window: The application's main window
         """
         self.current_snippet = None
+        self.clipboard = None
         self.window = window
 
     def create_cue(self, *, extra_data: dict = None, parent: QTreeWidgetItem = None) -> None:
