@@ -7,7 +7,7 @@ from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
-from PySide6.QtCore import QFile
+from PySide6.QtCore import QFile, QSize
 import uuid
 import sys
 
@@ -69,23 +69,35 @@ class Workspace(QMainWindow):
         file_menu = QMenu("File", self)
         menu_bar.addMenu(file_menu)
         new_action = QAction("New", self)
+        new_action.setIcon(QPixmap("Assets/Icons/new.svg"))
         file_menu.addAction(new_action)
         new_action.triggered.connect(lambda: self.workspace_file_manager.new_workspace())
         open_action = QAction("Open", self)
+        open_action.setIcon(QPixmap("Assets/Icons/open.svg"))
         file_menu.addAction(open_action)
         open_action.triggered.connect(lambda: self.workspace_file_manager.show_open_workspace_dialog())
         save_action = QAction("Save", self)
+        save_action.setIcon(QPixmap("Assets/Icons/save.svg"))
         file_menu.addAction(save_action)
         save_action.triggered.connect(lambda: self.workspace_file_manager.save_workspace())
         save_as_action = QAction("Save As", self)
+        save_as_action.setIcon(QPixmap("Assets/Icons/save_as.svg"))
         file_menu.addAction(save_as_action)
         save_as_action.triggered.connect(lambda: self.workspace_file_manager.save_workspace_as())
 
-        # Connect buttons
+        # Configure buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
+        self.ui.fixture_btn.setIcon(QPixmap("Assets/Icons/fixture_page.svg"))
+        self.ui.fixture_btn.setIconSize(QSize(24, 24))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
+        self.ui.console_btn.setIcon(QPixmap("Assets/Icons/console_page.svg"))
+        self.ui.console_btn.setIconSize(QSize(24, 24))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
+        self.ui.io_btn.setIcon(QPixmap("Assets/Icons/io_page.svg"))
+        self.ui.io_btn.setIconSize(QSize(24, 24))
         self.ui.snippet_btn.clicked.connect(lambda: self.show_page(3))
+        self.ui.snippet_btn.setIcon(QPixmap("Assets/Icons/snippet_page.svg"))
+        self.ui.snippet_btn.setIconSize(QSize(24, 24))
 
     def show_page(self, page_index: int) -> None:
         """
@@ -101,7 +113,9 @@ class Workspace(QMainWindow):
         :return: None
         """
         self.ui.fixture_add_btn.clicked.connect(self.show_add_fixture_dialog)
+        self.ui.fixture_add_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
+        self.ui.fixture_remove_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
         for i in range(10):
             universe_fixture_item = QTreeWidgetItem()
             universe_fixture_item.setText(0, f"Universe: {i + 1}")
@@ -217,14 +231,22 @@ class Workspace(QMainWindow):
         self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.show_editor)
 
         self.ui.cue_btn.clicked.connect(self.snippet_manager.create_cue)
+        self.ui.cue_btn.setIcon(QPixmap("Assets/Icons/cue.svg"))
         self.ui.scene_btn.clicked.connect(self.snippet_manager.create_scene)
+        self.ui.scene_btn.setIcon(QPixmap("Assets/Icons/scene.svg"))
         self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.create_efx_2d)
+        self.ui.efx_2d_btn.setIcon(QPixmap("Assets/Icons/efx_2d.svg"))
         self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.create_rgb_matrix)
+        self.ui.rgb_matrix_btn.setIcon(QPixmap("Assets/Icons/rgb_matrix.svg"))
         self.ui.script_btn.clicked.connect(self.snippet_manager.create_script)
+        self.ui.script_btn.setIcon(QPixmap("Assets/Icons/script.svg"))
         self.ui.directory_btn.clicked.connect(self.snippet_manager.create_dir)
+        self.ui.directory_btn.setIcon(QPixmap("Assets/Icons/directory.svg"))
 
         self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_add_fixture)
+        self.ui.scene_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_remove_fixture)
+        self.ui.scene_remove_fixture.setIcon(QPixmap("Assets/Icons/remove.svg"))
         self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)

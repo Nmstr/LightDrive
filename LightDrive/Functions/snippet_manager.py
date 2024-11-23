@@ -23,9 +23,11 @@ class SceneFixtureConfigScreen(QWidget):
         layout.addWidget(self.btn_frame)
 
         self.copy_btn = QPushButton("Copy")
+        self.copy_btn.setIcon(QPixmap("Assets/Icons/copy.svg"))
         self.copy_btn.clicked.connect(self.copy_to_clipboard)
         btn_layout.addWidget(self.copy_btn)
         self.paste_btn = QPushButton("Paste")
+        self.paste_btn.setIcon(QPixmap("Assets/Icons/paste.svg"))
         self.paste_btn.clicked.connect(self.paste_clipboard)
         btn_layout.addWidget(self.paste_btn)
 
