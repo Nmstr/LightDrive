@@ -7,7 +7,7 @@ from Workspace.Widgets.io_universe_entry import UniverseEntry
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
-from PySide6.QtCore import QFile
+from PySide6.QtCore import QFile, QSize
 import uuid
 import sys
 
@@ -81,11 +81,19 @@ class Workspace(QMainWindow):
         file_menu.addAction(save_as_action)
         save_as_action.triggered.connect(lambda: self.workspace_file_manager.save_workspace_as())
 
-        # Connect buttons
+        # Configure buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
+        self.ui.fixture_btn.setIcon(QPixmap("Assets/Icons/fixture_page.svg"))
+        self.ui.fixture_btn.setIconSize(QSize(24, 24))
         self.ui.console_btn.clicked.connect(lambda: self.show_page(1))
+        self.ui.console_btn.setIcon(QPixmap("Assets/Icons/console_page.svg"))
+        self.ui.console_btn.setIconSize(QSize(24, 24))
         self.ui.io_btn.clicked.connect(lambda: self.show_page(2))
+        self.ui.io_btn.setIcon(QPixmap("Assets/Icons/io_page.svg"))
+        self.ui.io_btn.setIconSize(QSize(24, 24))
         self.ui.snippet_btn.clicked.connect(lambda: self.show_page(3))
+        self.ui.snippet_btn.setIcon(QPixmap("Assets/Icons/snippet_page.svg"))
+        self.ui.snippet_btn.setIconSize(QSize(24, 24))
 
     def show_page(self, page_index: int) -> None:
         """
