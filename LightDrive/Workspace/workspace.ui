@@ -161,8 +161,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>68</width>
+            <height>20</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -327,8 +327,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>66</width>
+            <height>18</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -459,6 +459,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QFrame" name="frame">
+            <property name="frameShape">
+             <enum>QFrame::Shape::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Shadow::Raised</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QStackedWidget" name="snippet_editor">
             <widget class="QWidget" name="empty_page">
              <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -504,13 +514,42 @@
             <widget class="QWidget" name="cue_page">
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>The Cue configurations are currently WIP</string>
+               <widget class="QFrame" name="cue_topper">
+                <property name="frameShape">
+                 <enum>QFrame::Shape::StyledPanel</enum>
                 </property>
-                <property name="alignment">
-                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                <property name="frameShadow">
+                 <enum>QFrame::Shadow::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <widget class="QLabel" name="cue_name_label">
+                   <property name="text">
+                    <string>Name:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cue_name_edit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="cue_timeline_frame">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Shape::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Shadow::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_7"/>
                </widget>
               </item>
              </layout>

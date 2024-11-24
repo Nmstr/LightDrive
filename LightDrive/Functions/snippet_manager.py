@@ -247,6 +247,7 @@ class SnippetManager:
                 self.window.ui.directory_name_edit.setText(self.current_snippet.extra_data["name"])
             case "cue":
                 self.window.ui.snippet_editor.setCurrentIndex(2)
+                self.window.ui.cue_name_edit.setText(self.current_snippet.extra_data["name"])
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
                 self.window.ui.scene_name_edit.setText(self.current_snippet.extra_data["name"])
@@ -318,6 +319,15 @@ class SnippetManager:
         selected_uuid = self.window.ui.scene_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
         self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
         self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+
+    def rename_cue(self) -> None:
+        """
+        Changes the name of the current cue to a new name from ui.cue_name_edit
+        :return: None
+        """
+        self.current_snippet.extra_data["name"] = self.window.ui.cue_name_edit.text()
+        self.current_snippet.setText(0, self.window.ui.cue_name_edit.text())
+        self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
     def rename_dir(self) -> None:
         """

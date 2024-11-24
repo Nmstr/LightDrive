@@ -255,6 +255,8 @@ class Workspace(QMainWindow):
         self.ui.scene_remove_fixture.setIcon(QPixmap("Assets/Icons/remove.svg"))
         self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
 
+        self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.rename_cue)
+
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
