@@ -48,14 +48,18 @@ class CueTimeline(QGraphicsView):
         Add beats to the timeline
         :return: None
         """
-        beat_interval = 50  # Distance between beats
+        beat_interval = 50  # Distance between major beats
         num_beats = int(self.tracks[0].rect().width() / beat_interval)
+        num_minor_beats = 3
         pen = QPen(Qt.black)
         for i in range(num_beats):
             x = i * beat_interval
-            tick = self.scene.addLine(x, -10, x, 10, pen)
+            self.scene.addLine(x, -10, x, 10, pen)
             label = self.scene.addText(str(i + 1))
             label.setPos(x, -20)
+            for j in range(1, num_minor_beats + 1):  # Add minor beats
+                x_minor = x + j * beat_interval / (num_minor_beats + 1)
+                self.scene.addLine(x_minor, -5, x_minor, 5, pen)
 
     def add_keyframe(self, position) -> None:
         """
