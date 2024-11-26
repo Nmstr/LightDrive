@@ -1,5 +1,7 @@
 from Workspace.Dialogs.snippet_dialogs import SnippetAddFixtureDialog
 from Workspace.Widgets.value_slider import SceneSlider
+from Workspace.Widgets.cue_timeline import CueTimeline
+from Functions.ui import clear_field
 from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem, QWidget, QHBoxLayout, QVBoxLayout, QSpacerItem, \
     QSizePolicy, QScrollArea, QPushButton, QFrame
 from PySide6.QtGui import QPixmap
@@ -248,6 +250,7 @@ class SnippetManager:
             case "cue":
                 self.window.ui.snippet_editor.setCurrentIndex(2)
                 self.window.ui.cue_name_edit.setText(self.current_snippet.extra_data["name"])
+                self._load_cue_timeline()
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
                 self.window.ui.scene_name_edit.setText(self.current_snippet.extra_data["name"])
@@ -328,6 +331,15 @@ class SnippetManager:
         self.current_snippet.extra_data["name"] = self.window.ui.cue_name_edit.text()
         self.current_snippet.setText(0, self.window.ui.cue_name_edit.text())
         self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def _load_cue_timeline(self) -> None:
+        """
+        Loads the timeline of the current cue to ui.cue_timeline
+        :return: None
+        """
+        layout = clear_field(self.window.ui.cue_timeline_frame, QVBoxLayout, amount_left = 0)
+        self.cue_timeline = CueTimeline(self.window)
+        layout.addWidget(self.cue_timeline)
 
     def rename_dir(self) -> None:
         """

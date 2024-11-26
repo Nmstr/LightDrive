@@ -161,8 +161,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
-            <height>20</height>
+            <width>100</width>
+            <height>30</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -327,8 +327,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>66</width>
-            <height>18</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -459,16 +459,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frame">
-            <property name="frameShape">
-             <enum>QFrame::Shape::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Shadow::Raised</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QStackedWidget" name="snippet_editor">
             <widget class="QWidget" name="empty_page">
              <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -549,7 +539,7 @@
                 <property name="frameShadow">
                  <enum>QFrame::Shadow::Raised</enum>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+                <layout class="QVBoxLayout" name="verticalLayout_12"/>
                </widget>
               </item>
              </layout>
