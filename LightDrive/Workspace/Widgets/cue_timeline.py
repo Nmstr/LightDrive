@@ -16,6 +16,12 @@ class Keyframe(QGraphicsEllipseItem):
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
+
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.ItemPositionChange:
+            value.setY(self.y())
+        return super().itemChange(change, value)
 
 class Playhead(QGraphicsItemGroup):
     def __init__(self, cue_timeline) -> None:
