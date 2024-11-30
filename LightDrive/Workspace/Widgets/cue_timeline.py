@@ -81,9 +81,9 @@ class CueTimeline(QGraphicsView):
         Add beats to the timeline
         :return: None
         """
-        num_beats = int(self.tracks[0].rect().width() / self.major_tick_interval)
+        num_ticks = int(self.tracks[0].rect().width() / self.major_tick_interval)
         pen = QPen(Qt.black)
-        for i in range(num_beats):
+        for i in range(num_ticks):
             x = i * self.major_tick_interval
             self.scene.addLine(x, -10, x, 10, pen)
             label = self.scene.addText(str(i + 1))
