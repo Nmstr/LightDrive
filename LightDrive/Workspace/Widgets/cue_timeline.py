@@ -18,7 +18,7 @@ class Keyframe(QGraphicsEllipseItem):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
 
-    def itemChange(self, change, value):
+    def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
             value.setY(self.y())
         return super().itemChange(change, value)
