@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsEllipseItem, \
-    QGraphicsItem
-from PySide6.QtGui import QPen
-from PySide6.QtCore import Qt
+    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem
+from PySide6.QtGui import QPen, QPolygonF
+from PySide6.QtCore import Qt, QPointF
 
 class Keyframe(QGraphicsEllipseItem):
     def __init__(self, x: float, y: float, diameter: int) -> None:
@@ -17,12 +17,31 @@ class Keyframe(QGraphicsEllipseItem):
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
+class Playhead(QGraphicsItemGroup):
+    def __init__(self, cue_timeline) -> None:
+        """
+        Create a playhead
+        :param cue_timeline: The cue timeline
+        :return: None
+        """
+        super().__init__()
+        self.cue_timeline = cue_timeline
+
+        # Create the parts of the playhead
+        self.body = QGraphicsRectItem(10, 0, 3, 200)
+        self.body.setBrush(Qt.red)
+        self.addToGroup(self.body)
+        self.head = QGraphicsPolygonItem(QPolygonF([QPointF(1.5, -20), QPointF(21.5, -20), QPointF(11.5, 0)]))
+        self.head.setBrush(Qt.red)
+        self.addToGroup(self.head)
+
 class CueTimeline(QGraphicsView):
     def __init__(self, window: QMainWindow) -> None:
         """
         Create the timeline object
         :param window: The main window
         """
+        self.is_clicked = False
         super().__init__(window)
         self.window = window
         self.scene = QGraphicsScene(window)
@@ -31,6 +50,7 @@ class CueTimeline(QGraphicsView):
         for i in range(4):
             self.create_track()
         self.add_ticks()
+        self.add_playhead()
 
     def create_track(self) -> None:
         """
@@ -61,6 +81,14 @@ class CueTimeline(QGraphicsView):
                 x_minor = x + j * beat_interval / (num_minor_beats + 1)
                 self.scene.addLine(x_minor, -5, x_minor, 5, pen)
 
+    def add_playhead(self):
+        """
+        Adds the playhead to the timeline
+        :return: None
+        """
+        playhead = Playhead(self)
+        self.scene.addItem(playhead)
+
     def add_keyframe(self, position) -> None:
         """
         Adds a keyframe onto a timeline
@@ -83,4 +111,21 @@ class CueTimeline(QGraphicsView):
             # Add a new keyframe
             position = self.mapToScene(event.pos())
             self.add_keyframe(position)
+        elif event.button() == Qt.LeftButton:
+            self.is_clicked = True
         super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        self.is_clicked = False
+        super().mouseReleaseEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if self.is_clicked:
+            # Move the playhead
+            position = self.mapToScene(event.pos())
+            if position.x() < 0:
+                return # Don't move the playhead off the left side
+            for item in self.scene.items():
+                if isinstance(item, Playhead):
+                    item.setPos(position.x()-11.5, item.y())
+        super().mouseMoveEvent(event)
