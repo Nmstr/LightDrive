@@ -1,17 +1,19 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsEllipseItem, \
-    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem
+    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication
 from PySide6.QtGui import QPen, QPolygonF
 from PySide6.QtCore import Qt, QPointF
 
 class Keyframe(QGraphicsEllipseItem):
-    def __init__(self, x: float, y: float, diameter: int) -> None:
+    def __init__(self, timeline, x: float, y: float, diameter: int) -> None:
         """
         Create a keyframe
+        :param timeline: The CueTimeline object
         :param x: The x position of the keyframe
         :param y: The y position of the keyframe
         :param diameter: The diameter of the keyframe
         :return: None
         """
+        self.timeline = timeline
         super().__init__(x - diameter / 2, y - diameter / 2, diameter, diameter)
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
@@ -21,6 +23,9 @@ class Keyframe(QGraphicsEllipseItem):
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
             value.setY(self.y())
+            if not QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
+                tick_interval = self.timeline.major_tick_interval / self.timeline.num_minor_ticks
+                value.setX(round(value.x() / tick_interval) * tick_interval)
         return super().itemChange(change, value)
 
 class Playhead(QGraphicsItemGroup):
@@ -47,9 +52,11 @@ class CueTimeline(QGraphicsView):
         Create the timeline object
         :param window: The main window
         """
-        self.is_clicked = False
         super().__init__(window)
         self.window = window
+        self.is_clicked = False
+        self.major_tick_interval = 50
+        self.num_minor_ticks = 3
         self.scene = QGraphicsScene(window)
         self.setScene(self.scene)
         self.tracks = []
@@ -74,17 +81,15 @@ class CueTimeline(QGraphicsView):
         Add beats to the timeline
         :return: None
         """
-        beat_interval = 50  # Distance between major ticks
-        num_beats = int(self.tracks[0].rect().width() / beat_interval)
-        num_minor_beats = 3
+        num_beats = int(self.tracks[0].rect().width() / self.major_tick_interval)
         pen = QPen(Qt.black)
         for i in range(num_beats):
-            x = i * beat_interval
+            x = i * self.major_tick_interval
             self.scene.addLine(x, -10, x, 10, pen)
             label = self.scene.addText(str(i + 1))
             label.setPos(x, -20)
-            for j in range(1, num_minor_beats + 1):  # Add minor ticks
-                x_minor = x + j * beat_interval / (num_minor_beats + 1)
+            for j in range(1, self.num_minor_ticks + 1):  # Add minor ticks
+                x_minor = x + j * self.major_tick_interval / (self.num_minor_ticks + 1)
                 self.scene.addLine(x_minor, -5, x_minor, 5, pen)
 
     def add_playhead(self):
@@ -104,7 +109,7 @@ class CueTimeline(QGraphicsView):
         for track in self.tracks:
             if track.rect().contains(position.x(), position.y()):
                 timeline_y_center = track.rect().center().y()
-                keyframe = Keyframe(position.x(), timeline_y_center, 10)
+                keyframe = Keyframe(self, position.x(), timeline_y_center, 10)
                 self.scene.addItem(keyframe)
                 break
 
