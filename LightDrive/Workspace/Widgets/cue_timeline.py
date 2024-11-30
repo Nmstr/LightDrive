@@ -115,11 +115,11 @@ class CueTimeline(QGraphicsView):
             self.is_clicked = True
         super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event):  # noqa: N802
         self.is_clicked = False
         super().mouseReleaseEvent(event)
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event):  # noqa: N802
         if self.is_clicked:
             # Move the playhead
             position = self.mapToScene(event.pos())
