@@ -41,7 +41,7 @@ class Playhead(QGraphicsItemGroup):
         self.cue_timeline = cue_timeline
 
         # Create the parts of the playhead
-        self.body = QGraphicsRectItem(0, 0, 3, 200)
+        self.body = QGraphicsRectItem(0, 0, 3, len(self.cue_timeline.fixture_uuids) * self.cue_timeline.track_y_size)
         self.body.setBrush(Qt.red)
         self.addToGroup(self.body)
         self.head = QGraphicsPolygonItem(QPolygonF([QPointF(-8.5, -20), QPointF(11.5, -20), QPointF(1.5, 0)]))
