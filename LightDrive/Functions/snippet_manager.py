@@ -346,8 +346,6 @@ class SnippetManager:
         Shows a dialog to add fixtures to the cue
         :return: None
         """
-        print(self.current_snippet.extra_data.get("fixtures", []))
-
         dlg = SnippetAddFixtureDialog(self.window, self.current_snippet.extra_data.get("fixtures", []))
         if not dlg.exec():
             return
@@ -357,13 +355,15 @@ class SnippetManager:
         for fixture in dlg.selected_fixtures:
             self.current_snippet.extra_data["fixtures"].append(fixture.extra_data["fixture_uuid"])
             self._load_cue_timeline()
-        print(self.current_snippet.extra_data.get("fixtures", []))
 
-    def cue_remove_fixture(self) -> None:
+    def cue_remove_fixture(self, fixture_uuid) -> None:
         """
         Removes a fixture from the cue
+        :param fixture_uuid: The UUID of the fixture to remove
         :return: None
         """
+        self.current_snippet.extra_data["fixtures"].remove(fixture_uuid)
+        self._load_cue_timeline()
 
     def rename_dir(self) -> None:
         """

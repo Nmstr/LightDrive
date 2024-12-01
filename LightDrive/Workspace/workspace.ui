@@ -542,13 +542,6 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="cue_remove_fixture">
-                   <property name="text">
-                    <string>Remove Fixture</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
                   <spacer name="horizontalSpacer_6">
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>

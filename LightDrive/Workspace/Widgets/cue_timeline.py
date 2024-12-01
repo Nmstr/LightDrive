@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsEllipseItem, \
-    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication, QGraphicsPixmapItem
+    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication, QGraphicsPixmapItem, QMenu
 from PySide6.QtGui import QPen, QPolygonF, QPixmap
 from PySide6.QtCore import Qt, QPointF
 import json
@@ -49,6 +49,39 @@ class Playhead(QGraphicsItemGroup):
         self.addToGroup(self.head)
         self.setPos(self.cue_timeline.track_y_size, 0)
 
+class FixtureSymbol(QGraphicsItemGroup):
+    def __init__(self, cue_timeline, fixture_data: list, fixture_uuid: str) -> None:
+        """
+        Create a fixture symbol
+        :param cue_timeline: The cue timeline
+        :param fixture_data: The fixture data
+        :return: None
+        """
+        super().__init__()
+        self.cue_timeline = cue_timeline
+        self.fixture_data = fixture_data
+        self.fixture_uuid = fixture_uuid
+
+        # Add the fixture rect
+        fixture_rect = QGraphicsRectItem(0, len(self.cue_timeline.tracks) * self.cue_timeline.track_y_size, self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
+        fixture_rect.setBrush(Qt.darkGray)
+        fixture_rect.setOpacity(0.25)
+        self.addToGroup(fixture_rect)
+        # Add the fixture icon
+        pixmap = QPixmap(f"Assets/Icons/{self.fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
+        fixture_pixmap_item = QGraphicsPixmapItem(pixmap)
+        fixture_pixmap_item.setPos(0, len(self.cue_timeline.tracks) * self.cue_timeline.track_y_size)
+        fixture_pixmap_item.setOpacity(0.25)
+        self.addToGroup(fixture_pixmap_item)
+
+        # Create context menu
+        self.context_menu = QMenu()
+        remove_fixture_action = self.context_menu.addAction("Remvoe Fixture")
+        remove_fixture_action.triggered.connect(lambda: self.cue_timeline.window.snippet_manager.cue_remove_fixture(self.fixture_uuid))
+
+    def contextMenuEvent(self, event):
+        self.context_menu.exec(event.screenPos())
+
 class CueTimeline(QGraphicsView):
     def __init__(self, window: QMainWindow, fixture_uuids: list) -> None:
         """
@@ -84,16 +117,8 @@ class CueTimeline(QGraphicsView):
             fixture_data = json.load(f)
 
         # Create the fixture symbol
-        fixture_rect = QGraphicsRectItem(0, len(self.tracks) * self.track_y_size, self.track_y_size, self.track_y_size)
-        fixture_rect.setBrush(Qt.darkGray)
-        fixture_rect.setOpacity(0.25)
-        self.scene.addItem(fixture_rect)
-        pixmap = QPixmap(f"Assets/Icons/{fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.track_y_size, self.track_y_size)
-        fixture_pixmap_item = QGraphicsPixmapItem(pixmap)
-        fixture_pixmap_item.setPos(0, len(self.tracks) * self.track_y_size)
-        fixture_pixmap_item.setOpacity(0.25)
-        self.scene.addItem(fixture_pixmap_item)
-
+        fixture_symbol = FixtureSymbol(self, fixture_data, fixture_uuid)
+        self.scene.addItem(fixture_symbol)
         # Create the track
         track_rect = QGraphicsRectItem(self.track_y_size, len(self.tracks) * self.track_y_size, 2500, self.track_y_size)
         track_rect.setBrush(Qt.lightGray)
