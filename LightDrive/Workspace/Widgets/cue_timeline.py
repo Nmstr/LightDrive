@@ -1,7 +1,9 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsEllipseItem, \
-    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication
-from PySide6.QtGui import QPen, QPolygonF
+    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication, QGraphicsPixmapItem
+from PySide6.QtGui import QPen, QPolygonF, QPixmap
 from PySide6.QtCore import Qt, QPointF
+import json
+import os
 
 class Keyframe(QGraphicsEllipseItem):
     def __init__(self, timeline, x: float, y: float, diameter: int) -> None:
@@ -39,38 +41,61 @@ class Playhead(QGraphicsItemGroup):
         self.cue_timeline = cue_timeline
 
         # Create the parts of the playhead
-        self.body = QGraphicsRectItem(10, 0, 3, 200)
+        self.body = QGraphicsRectItem(0, 0, 3, 200)
         self.body.setBrush(Qt.red)
         self.addToGroup(self.body)
-        self.head = QGraphicsPolygonItem(QPolygonF([QPointF(1.5, -20), QPointF(21.5, -20), QPointF(11.5, 0)]))
+        self.head = QGraphicsPolygonItem(QPolygonF([QPointF(-8.5, -20), QPointF(11.5, -20), QPointF(1.5, 0)]))
         self.head.setBrush(Qt.red)
         self.addToGroup(self.head)
+        self.setPos(self.cue_timeline.track_y_size, 0)
 
 class CueTimeline(QGraphicsView):
-    def __init__(self, window: QMainWindow) -> None:
+    def __init__(self, window: QMainWindow, fixture_uuids: list) -> None:
         """
         Create the timeline object
+        :param fixture_uuids: The list of fixture UUIDs in this cue
         :param window: The main window
         """
         super().__init__(window)
         self.window = window
+        self.fixture_uuids = fixture_uuids
         self.is_clicked = False
         self.major_tick_interval = 50
         self.num_minor_ticks = 3
+        self.track_y_size = 50
         self.scene = QGraphicsScene(window)
         self.setScene(self.scene)
         self.tracks = []
-        for i in range(4):
-            self.create_track()
+        for fixture_uuid in fixture_uuids:
+            self.create_track(fixture_uuid)
         self.add_ticks()
         self.add_playhead()
 
-    def create_track(self) -> None:
+    def create_track(self, fixture_uuid) -> None:
         """
         Create a timeline
+        :param fixture_uuid: The UUID of the fixture associated with this track
         :return: None
         """
-        track_rect = QGraphicsRectItem(0, len(self.tracks) * 50, 2500, 50)
+        # Get fixture data
+        fixture_id = [item for item in self.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0].get("id")
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
+            fixture_data = json.load(f)
+
+        # Create the fixture symbol
+        fixture_rect = QGraphicsRectItem(0, len(self.tracks) * self.track_y_size, self.track_y_size, self.track_y_size)
+        fixture_rect.setBrush(Qt.darkGray)
+        fixture_rect.setOpacity(0.25)
+        self.scene.addItem(fixture_rect)
+        pixmap = QPixmap(f"Assets/Icons/{fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.track_y_size, self.track_y_size)
+        fixture_pixmap_item = QGraphicsPixmapItem(pixmap)
+        fixture_pixmap_item.setPos(0, len(self.tracks) * self.track_y_size)
+        fixture_pixmap_item.setOpacity(0.25)
+        self.scene.addItem(fixture_pixmap_item)
+
+        # Create the track
+        track_rect = QGraphicsRectItem(self.track_y_size, len(self.tracks) * self.track_y_size, 2500, self.track_y_size)
         track_rect.setBrush(Qt.lightGray)
         track_rect.setOpacity(0.25)
         self.scene.addItem(track_rect)
@@ -84,7 +109,7 @@ class CueTimeline(QGraphicsView):
         num_ticks = int(self.tracks[0].rect().width() / self.major_tick_interval)
         pen = QPen(Qt.black)
         for i in range(num_ticks):
-            x = i * self.major_tick_interval
+            x = i * self.major_tick_interval + self.track_y_size
             self.scene.addLine(x, -10, x, 10, pen)
             label = self.scene.addText(str(i + 1))
             label.setPos(x, -20)
@@ -134,9 +159,9 @@ class CueTimeline(QGraphicsView):
         if self.is_clicked:
             # Move the playhead
             position = self.mapToScene(event.pos())
-            if position.x() < 0:
+            if position.x() < self.track_y_size:
                 return # Don't move the playhead off the left side
             for item in self.scene.items():
                 if isinstance(item, Playhead):
-                    item.setPos(position.x()-11.5, item.y())
+                    item.setPos(position.x(), item.y())
         super().mouseMoveEvent(event)

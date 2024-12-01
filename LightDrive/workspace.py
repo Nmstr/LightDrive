@@ -256,6 +256,10 @@ class Workspace(QMainWindow):
         self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
 
         self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.rename_cue)
+        self.ui.cue_add_fixture.clicked.connect(self.snippet_manager.cue_add_fixture)
+        self.ui.cue_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.cue_remove_fixture.clicked.connect(self.snippet_manager.cue_remove_fixture)
+        self.ui.cue_remove_fixture.setIcon(QPixmap("Assets/Icons/remove.svg"))
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
 

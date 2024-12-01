@@ -338,8 +338,32 @@ class SnippetManager:
         :return: None
         """
         layout = clear_field(self.window.ui.cue_timeline_frame, QVBoxLayout, amount_left = 0)
-        self.cue_timeline = CueTimeline(self.window)
+        self.cue_timeline = CueTimeline(self.window, self.current_snippet.extra_data.get("fixtures", []))
         layout.addWidget(self.cue_timeline)
+
+    def cue_add_fixture(self) -> None:
+        """
+        Shows a dialog to add fixtures to the cue
+        :return: None
+        """
+        print(self.current_snippet.extra_data.get("fixtures", []))
+
+        dlg = SnippetAddFixtureDialog(self.window, self.current_snippet.extra_data.get("fixtures", []))
+        if not dlg.exec():
+            return
+
+        if not self.current_snippet.extra_data.get("fixtures"):  # Add fixtures to extra_data if it doesn't exist
+            self.current_snippet.extra_data["fixtures"] = []
+        for fixture in dlg.selected_fixtures:
+            self.current_snippet.extra_data["fixtures"].append(fixture.extra_data["fixture_uuid"])
+            self._load_cue_timeline()
+        print(self.current_snippet.extra_data.get("fixtures", []))
+
+    def cue_remove_fixture(self) -> None:
+        """
+        Removes a fixture from the cue
+        :return: None
+        """
 
     def rename_dir(self) -> None:
         """
