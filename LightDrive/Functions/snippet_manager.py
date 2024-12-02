@@ -370,21 +370,21 @@ class SnippetManager:
         Plays the cue
         :return: None
         """
-        pass
+        self.cue_timeline.play()
 
     def cue_pause(self) -> None:
         """
         Pauses the cue
         :return: None
         """
-        pass
+        self.cue_timeline.pause()
 
     def cue_stop(self) -> None:
         """
         Stops the cue
         :return: None
         """
-        pass
+        self.cue_timeline.stop()
 
     def rename_dir(self) -> None:
         """

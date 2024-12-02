@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsEllipseItem, \
     QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication, QGraphicsPixmapItem, QMenu
 from PySide6.QtGui import QPen, QPolygonF, QPixmap
-from PySide6.QtCore import Qt, QPointF
+from PySide6.QtCore import Qt, QPointF, QTimer, QElapsedTimer
 import json
 import os
 
@@ -104,6 +104,13 @@ class CueTimeline(QGraphicsView):
         self.add_ticks()
         self.add_playhead()
 
+        # Create timers and vars for playback
+        self.play_timer = QTimer()
+        self.play_elapsed_timer = QElapsedTimer()
+        self.play_timer.timeout.connect(self.update_virtual_frame)
+        self.start_frame = 0
+        self.is_playing = False
+
     def create_track(self, fixture_uuid) -> None:
         """
         Create a timeline
@@ -163,6 +170,46 @@ class CueTimeline(QGraphicsView):
                 self.scene.addItem(keyframe)
                 break
 
+    def play(self) -> None:
+        """
+        Start playback of the timeline
+        :return: None
+        """
+        self.start_frame = self.current_virtual_frame
+        self.play_elapsed_timer.start()
+        self.play_timer.start(10)  # Update every 10 ms
+        self.is_playing = True
+
+    def pause(self) -> None:
+        """
+        Pause playback of the timeline
+        :return: None
+        """
+        self.play_timer.stop()
+        self.is_playing = False
+
+    def stop(self) -> None:
+        """
+        Stop playback of the timeline
+        :return: None
+        """
+        self.current_virtual_frame = 0
+        self.play_timer.stop()
+        self.is_playing = False
+
+    def update_virtual_frame(self) -> None:
+        """
+        Updates to the next virtual frame in the timeline while playback. Triggered by the play timer.
+        :return: None
+        """
+        # Calculate the virtual frame per second
+        # bpm / 60 = beats per second; beats per second * 100 = virtual frames per second
+        vfps = self.window.ui.cue_bpm_spin.value() / 60 * 100
+
+        elapsed_time = self.play_elapsed_timer.elapsed() / 1000.0  # Elapsed time in seconds
+        virtual_frames = elapsed_time * vfps + self.start_frame
+        self.current_virtual_frame = virtual_frames
+
     def mousePressEvent(self, event):  # noqa: N802
         """
         Adds a keyframe on right-click
@@ -187,6 +234,9 @@ class CueTimeline(QGraphicsView):
                 return # Don't move the playhead off the left side
             virtual_frame = round((position.x() - self.track_y_size) / self.major_tick_interval * 100)
             self.current_virtual_frame = virtual_frame
+            if self.is_playing:
+                self.start_frame = virtual_frame
+                self.play_elapsed_timer.restart()
         super().mouseMoveEvent(event)
 
     @property
@@ -207,6 +257,7 @@ class CueTimeline(QGraphicsView):
         :param frame: The frame to set as the current virtual frame
         :return: None
         """
+        frame = round(frame)  # Account for floating point errors
         # Move the playhead
         for item in self.scene.items():
             if isinstance(item, Playhead):
