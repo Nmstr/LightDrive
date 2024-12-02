@@ -161,7 +161,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
+            <width>82</width>
             <height>20</height>
            </rect>
           </property>
@@ -327,7 +327,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>66</width>
+            <width>80</width>
             <height>18</height>
            </rect>
           </property>
@@ -554,6 +554,44 @@
                    </property>
                   </spacer>
                  </item>
+                 <item>
+                  <widget class="QPushButton" name="cue_play_btn">
+                   <property name="text">
+                    <string>Play</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="cue_pause_btn">
+                   <property name="text">
+                    <string>Pause</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="cue_stop_btn">
+                   <property name="text">
+                    <string>Stop</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="cue_bpm_label">
+                   <property name="text">
+                    <string>BPM:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="cue_bpm_spin">
+                   <property name="maximum">
+                    <number>999</number>
+                   </property>
+                   <property name="value">
+                    <number>120</number>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -572,6 +610,13 @@
                  <enum>QFrame::Shadow::Raised</enum>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_12"/>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="cue_virtual_frame_label">
+                <property name="text">
+                 <string>Virtual Frame: n</string>
+                </property>
                </widget>
               </item>
              </layout>

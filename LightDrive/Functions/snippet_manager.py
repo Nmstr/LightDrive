@@ -365,6 +365,27 @@ class SnippetManager:
         self.current_snippet.extra_data["fixtures"].remove(fixture_uuid)
         self._load_cue_timeline()
 
+    def cue_play(self) -> None:
+        """
+        Plays the cue
+        :return: None
+        """
+        pass
+
+    def cue_pause(self) -> None:
+        """
+        Pauses the cue
+        :return: None
+        """
+        pass
+
+    def cue_stop(self) -> None:
+        """
+        Stops the cue
+        :return: None
+        """
+        pass
+
     def rename_dir(self) -> None:
         """
         Renames the directory to the new name

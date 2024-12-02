@@ -182,11 +182,35 @@ class CueTimeline(QGraphicsView):
 
     def mouseMoveEvent(self, event):  # noqa: N802
         if self.is_clicked:
-            # Move the playhead
             position = self.mapToScene(event.pos())
             if position.x() < self.track_y_size:
                 return # Don't move the playhead off the left side
-            for item in self.scene.items():
-                if isinstance(item, Playhead):
-                    item.setPos(position.x(), item.y())
+            virtual_frame = round((position.x() - self.track_y_size) / self.major_tick_interval * 100)
+            self.current_virtual_frame = virtual_frame
         super().mouseMoveEvent(event)
+
+    @property
+    def current_virtual_frame(self) -> int:
+        """
+        Get the current virtual frame
+        :return: The current virtual frame
+        """
+        for item in self.scene.items():
+            if isinstance(item, Playhead):
+                return round((item.x() - self.track_y_size) / self.major_tick_interval * 100)
+        return 0
+
+    @current_virtual_frame.setter
+    def current_virtual_frame(self, frame: int) -> None:
+        """
+        Set the current virtual frame
+        :param frame: The frame to set as the current virtual frame
+        :return: None
+        """
+        # Move the playhead
+        for item in self.scene.items():
+            if isinstance(item, Playhead):
+                item.setPos(frame / 100 * self.major_tick_interval + self.track_y_size, item.y())
+                break
+        # Update the virtual frame label
+        self.window.ui.cue_virtual_frame_label.setText(f"Virtual Frame: {frame}")

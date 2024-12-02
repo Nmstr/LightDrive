@@ -258,6 +258,12 @@ class Workspace(QMainWindow):
         self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.rename_cue)
         self.ui.cue_add_fixture.clicked.connect(self.snippet_manager.cue_add_fixture)
         self.ui.cue_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.cue_play_btn.clicked.connect(self.snippet_manager.cue_play)
+        self.ui.cue_play_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
+        self.ui.cue_pause_btn.clicked.connect(self.snippet_manager.cue_pause)
+        self.ui.cue_pause_btn.setIcon(QPixmap("Assets/Icons/pause.svg"))
+        self.ui.cue_stop_btn.clicked.connect(self.snippet_manager.cue_stop)
+        self.ui.cue_stop_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
 
