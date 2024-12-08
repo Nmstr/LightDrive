@@ -24,7 +24,7 @@ class Keyframe(QGraphicsEllipseItem):
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
-            value.setY(self.y())
+            value.setY(round(value.y() / self.timeline.track_y_size) * self.timeline.track_y_size)
             if not QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
                 tick_interval = self.timeline.major_tick_interval / self.timeline.num_minor_ticks
                 value.setX(round(value.x() / tick_interval) * tick_interval)
