@@ -48,6 +48,7 @@ class Playhead(QGraphicsItemGroup):
         self.head.setBrush(Qt.red)
         self.addToGroup(self.head)
         self.setPos(self.cue_timeline.track_y_size, 0)
+        self.setZValue(1)
 
 class FixtureSymbol(QGraphicsItemGroup):
     def __init__(self, cue_timeline, fixture_data: list, fixture_uuid: str) -> None:
