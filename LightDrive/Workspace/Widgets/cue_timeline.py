@@ -77,7 +77,7 @@ class FixtureSymbol(QGraphicsItemGroup):
 
         # Create context menu
         self.context_menu = QMenu()
-        remove_fixture_action = self.context_menu.addAction("Remvoe Fixture")
+        remove_fixture_action = self.context_menu.addAction("Remove Fixture")
         remove_fixture_action.triggered.connect(lambda: self.cue_timeline.window.snippet_manager.cue_remove_fixture(self.fixture_uuid))
 
     def contextMenuEvent(self, event):  # noqa: N802
