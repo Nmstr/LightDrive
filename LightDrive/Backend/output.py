@@ -1,19 +1,36 @@
 from .artnet import ArtnetOutput
 
+class OutputSnippet:
+    def __init__(self, dmx_output, values: dict) -> None:
+        """
+        Creates a snippet
+        :param dmx_output: An instance of the DmxOutput class (used to tick the output after updating values)
+        :param values: The values to set (dict of channel: value pairs)
+        """
+        self.dmx_output = dmx_output
+        self.values = values
+
+    def update_values(self, values: dict) -> None:
+        """
+        Updates the values of the snippet
+        :param values: The values to update
+        :return: None
+        """
+        self.values = values
+        self.dmx_output.tick_output()
+
 class DmxOutput:
     def __init__(self) -> None:
         """
         Creates the output class to output data
-        :param target_ip: The ip to output to
-        :param universe: The universe to output to
         """
-        self.packet_size = 512
-        self.universes = {}
         self.output_configuration = {}
+        self.universes = {}
+        self.active_snippets = []
 
     def set_single_value(self, universe: int, channel: int, value: int) -> None:
         """
-        Sets a single channel to another value
+        Sets a single channel to another value (this is kept for the console tab; console tab needs to be overhauled)
         :param universe: The universe to output to
         :param channel: The channel to set
         :param value: The value that should be set
@@ -22,77 +39,74 @@ class DmxOutput:
         if channel < 1 or channel > 512:
             print("ERROR: Channel out of range.")
             return
-        backend = self.universes.get(universe)
-        if backend is None:
+        universe = self.universes.get(universe)
+        if universe is None:
             return
-        backend.set_single_value(channel, value)
+        for backend in universe:
+            backend.set_single_value(channel, value)
 
-    def set_multiple_values(self, universe: int, values: list[int]) -> None:
+    def insert_snippet(self, snippet: OutputSnippet) -> None:
         """
-        Sets all channels to a list of values
-        :param universe: The universe to output to
-        :param values: The list of values (must match the packet size (512)
+        Inserts a snippet into the output
+        :param snippet: The snippet to insert
         :return: None
         """
-        if len(values) != self.packet_size:
-            print(f"ERROR: Packet size mismatch. Expected {self.packet_size} channels, got {len(values)}.")
-            return
-        backend = self.universes.get(universe)
-        if backend is None:
-            return
-        backend.set_multiple_values(values)
+        self.active_snippets.append(snippet)
+        self.tick_output()
 
-    def blackout(self, universe: int) -> None:
+    def remove_snippet(self, snippet: OutputSnippet) -> None:
         """
-        Sets all channels to 0
-        :param universe: The universe blackout
+        Removes a snippet from the output
+        :param snippet: The snippet to remove
         :return: None
         """
-        backend = self.universes.get(universe)
-        if backend is None:
-            return
-        backend.blackout()
+        self.active_snippets.remove(snippet)
 
-    def stop(self) -> None:
+    def tick_output(self) -> None:
         """
-        Gracefully stops the output
+        Ticks the output updating values in the backends
         :return: None
         """
         for universe in self.universes:
-            self.universes.get(universe).stop()
+            universe_values = [0] * 512
+            for snippet in self.active_snippets:
+                for channel in snippet.values:
+                    universe_values[channel - 1] = snippet.values[channel]
+            for backend in self.universes[universe]:
+                backend.set_multiple_values(universe_values)
 
-    def setup_universe(self, universe: int, backend: str, **kwargs) -> None:
+    def setup_backend(self, universe: int, backend: str, **kwargs) -> None:
         """
-        Sets up a universe
-        :param universe: The universe to set up (minimum = 1)
+        Sets up a backend
+        :param universe: The universe for the new backend
         :param backend: The backend to choose
         :param kwargs: Additional arguments based on the backend
             - For "ArtNet" backend:
                 - target_ip (str): The target IP address
                 - artnet_universe (int): The ArtNet universe to use
+                - hz (int): The refresh rate
         :return: None
         """
-        if universe < 1:
-            print("ERROR: Universe out of range.")
-            return
-        match backend:
-            case "ArtNet":
-                artnet = ArtnetOutput(kwargs["target_ip"], kwargs["artnet_universe"])
-                self.universes[universe] = artnet
-                self.output_configuration[universe] = [backend, kwargs]
+        if universe not in self.universes:
+            self.universes[universe] = []
 
-    def remove_universe(self, universe: int) -> None:
+        if backend == "ArtNet":
+            artnet = ArtnetOutput(kwargs["target_ip"], kwargs["artnet_universe"], kwargs["hz"])
+            self.universes[universe].append(artnet)
+            self.output_configuration[universe] = [backend, kwargs]
+
+    def remove_backend(self, universe: int, backend: str) -> None:
         """
-        Removes a specific universe
-        :param universe: The universe to remove
+        Removes a backend from a universe
+        :param universe: The universe to remove the backend from
+        :param backend: The backend to remove
         :return: None
         """
-        backend = self.universes.get(universe)
-        if backend is None:
-            return
-        backend.stop()
-        self.universes.pop(universe)
-        self.output_configuration.pop(universe)
+        if universe in self.universes:
+            for i, backend_instance in enumerate(self.universes[universe]):
+                if isinstance(backend_instance, ArtnetOutput):
+                    self.universes[universe].pop(i)
+                    self.output_configuration.pop(universe)
 
     def write_universe_configuration(self, configuration: dict) -> None:
         """
@@ -103,10 +117,11 @@ class DmxOutput:
         for entry in configuration:
             match configuration[entry][0]:
                 case "ArtNet":
-                    self.setup_universe(universe=int(entry),
-                                        backend="ArtNet",
-                                        target_ip=configuration[entry][1]["target_ip"],
-                                        artnet_universe=configuration[entry][1]["artnet_universe"])
+                    self.setup_backend(universe=int(entry),
+                                       backend="ArtNet",
+                                       target_ip=configuration[entry][1]["target_ip"],
+                                       artnet_universe=configuration[entry][1]["artnet_universe"],
+                                       hz=configuration[entry][1]["hz"])
 
     def get_universe_data(self, universe: int) -> dict:
         """
@@ -118,3 +133,12 @@ class DmxOutput:
         if universe_data is None:
             return {}
         return universe_data
+
+    def shutdown_output(self) -> None:
+        """
+        Gracefully stops all backends
+        :return: None
+        """
+        for universe in self.universes:
+            for backend in self.universes[universe]:
+                backend.stop()

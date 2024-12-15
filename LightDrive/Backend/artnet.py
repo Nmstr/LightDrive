@@ -1,17 +1,19 @@
 from stupidArtnet import StupidArtnet
 
 class ArtnetOutput:
-    def __init__(self, target_ip: str, artnet_universe: int) -> None:
+    def __init__(self, target_ip: str, artnet_universe: int, hz: int) -> None:
         """
         Creates the Artnet output class
         :param target_ip: The ip to output to
         :param artnet_universe: The artnet_universe to output to
+        :param hz: The refresh rate
         """
         self.target_ip = target_ip
         self.artnet_universe = artnet_universe
+        self.hz = hz
         self.packet_size = 512
 
-        self.device = StupidArtnet(self.target_ip, self.artnet_universe, self.packet_size, 30, True, True)
+        self.device = StupidArtnet(self.target_ip, self.artnet_universe, self.packet_size, self.hz, True, True)
         self.device.start()
 
     def set_single_value(self, channel: int, value: int) -> None:
@@ -32,13 +34,6 @@ class ArtnetOutput:
         """
         self.device.set(values)
         self.device.show()
-
-    def blackout(self) -> None:
-        """
-        Sets all channels to 0
-        :return: None
-        """
-        self.device.blackout()
 
     def stop(self) -> None:
         """

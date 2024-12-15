@@ -273,7 +273,7 @@ class Workspace(QMainWindow):
         :param event:  The close event
         :return: None
         """
-        self.dmx_output.stop()
+        self.dmx_output.shutdown_output()
         super().closeEvent(event)
 
 if __name__ == "__main__":
