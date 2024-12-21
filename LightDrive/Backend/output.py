@@ -5,7 +5,11 @@ class OutputSnippet:
         """
         Creates a snippet
         :param dmx_output: An instance of the DmxOutput class (used to tick the output after updating values)
-        :param values: The values to set (dict of channel: value pairs)
+        :param values: The values to set.
+                       (E.g.:
+                       1 universe - {universe_id: {channel: value, channel: value}} or
+                       multiple universes - {universe_id: {channel: value, channel: value}, universe_id: {channel: value}}
+                       )
         """
         self.dmx_output = dmx_output
         self.values = values
@@ -61,6 +65,7 @@ class DmxOutput:
         :return: None
         """
         self.active_snippets.remove(snippet)
+        self.tick_output()
 
     def tick_output(self) -> None:
         """
@@ -70,8 +75,10 @@ class DmxOutput:
         for universe in self.universes:
             universe_values = [0] * 512
             for snippet in self.active_snippets:
-                for channel in snippet.values:
-                    universe_values[channel - 1] = snippet.values[channel]
+                for snippet_universe in snippet.values:
+                    if snippet_universe == universe:
+                        for channel in snippet.values[universe]:
+                            universe_values[channel - 1] = snippet.values[universe][channel]
             for backend in self.universes[universe]:
                 backend.set_multiple_values(universe_values)
 
