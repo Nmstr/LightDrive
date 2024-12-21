@@ -98,10 +98,11 @@ class UniverseEntry(QWidget):
         dlg = UniverseConfigurationDialog(self.universe_index, universe_data)
         if dlg.exec_():
             if dlg.ui.enable_artnet_checkbox.isChecked():
-                self.workspace_window.dmx_output.setup_universe(universe = self.universe_index + 1,
+                self.workspace_window.dmx_output.setup_backend(universe = self.universe_index + 1,
                                                                 backend = "ArtNet",
                                                                 target_ip = dlg.ui.target_ip_edit.text(),
-                                                                artnet_universe = dlg.ui.universe_spin.value())
+                                                                artnet_universe = dlg.ui.universe_spin.value(),
+                                                                hz = dlg.ui.hz_spin.value())
             else:
-                self.workspace_window.dmx_output.remove_universe(universe = self.universe_index + 1,)
+                self.workspace_window.dmx_output.remove_backend(universe = self.universe_index + 1, backend = "ArtNet")
         super().mouseDoubleClickEvent(event)

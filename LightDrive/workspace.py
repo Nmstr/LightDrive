@@ -254,6 +254,8 @@ class Workspace(QMainWindow):
         self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_remove_fixture)
         self.ui.scene_remove_fixture.setIcon(QPixmap("Assets/Icons/remove.svg"))
         self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
+        self.ui.scene_show_btn.clicked.connect(self.snippet_manager.scene_toggle_show)
+        self.ui.scene_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
         self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.rename_cue)
         self.ui.cue_add_fixture.clicked.connect(self.snippet_manager.cue_add_fixture)
@@ -273,7 +275,7 @@ class Workspace(QMainWindow):
         :param event:  The close event
         :return: None
         """
-        self.dmx_output.stop()
+        self.dmx_output.shutdown_output()
         super().closeEvent(event)
 
 if __name__ == "__main__":

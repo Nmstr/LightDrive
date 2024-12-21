@@ -1,3 +1,4 @@
+from Backend.output import OutputSnippet
 from Workspace.Dialogs.snippet_dialogs import SnippetAddFixtureDialog
 from Workspace.Widgets.value_slider import SceneSlider
 from Workspace.Widgets.cue_timeline import CueTimeline
@@ -91,6 +92,7 @@ class SnippetManager:
         :param window: The application's main window
         """
         self.current_snippet = None
+        self.current_display_snippet = None
         self.clipboard = None
         self.window = window
 
@@ -322,6 +324,49 @@ class SnippetManager:
         selected_uuid = self.window.ui.scene_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
         self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
         self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+
+    def _scene_construct_output_values(self) -> dict:
+        """
+        Constructs output values for the current scene for them to then be outputted
+        :return:
+        """
+        output_values = {}
+
+        fixture_configs = self.current_snippet.extra_data.get("fixture_configs", {})
+        available_fixtures = self.window.available_fixtures
+
+        for fixture_uuid, channels in fixture_configs.items():
+            fixture = next((f for f in available_fixtures if f["fixture_uuid"] == fixture_uuid), None)
+            if not fixture:
+                continue
+
+            universe = fixture["universe"]
+            address = fixture["address"]
+
+            if universe not in output_values:
+                output_values[universe] = {}
+
+            for channel_offset, channel_data in channels.items():
+                channel = address + int(channel_offset)
+                output_values[universe][channel] = channel_data["value"]
+
+        return output_values
+
+    def scene_toggle_show(self) -> None:
+        """
+        Toggles whether the scene is being outputted over dmx or not
+        :return: None
+        """
+        if self.current_display_snippet is not None:  # Remove the current display snippet if it exists
+            self.window.dmx_output.remove_snippet(self.current_display_snippet)
+            self.current_display_snippet = None
+
+        if self.window.ui.scene_show_btn.isChecked():  # Add the new snippet if necessary
+            output_values = self._scene_construct_output_values()
+            if not output_values:
+                return
+            self.current_display_snippet = OutputSnippet(self.window.dmx_output, output_values)
+            self.window.dmx_output.insert_snippet(self.current_display_snippet)
 
     def rename_cue(self) -> None:
         """
