@@ -20,6 +20,7 @@ class Workspace(QMainWindow):
         self.value_sliders = []
         self.available_fixtures =  []
         self.control_desk_view = None
+        self.live_mode = False
         self.snippet_manager = SnippetManager(self)
         super().__init__()
 
@@ -104,6 +105,21 @@ class Workspace(QMainWindow):
         self.ui.control_desk_btn.clicked.connect(lambda: self.show_page(4))
         self.ui.control_desk_btn.setIcon(QPixmap("Assets/Icons/control_desk_page.svg"))
         self.ui.control_desk_btn.setIconSize(QSize(24, 24))
+
+        self.ui.toggle_live_mode_btn.clicked.connect(self.toggle_live_mode)
+        self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
+
+    def toggle_live_mode(self) -> None:
+        """
+        Toggles whether live mode in enabled or disabled
+        :return: None
+        """
+        if self.ui.toggle_live_mode_btn.isChecked():
+            self.live_mode = True
+            self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
+        else:
+            self.live_mode = False
+            self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
 
     def show_page(self, page_index: int) -> None:
         """
