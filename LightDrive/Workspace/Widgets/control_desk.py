@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 class ControlDesk(QGraphicsView):
     def __init__(self, window: QMainWindow) -> None:
         """
-        Create the timeline object
+        Create the control desk object
         :param window: The main window
         """
         super().__init__(window)
