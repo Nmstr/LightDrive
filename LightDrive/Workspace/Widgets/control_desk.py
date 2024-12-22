@@ -1,3 +1,4 @@
+from Backend.output import OutputSnippet
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsRectItem, QDialog, \
     QVBoxLayout, QGraphicsItemGroup, QGraphicsTextItem, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
 from PySide6.QtGui import QPen
@@ -110,6 +111,7 @@ class DeskButton(QGraphicsItemGroup):
         self.linked_snippet_uuid = linked_snippet_uuid
         self.desk = desk
         self.pressed = False
+        self.output_snippet = None
         self.button_uuid = button_uuid
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
@@ -134,9 +136,16 @@ class DeskButton(QGraphicsItemGroup):
         if self.pressed:
             self.body.setBrush(Qt.darkGray)
             self.body.setPen(QPen(Qt.green, 2))
+            values = self.desk.window.snippet_manager.scene_construct_output_values(self.linked_snippet_uuid)
+            if not values:
+                return
+            self.output_snippet = OutputSnippet(self.desk.window.dmx_output, values)
+            self.desk.window.dmx_output.insert_snippet(self.output_snippet)
         else:
             self.body.setBrush(Qt.lightGray)
             self.body.setPen(QPen(Qt.black, 1))
+            self.desk.window.dmx_output.remove_snippet(self.output_snippet)
+            self.output_snippet = None
         super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802

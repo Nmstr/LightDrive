@@ -325,14 +325,15 @@ class SnippetManager:
         self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
         self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
 
-    def _scene_construct_output_values(self) -> dict:
+    def scene_construct_output_values(self, snippet_uuid: str) -> dict:
         """
-        Constructs output values for the current scene for them to then be outputted
-        :return:
+        Constructs output values for a scene with a specific UUID
+        :param snippet_uuid: The uuid of the scene
+        :return: The output values
         """
         output_values = {}
 
-        fixture_configs = self.current_snippet.extra_data.get("fixture_configs", {})
+        fixture_configs = self.find_snippet_by_uuid(snippet_uuid).get("fixture_configs", {})
         available_fixtures = self.window.available_fixtures
 
         for fixture_uuid, channels in fixture_configs.items():
@@ -362,7 +363,7 @@ class SnippetManager:
             self.current_display_snippet = None
 
         if self.window.ui.scene_show_btn.isChecked():  # Add the new snippet if necessary
-            output_values = self._scene_construct_output_values()
+            output_values = self.scene_construct_output_values(self.current_snippet.extra_data.get("uuid"))
             if not output_values:
                 return
             self.current_display_snippet = OutputSnippet(self.window.dmx_output, output_values)
