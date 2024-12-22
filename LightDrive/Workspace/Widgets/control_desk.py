@@ -44,14 +44,18 @@ class SnippetLinkingSelection(QDialog):
         add_items(root, self.snippet_tree)
 
 class DeskButtonConfig(QDialog):
-    def __init__(self, window, button_data) -> None:
+    def __init__(self, window, button_label: str, linked_snippet_uuid: str) -> None:
         """
         Create a dialog for configuring a button
         :param window: The main window
-        :param button_data: The data for the button (created if not provided)
+        :param button_label: The label of the button
+        :param linked_snippet_uuid: The UUID of the linked snippet
         """
         super().__init__()
         self.window = window
+        self.button_label = button_label
+        self.linked_snippet_uuid = linked_snippet_uuid
+
         self.setWindowTitle("LightDrive - Button Properties")
 
         # Load the UI file
@@ -66,11 +70,11 @@ class DeskButtonConfig(QDialog):
         self.ui.button_box.rejected.connect(self.reject)
         self.ui.link_snippet_btn.clicked.connect(self.link_snippet)
 
-        self.ui.label_edit.setText(button_data["label"])
-        snippet_data = self.window.snippet_manager.find_snippet_by_uuid(button_data["linked_snippet_uuid"])
+        # Set the initial values
+        self.ui.label_edit.setText(self.button_label)
+        snippet_data = self.window.snippet_manager.find_snippet_by_uuid(linked_snippet_uuid)
         if snippet_data:
             self.ui.snippet_edit.setText(snippet_data["name"])
-        self.linked_snippet_uuid = button_data["linked_snippet_uuid"]
 
         layout = QVBoxLayout()
         layout.addWidget(self.ui)
@@ -102,22 +106,22 @@ class DeskButton(QGraphicsItemGroup):
         :param button_uuid: The UUID of the button
         """
         super().__init__()
-        self.button_data = {
-            "label": button_label,
-            "linked_snippet_uuid": linked_snippet_uuid
-        }
+        self.button_label = button_label
+        self.linked_snippet_uuid = linked_snippet_uuid
         self.desk = desk
         self.pressed = False
         self.button_uuid = button_uuid
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
-        self.body = QGraphicsRectItem(x, y, width, height)
+        self.body = QGraphicsRectItem(0, 0, width, height)
         self.body.setBrush(Qt.lightGray)
         self.addToGroup(self.body)
-        self.label = QGraphicsTextItem(self.button_data["label"])
-        self.label.setPos(x, y)
+        self.label = QGraphicsTextItem(self.button_label)
+        self.label.setPos(0, 0)
         self.label.setDefaultTextColor(Qt.black)
         self.addToGroup(self.label)
+
+        self.setPos(x, y)
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -141,11 +145,11 @@ class DeskButton(QGraphicsItemGroup):
         """
         if self.desk.window.live_mode:
             return  # Disable editing in live mode
-        config_dlg = DeskButtonConfig(window=self.desk.window, button_data=self.button_data)
+        config_dlg = DeskButtonConfig(window=self.desk.window, button_label=self.button_label, linked_snippet_uuid=self.linked_snippet_uuid)
         if config_dlg.exec():
-            self.button_data["label"] = config_dlg.ui.label_edit.text()
+            self.button_label = config_dlg.ui.label_edit.text()
             self.label.setPlainText(config_dlg.ui.label_edit.text())
-            self.button_data["linked_snippet_uuid"] = config_dlg.linked_snippet_uuid
+            self.linked_snippet_uuid = config_dlg.linked_snippet_uuid
         super().mouseDoubleClickEvent(event)
 
     def mouseMoveEvent(self, event) -> None:  # noqa: N802
@@ -231,8 +235,8 @@ class ControlDesk(QGraphicsView):
                 desk_configuration.append({
                     "type": "button",
                     "uuid": item.button_uuid,
-                    "label": item.button_data["label"],
-                    "linked_snippet_uuid": item.button_data["linked_snippet_uuid"],
+                    "label": item.button_label,
+                    "linked_snippet_uuid": item.linked_snippet_uuid,
                     "x": item.x(),
                     "y": item.y(),
                     "width": item.body.rect().width(),
