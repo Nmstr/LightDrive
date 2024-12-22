@@ -169,6 +169,26 @@ class DeskButton(QGraphicsItemGroup):
             return  # Disable movement in live mode
         super().mouseMoveEvent(event)
 
+    def mouseReleaseEvent(self, event):  # noqa: N802
+        """
+        Move the button back if it is out of bounds
+        """
+        if self.desk.window.live_mode:
+            return  # Disable movement in live mode
+
+        # Check button position and move if required
+        width = self.body.rect().width()
+        height = self.body.rect().height()
+        if self.x() < 0:
+            self.setPos(0, self.y())
+        if self.y() < 0:
+            self.setPos(self.x(), 0)
+        if self.x() + width > 1920:
+            self.setPos(1920 - width, self.y())
+        if self.y() + height > 1080:
+            self.setPos(self.x(), 1080 - height)
+        super().mouseReleaseEvent(event)
+
 class ControlDesk(QGraphicsView):
     def __init__(self, window: QMainWindow) -> None:
         """
@@ -179,6 +199,7 @@ class ControlDesk(QGraphicsView):
         self.window = window
         self.scene = QGraphicsScene(window)
         self.setScene(self.scene)
+        self.setSceneRect(0, 0, 1920, 1080)
         self.scene_items = []
 
     def add_btn(self) -> None:
