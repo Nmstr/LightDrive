@@ -37,6 +37,7 @@ large number of lights.
   - ❌ Sound Triggers
   - ❌ Labels
   - ❌ Clocks
+  - ❌ Hotkeys
 - ❌ Control Terminal (CLI for controlling lights)
 - ❌ Laser Support
 - 🚧 Dmx Output
