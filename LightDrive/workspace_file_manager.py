@@ -5,7 +5,7 @@ import shutil
 import json
 import os
 
-def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, dict]:
+def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, dict, list]:
     """
     Reads a workspace file and returns its contents.
     :param workspace_file_path: The path to the workspace file
@@ -36,18 +36,25 @@ def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, dict]:
     else:
         snippets = {}
 
+    if os.path.exists(os.path.join(tmp_dir, 'desk_configuration.json')):
+        with open(os.path.join(tmp_dir, 'desk_configuration.json')) as f:
+            desk_configuration = json.load(f)
+    else:
+        desk_configuration = []
+
     if os.path.exists(tmp_dir):
         shutil.rmtree(tmp_dir)
 
-    return fixtures, dmx_output_configuration, snippets
+    return fixtures, dmx_output_configuration, snippets, desk_configuration
 
-def write_workspace_file(workspace_file_path: str, fixtures: list, dmx_output_configuration: dict, snippet_configuration: dict) -> None:
+def write_workspace_file(workspace_file_path: str, fixtures: list, dmx_output_configuration: dict, snippet_configuration: dict, desk_configuration: list) -> None:
     """
     Creates a workspace file
     :param workspace_file_path: The path to the workspace file
     :param fixtures: The fixtures available in the workspace
     :param dmx_output_configuration: The configuration of output
     :param snippet_configuration: The configuration of the snippets
+    :param desk_configuration: The configuration of the control desk
     :return: None
     """
     tmp_dir = tempfile.mkdtemp()
@@ -59,12 +66,15 @@ def write_workspace_file(workspace_file_path: str, fixtures: list, dmx_output_co
         dmx_output_file.write(json.dumps(dmx_output_configuration, indent=4).encode())
     with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as snippet_file:
         snippet_file.write(json.dumps(snippet_configuration, indent=4).encode())
+    with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as desk_file:
+        desk_file.write(json.dumps(desk_configuration, indent=4).encode())
 
     # Archive the files in the tmp dir into the workspace file
     with tarfile.open(workspace_file_path, "w") as archive:
         archive.add(fixtures_file.name, "fixtures.json")
         archive.add(dmx_output_file.name, "dmx_output_configuration.json")
         archive.add(snippet_file.name, "snippets.json")
+        archive.add(desk_file.name, "desk_configuration.json")
 
     if os.path.exists(tmp_dir):
         shutil.rmtree(tmp_dir)
@@ -117,7 +127,8 @@ class WorkspaceFileManager:
             write_workspace_file(workspace_file_path=self.current_workspace_file,
                                  fixtures=self.window.available_fixtures,
                                  dmx_output_configuration=self.window.dmx_output.output_configuration,
-                                 snippet_configuration=snippet_configuration)
+                                 snippet_configuration=snippet_configuration,
+                                 desk_configuration=self.window.control_desk_view.get_desk_configuration())
 
     def get_snippet_configuration(self) -> dict:
         """
@@ -160,7 +171,7 @@ class WorkspaceFileManager:
         :param workspace_file_path: The path to the workspace file
         :return: None
         """
-        fixtures, dmx_output_configuration, snippets = read_workspace_file(workspace_file_path)
+        fixtures, dmx_output_configuration, snippets, desk_configuration = read_workspace_file(workspace_file_path)
         # Add the fixtures
         for fixture in fixtures:
             # Read the fixture data
@@ -212,3 +223,6 @@ class WorkspaceFileManager:
                     parent = self.window.snippet_manager.create_dir(extra_data=snippet)
                     if "content" in snippet:
                         add_snippets_to_parent(snippet["content"], parent)
+
+        # Load the desk configuration
+        self.window.control_desk_view.load_desk_configuration(desk_configuration)

@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraph
 from PySide6.QtGui import QPen
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
+import uuid
 
 class SnippetLinkingSelection(QDialog):
     def __init__(self, window) -> None:
@@ -66,10 +67,10 @@ class DeskButtonConfig(QDialog):
         self.ui.link_snippet_btn.clicked.connect(self.link_snippet)
 
         self.ui.label_edit.setText(button_data["label"])
-        snippet_data = self.window.snippet_manager.find_snippet_by_uuid(button_data["snippet_uuid"])
+        snippet_data = self.window.snippet_manager.find_snippet_by_uuid(button_data["linked_snippet_uuid"])
         if snippet_data:
             self.ui.snippet_edit.setText(snippet_data["name"])
-        self.linked_snippet_uuid = button_data["snippet_uuid"]
+        self.linked_snippet_uuid = button_data["linked_snippet_uuid"]
 
         layout = QVBoxLayout()
         layout.addWidget(self.ui)
@@ -87,25 +88,34 @@ class DeskButtonConfig(QDialog):
             self.linked_snippet_uuid = selected_uuid
 
 class DeskButton(QGraphicsItemGroup):
-    def __init__(self, desk, x, y, width, height, button_data = None) -> None:
+    def __init__(self, desk, x: int, y: int, width: int, height: int,
+                button_label: str = "Button", linked_snippet_uuid: str = None, button_uuid: str = None) -> None:
         """
         Create a button object
-        :param button_data: The data for the button (created if not provided)
+        :param desk: The control desk object
+        :param x: The x position of the button
+        :param y: The y position of the button
+        :param width: The width of the button
+        :param height: The height of the button
+        :param button_label: The label of the button
+        :param linked_snippet_uuid: The UUID of the snippet to link to
+        :param button_uuid: The UUID of the button
         """
         super().__init__()
-        if not button_data:
-            self.button_data = {
-                "label": "Button",
-                "snippet_uuid": None
-            }
+        self.button_data = {
+            "label": button_label,
+            "linked_snippet_uuid": linked_snippet_uuid
+        }
         self.desk = desk
         self.pressed = False
+        self.button_uuid = button_uuid
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
         self.body = QGraphicsRectItem(x, y, width, height)
         self.body.setBrush(Qt.lightGray)
         self.addToGroup(self.body)
         self.label = QGraphicsTextItem(self.button_data["label"])
+        self.label.setPos(x, y)
         self.label.setDefaultTextColor(Qt.black)
         self.addToGroup(self.label)
 
@@ -135,7 +145,7 @@ class DeskButton(QGraphicsItemGroup):
         if config_dlg.exec():
             self.button_data["label"] = config_dlg.ui.label_edit.text()
             self.label.setPlainText(config_dlg.ui.label_edit.text())
-            self.button_data["snippet_uuid"] = config_dlg.linked_snippet_uuid
+            self.button_data["linked_snippet_uuid"] = config_dlg.linked_snippet_uuid
         super().mouseDoubleClickEvent(event)
 
     def mouseMoveEvent(self, event) -> None:  # noqa: N802
@@ -156,13 +166,15 @@ class ControlDesk(QGraphicsView):
         self.window = window
         self.scene = QGraphicsScene(window)
         self.setScene(self.scene)
+        self.scene_items = []
 
     def add_btn(self) -> None:
         """
         Add a button to the control desk
         """
-        button = DeskButton(self, 0, 0, 100, 100)
+        button = DeskButton(self, 0, 0, 100, 100, button_uuid=str(uuid.uuid4()))
         self.scene.addItem(button)
+        self.scene_items.append(button)
 
     def add_fader(self) -> None:
         """
@@ -193,3 +205,37 @@ class ControlDesk(QGraphicsView):
         Add a clock to the control desk
         """
         pass
+
+    def load_desk_configuration(self, configuration: list) -> None:
+        """
+        Load the configuration of the control desk. Used for loading a saved configuration when opening a workspace.
+        :param configuration: The configuration of the control desk to load
+        :return: None
+        """
+        for item in configuration:
+            if item["type"] == "button":
+                button = DeskButton(self, item["x"], item["y"], item["width"], item["height"],
+                                    button_label=item["label"], linked_snippet_uuid=item["linked_snippet_uuid"],
+                                    button_uuid=item["uuid"])
+                self.scene.addItem(button)
+                self.scene_items.append(button)
+
+    def get_desk_configuration(self) -> list:
+        """
+        Get the configuration of the control desk
+        :return: The configuration of the control desk
+        """
+        desk_configuration = []
+        for item in self.scene_items:
+            if isinstance(item, DeskButton):
+                desk_configuration.append({
+                    "type": "button",
+                    "uuid": item.button_uuid,
+                    "label": item.button_data["label"],
+                    "linked_snippet_uuid": item.button_data["linked_snippet_uuid"],
+                    "x": item.x(),
+                    "y": item.y(),
+                    "width": item.body.rect().width(),
+                    "height": item.body.rect().height()
+                })
+        return desk_configuration
