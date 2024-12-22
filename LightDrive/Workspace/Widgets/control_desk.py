@@ -144,8 +144,9 @@ class DeskButton(QGraphicsItemGroup):
         else:
             self.body.setBrush(Qt.lightGray)
             self.body.setPen(QPen(Qt.black, 1))
-            self.desk.window.dmx_output.remove_snippet(self.output_snippet)
-            self.output_snippet = None
+            if self.output_snippet:
+                self.desk.window.dmx_output.remove_snippet(self.output_snippet)
+                self.output_snippet = None
         super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
