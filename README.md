@@ -36,7 +36,7 @@ large number of lights.
   - ❌ Knobs
   - ❌ Sound Triggers
   - ✅ Labels
-  - ❌ Clocks
+  - ✅ Clocks
   - 🚧 Hotkeys
 - ❌ Control Terminal (CLI for controlling lights)
 - ❌ Laser Support

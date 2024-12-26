@@ -1,4 +1,4 @@
-from Workspace.Widgets.Desk import DeskButton, DeskLabel
+from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
 import uuid
@@ -56,7 +56,9 @@ class ControlDesk(QGraphicsView):
         """
         Add a clock to the control desk
         """
-        pass
+        clock = DeskClock(self, 0, 0, 150, 40, clock_uuid=str(uuid.uuid4()), polling_rate=1000)
+        self.scene.addItem(clock)
+        self.scene_items.append(clock)
 
     def load_desk_configuration(self, configuration: list) -> None:
         """
@@ -77,6 +79,11 @@ class ControlDesk(QGraphicsView):
                                 label_uuid=item.get("uuid", None), label_text=item.get("label", "Label"))
                 self.scene.addItem(label)
                 self.scene_items.append(label)
+            elif item["type"] == "clock":
+                clock = DeskClock(self, item["x"], item["y"], item["width"], item["height"],
+                                clock_uuid=item.get("uuid", None), polling_rate=item.get("polling_rate", 1000))
+                self.scene.addItem(clock)
+                self.scene_items.append(clock)
         self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
@@ -105,6 +112,16 @@ class ControlDesk(QGraphicsView):
                     "type": "label",
                     "uuid": item.label_uuid,
                     "label": item.label_text,
+                    "x": item.x(),
+                    "y": item.y(),
+                    "width": item.body.rect().width(),
+                    "height": item.body.rect().height()
+                })
+            elif isinstance(item, DeskClock):
+                desk_configuration.append({
+                    "type": "clock",
+                    "uuid": item.clock_uuid,
+                    "polling_rate": item.polling_rate,
                     "x": item.x(),
                     "y": item.y(),
                     "width": item.body.rect().width(),
