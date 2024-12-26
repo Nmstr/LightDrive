@@ -34,11 +34,11 @@ class DeskClock(AbstractDeskItem):
         """
         Create a label object
         :param desk: The control desk object
-        :param x: The x position of the label
-        :param y: The y position of the label
-        :param width: The width of the label
-        :param height: The height of the label
-        :param clock_uuid: The UUID of the label
+        :param x: The x position of the clock
+        :param y: The y position of the clock
+        :param width: The width of the clock
+        :param height: The height of the clock
+        :param clock_uuid: The UUID of the clock
         :param polling_rate: The rate at which the clock updates
         """
         super().__init__(desk, x, y, width, height)
