@@ -4,6 +4,7 @@ from Functions.snippet_manager import SnippetManager
 from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
+from Workspace.Widgets.control_desk import ControlDesk
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
@@ -18,6 +19,8 @@ class Workspace(QMainWindow):
         self.console_current_universe = 1
         self.value_sliders = []
         self.available_fixtures =  []
+        self.control_desk_view = None
+        self.live_mode = False
         self.snippet_manager = SnippetManager(self)
         super().__init__()
 
@@ -27,6 +30,7 @@ class Workspace(QMainWindow):
         self.setup_console_page()
         self.setup_io_page()
         self.setup_snippet_page()
+        self.setup_control_desk_page()
 
         # Setup hotkeys
         self.save_hotkey = QShortcut(QKeySequence.Save, self)
@@ -98,6 +102,24 @@ class Workspace(QMainWindow):
         self.ui.snippet_btn.clicked.connect(lambda: self.show_page(3))
         self.ui.snippet_btn.setIcon(QPixmap("Assets/Icons/snippet_page.svg"))
         self.ui.snippet_btn.setIconSize(QSize(24, 24))
+        self.ui.control_desk_btn.clicked.connect(lambda: self.show_page(4))
+        self.ui.control_desk_btn.setIcon(QPixmap("Assets/Icons/control_desk_page.svg"))
+        self.ui.control_desk_btn.setIconSize(QSize(24, 24))
+
+        self.ui.toggle_live_mode_btn.clicked.connect(self.toggle_live_mode)
+        self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
+
+    def toggle_live_mode(self) -> None:
+        """
+        Toggles whether live mode in enabled or disabled
+        :return: None
+        """
+        if self.ui.toggle_live_mode_btn.isChecked():
+            self.live_mode = True
+            self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
+        else:
+            self.live_mode = False
+            self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
 
     def show_page(self, page_index: int) -> None:
         """
@@ -268,6 +290,27 @@ class Workspace(QMainWindow):
         self.ui.cue_stop_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
+
+    def setup_control_desk_page(self) -> None:
+        """
+        Creates the control desk page
+        :return: None
+        """
+        self.control_desk_view = ControlDesk(self)
+        self.ui.control_desk_content_frame.layout().addWidget(self.control_desk_view)
+
+        self.ui.desk_add_btn.clicked.connect(self.control_desk_view.add_btn)
+        self.ui.desk_add_btn.setIcon(QPixmap("Assets/Icons/desk_button.svg"))
+        self.ui.desk_add_fader.clicked.connect(self.control_desk_view.add_fader)
+        self.ui.desk_add_fader.setIcon(QPixmap("Assets/Icons/desk_fader.svg"))
+        self.ui.desk_add_knob.clicked.connect(self.control_desk_view.add_knob)
+        self.ui.desk_add_knob.setIcon(QPixmap("Assets/Icons/desk_knob.svg"))
+        self.ui.desk_add_sound_trigger.clicked.connect(self.control_desk_view.add_sound_trigger)
+        self.ui.desk_add_sound_trigger.setIcon(QPixmap("Assets/Icons/desk_sound_trigger.svg"))
+        self.ui.desk_add_label.clicked.connect(self.control_desk_view.add_label)
+        self.ui.desk_add_label.setIcon(QPixmap("Assets/Icons/desk_label.svg"))
+        self.ui.desk_add_clock.clicked.connect(self.control_desk_view.add_clock)
+        self.ui.desk_add_clock.setIcon(QPixmap("Assets/Icons/desk_clock.svg"))
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """

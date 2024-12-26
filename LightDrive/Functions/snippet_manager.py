@@ -325,14 +325,15 @@ class SnippetManager:
         self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
         self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
 
-    def _scene_construct_output_values(self) -> dict:
+    def scene_construct_output_values(self, snippet_uuid: str) -> dict:
         """
-        Constructs output values for the current scene for them to then be outputted
-        :return:
+        Constructs output values for a scene with a specific UUID
+        :param snippet_uuid: The uuid of the scene
+        :return: The output values
         """
         output_values = {}
 
-        fixture_configs = self.current_snippet.extra_data.get("fixture_configs", {})
+        fixture_configs = self.find_snippet_by_uuid(snippet_uuid).get("fixture_configs", {})
         available_fixtures = self.window.available_fixtures
 
         for fixture_uuid, channels in fixture_configs.items():
@@ -362,7 +363,7 @@ class SnippetManager:
             self.current_display_snippet = None
 
         if self.window.ui.scene_show_btn.isChecked():  # Add the new snippet if necessary
-            output_values = self._scene_construct_output_values()
+            output_values = self.scene_construct_output_values(self.current_snippet.extra_data.get("uuid"))
             if not output_values:
                 return
             self.current_display_snippet = OutputSnippet(self.window.dmx_output, output_values)
@@ -439,3 +440,31 @@ class SnippetManager:
         self.current_snippet.extra_data["name"] = self.window.ui.directory_name_edit.text()
         self.current_snippet.setText(0, self.window.ui.directory_name_edit.text())
         self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def find_snippet_by_uuid(self, snippet_uuid: str) -> dict:
+        """
+        Finds a snippet by its UUID
+        :param snippet_uuid: The UUID of the snippet to find
+        :return: The data of the snippet
+        """
+        def _find_snippet_by_uuid(snippet_config, target_uuid: str) -> dict:
+            if isinstance(snippet_config, list):
+                for snippet in snippet_config:
+                    if snippet["uuid"] == target_uuid:
+                        return snippet
+                    if snippet["type"] == "directory" and "content" in snippet:
+                        result = _find_snippet_by_uuid(snippet["content"], target_uuid)
+                        if result:
+                            return result
+            elif isinstance(snippet_config, dict):
+                for key, snippet in snippet_config.items():
+                    if snippet["uuid"] == target_uuid:
+                        return snippet
+                    if snippet["type"] == "directory" and "content" in snippet:
+                        result = _find_snippet_by_uuid(snippet["content"], target_uuid)
+                        if result:
+                            return result
+            return {}
+
+        snippet_configuration = self.window.workspace_file_manager.get_snippet_configuration()
+        return _find_snippet_by_uuid(snippet_configuration, snippet_uuid)
