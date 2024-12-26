@@ -134,7 +134,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="2" column="0">
-       <widget class="QRadioButton" name="flash__mode_radio">
+       <widget class="QRadioButton" name="flash_mode_radio">
         <property name="text">
          <string>Flash</string>
         </property>
@@ -146,7 +146,7 @@
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Flash Duration</string>
+         <string>Flash Duration in ms</string>
         </property>
         <property name="maximum">
          <number>32767</number>
@@ -197,7 +197,7 @@
   <tabstop>select_hotkey_btn</tabstop>
   <tabstop>clear_hotkey_btn</tabstop>
   <tabstop>toggle_mode_radio</tabstop>
-  <tabstop>flash__mode_radio</tabstop>
+  <tabstop>flash_mode_radio</tabstop>
   <tabstop>flash_duration_spin</tabstop>
  </tabstops>
  <resources/>
