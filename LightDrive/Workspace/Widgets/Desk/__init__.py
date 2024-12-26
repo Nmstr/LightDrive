@@ -1,2 +1,2 @@
-from .button import DeskButton
-from .label import DeskLabel
+from .button import DeskButton as DeskButton
+from .label import DeskLabel as DeskLabel
