@@ -1,9 +1,9 @@
 from Backend.output import OutputSnippet
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsRectItem, QDialog, \
     QVBoxLayout, QGraphicsItemGroup, QGraphicsTextItem, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
-from PySide6.QtGui import QPen
+from PySide6.QtGui import QPen, QShortcut, QKeySequence
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import QFile, Qt
+from PySide6.QtCore import QFile, Qt, QKeyCombination
 import uuid
 
 class SnippetLinkingSelection(QDialog):
@@ -45,17 +45,19 @@ class SnippetLinkingSelection(QDialog):
         add_items(root, self.snippet_tree)
 
 class DeskButtonConfig(QDialog):
-    def __init__(self, window, button_label: str, linked_snippet_uuid: str) -> None:
+    def __init__(self, window, button_label: str, linked_snippet_uuid: str, hotkey: str) -> None:
         """
         Create a dialog for configuring a button
         :param window: The main window
         :param button_label: The label of the button
         :param linked_snippet_uuid: The UUID of the linked snippet
+        :param hotkey: The hotkey of the button
         """
         super().__init__()
         self.window = window
         self.button_label = button_label
         self.linked_snippet_uuid = linked_snippet_uuid
+        self.capturing = False
 
         self.setWindowTitle("LightDrive - Button Properties")
 
@@ -70,12 +72,15 @@ class DeskButtonConfig(QDialog):
         self.ui.button_box.accepted.connect(self.accept)
         self.ui.button_box.rejected.connect(self.reject)
         self.ui.link_snippet_btn.clicked.connect(self.link_snippet)
+        self.ui.clear_hotkey_btn.clicked.connect(lambda: self.ui.hotkey_edit.clear())
+        self.ui.select_hotkey_btn.clicked.connect(self.start_key_capture)
 
         # Set the initial values
         self.ui.label_edit.setText(self.button_label)
         snippet_data = self.window.snippet_manager.find_snippet_by_uuid(linked_snippet_uuid)
         if snippet_data:
             self.ui.snippet_edit.setText(snippet_data["name"])
+        self.ui.hotkey_edit.setText(hotkey)
 
         layout = QVBoxLayout()
         layout.addWidget(self.ui)
@@ -92,9 +97,39 @@ class DeskButtonConfig(QDialog):
             self.ui.snippet_edit.setText(snippet_data["name"])
             self.linked_snippet_uuid = selected_uuid
 
+    def start_key_capture(self) -> None:
+        """
+        Starts capturing a key combination for the hotkey
+        :return: None
+        """
+        self.capturing = True
+        self.ui.hotkey_edit.setText("")
+        self.ui.hotkey_edit.setFocus()
+
+    def keyPressEvent(self, event):  # noqa: N802
+        """
+        Handle key presses for capturing hotkeys
+        :param event: The key press event
+        :return: None
+        """
+        if self.capturing:  # Only capture keys if capturing is enabled
+            if event.key() == Qt.Key_Escape:
+                self.capturing = False
+                return  # Stop capturing on escape
+            if (event.key() == Qt.Key_Shift
+                    or event.key() == Qt.Key_Control
+                    or event.key() == Qt.Key_Alt):
+                return  # Ignore modifier keys so that they can be used in combination
+            key_combination = QKeyCombination(event.modifiers(), Qt.Key(event.key()))
+            key_sequence = QKeySequence(key_combination)
+            self.ui.hotkey_edit.setText(key_sequence.toString())
+            self.capturing = False
+        super().keyPressEvent(event)
+
 class DeskButton(QGraphicsItemGroup):
     def __init__(self, desk, x: int, y: int, width: int, height: int,
-                button_label: str = "Button", linked_snippet_uuid: str = None, button_uuid: str = None) -> None:
+                button_label: str = "Button", linked_snippet_uuid: str = None, button_uuid: str = None,
+                hotkey: str = None) -> None:
         """
         Create a button object
         :param desk: The control desk object
@@ -105,6 +140,7 @@ class DeskButton(QGraphicsItemGroup):
         :param button_label: The label of the button
         :param linked_snippet_uuid: The UUID of the snippet to link to
         :param button_uuid: The UUID of the button
+        :param hotkey: The hotkey of the button
         """
         super().__init__()
         self.button_label = button_label
@@ -113,6 +149,7 @@ class DeskButton(QGraphicsItemGroup):
         self.pressed = False
         self.output_snippet = None
         self.button_uuid = button_uuid
+        self.hotkey = hotkey
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
         self.body = QGraphicsRectItem(0, 0, width, height)
@@ -127,7 +164,15 @@ class DeskButton(QGraphicsItemGroup):
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
-        Activate or deactivate the button
+        Activate or deactivate the button using the self.clicked method
+        """
+        self.clicked()
+        super().mousePressEvent(event)
+
+    def clicked(self) -> None:
+        """
+        Handle the button click. This is here so that the button can be clicked programmatically (hotkeys). mousePressEvent just calls this.
+        :return:
         """
         if not self.desk.window.live_mode:
             return  # Disallow button press outside live mode
@@ -147,7 +192,6 @@ class DeskButton(QGraphicsItemGroup):
             if self.output_snippet:
                 self.desk.window.dmx_output.remove_snippet(self.output_snippet)
                 self.output_snippet = None
-        super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
         """
@@ -155,11 +199,14 @@ class DeskButton(QGraphicsItemGroup):
         """
         if self.desk.window.live_mode:
             return  # Disable editing in live mode
-        config_dlg = DeskButtonConfig(window=self.desk.window, button_label=self.button_label, linked_snippet_uuid=self.linked_snippet_uuid)
+        config_dlg = DeskButtonConfig(window=self.desk.window, button_label=self.button_label,
+                                      linked_snippet_uuid=self.linked_snippet_uuid, hotkey=self.hotkey)
         if config_dlg.exec():
             self.button_label = config_dlg.ui.label_edit.text()
             self.label.setPlainText(config_dlg.ui.label_edit.text())
             self.linked_snippet_uuid = config_dlg.linked_snippet_uuid
+            self.hotkey = config_dlg.ui.hotkey_edit.text()
+            self.desk.regenerate_hotkeys()
         super().mouseDoubleClickEvent(event)
 
     def mouseMoveEvent(self, event) -> None:  # noqa: N802
@@ -202,6 +249,7 @@ class ControlDesk(QGraphicsView):
         self.setScene(self.scene)
         self.setSceneRect(0, 0, 1920, 1080)
         self.scene_items = []
+        self.available_hotkeys = []
 
     def add_btn(self) -> None:
         """
@@ -210,6 +258,7 @@ class ControlDesk(QGraphicsView):
         button = DeskButton(self, 0, 0, 100, 100, button_uuid=str(uuid.uuid4()))
         self.scene.addItem(button)
         self.scene_items.append(button)
+        self.regenerate_hotkeys()
 
     def add_fader(self) -> None:
         """
@@ -250,10 +299,11 @@ class ControlDesk(QGraphicsView):
         for item in configuration:
             if item["type"] == "button":
                 button = DeskButton(self, item["x"], item["y"], item["width"], item["height"],
-                                    button_label=item["label"], linked_snippet_uuid=item["linked_snippet_uuid"],
-                                    button_uuid=item["uuid"])
+                                    button_label=item.get("label", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None),
+                                    button_uuid=item.get("uuid", None), hotkey=item.get("hotkey", None))
                 self.scene.addItem(button)
                 self.scene_items.append(button)
+        self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
         """
@@ -271,6 +321,22 @@ class ControlDesk(QGraphicsView):
                     "x": item.x(),
                     "y": item.y(),
                     "width": item.body.rect().width(),
-                    "height": item.body.rect().height()
+                    "height": item.body.rect().height(),
+                    "hotkey": item.hotkey
                 })
         return desk_configuration
+
+    def regenerate_hotkeys(self) -> None:
+        """
+        (Re)generates the hotkeys for the buttons
+        """
+        for hotkey in self.available_hotkeys:
+            hotkey.activated.disconnect()
+            hotkey.deleteLater()
+        self.available_hotkeys.clear()
+        for item in self.scene_items:
+            if not item.hotkey:
+                continue
+            shortcut = QShortcut(QKeySequence(item.hotkey), self)
+            shortcut.activated.connect(item.clicked)
+            self.available_hotkeys.append(shortcut)
