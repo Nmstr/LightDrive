@@ -1,6 +1,6 @@
 from Backend.output import OutputSnippet
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsRectItem, QDialog, \
-    QVBoxLayout, QGraphicsItemGroup, QGraphicsTextItem, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
+    QVBoxLayout, QGraphicsItemGroup, QGraphicsTextItem, QTreeWidget, QTreeWidgetItem, QDialogButtonBox, QLineEdit
 from PySide6.QtGui import QPen, QShortcut, QKeySequence
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt, QKeyCombination, QTimer
@@ -275,6 +275,98 @@ class DeskButton(QGraphicsItemGroup):
             self.setPos(self.x(), 1080 - height)
         super().mouseReleaseEvent(event)
 
+class DeskLabelConfig(QDialog):
+    def __init__(self, window, label_text: str) -> None:
+        """
+        Create a dialog for configuring a button
+        :param window: The main window
+        :param label_text: The text of the label
+        """
+        super().__init__()
+        self.window = window
+        self.label_text = label_text
+
+        self.setWindowTitle("LightDrive - Label Properties")
+
+        layout = QVBoxLayout()
+        self.label_edit = QLineEdit()
+        self.label_edit.setText(self.label_text)
+        self.label_edit.setPlaceholderText("Label text")
+        layout.addWidget(self.label_edit)
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+class DeskLabel(QGraphicsItemGroup):
+    def __init__(self, desk, x: int, y: int, width: int, height: int, label_uuid: str, label_text: str = "Label") -> None:
+        """
+        Create a label object
+        :param desk: The control desk object
+        :param x: The x position of the label
+        :param y: The y position of the label
+        :param width: The width of the label
+        :param height: The height of the label
+        :param label_uuid: The UUID of the label
+        :param label_text: The text on the label
+        """
+        super().__init__()
+        self.desk = desk
+        self.label_text = label_text
+        self.label_uuid = label_uuid
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+
+        self.body = QGraphicsRectItem(0, 0, width, height)
+        self.body.setBrush(Qt.lightGray)
+        self.addToGroup(self.body)
+        self.label = QGraphicsTextItem(self.label_text)
+        self.label.setPos(0, 0)
+        self.label.setDefaultTextColor(Qt.black)
+        self.addToGroup(self.label)
+
+        self.setPos(x, y)
+
+    def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
+        """
+        Edit the label's properties
+        """
+        if self.desk.window.live_mode:
+            return  # Disable editing in live mode
+        config_dlg = DeskLabelConfig(window=self.desk.window, label_text=self.label_text)
+        if config_dlg.exec():
+            self.label_text = config_dlg.label_edit.text()
+            self.label.setPlainText(config_dlg.label_edit.text())
+        super().mouseDoubleClickEvent(event)
+
+    def mouseMoveEvent(self, event) -> None:  # noqa: N802
+        """
+        Move the button
+        """
+        if self.desk.window.live_mode:
+            return  # Disable movement in live mode
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):  # noqa: N802
+        """
+        Move the label back if it is out of bounds
+        """
+        if self.desk.window.live_mode:
+            return  # Disable movement in live mode
+
+        # Check button position and move if required
+        width = self.body.rect().width()
+        height = self.body.rect().height()
+        if self.x() < 0:
+            self.setPos(0, self.y())
+        if self.y() < 0:
+            self.setPos(self.x(), 0)
+        if self.x() + width > 1920:
+            self.setPos(1920 - width, self.y())
+        if self.y() + height > 1080:
+            self.setPos(self.x(), 1080 - height)
+        super().mouseReleaseEvent(event)
+
 class ControlDesk(QGraphicsView):
     def __init__(self, window: QMainWindow) -> None:
         """
@@ -320,7 +412,9 @@ class ControlDesk(QGraphicsView):
         """
         Add a label to the control desk
         """
-        pass
+        label = DeskLabel(self, 0, 0, 150, 40, label_uuid=str(uuid.uuid4()), label_text="Label")
+        self.scene.addItem(label)
+        self.scene_items.append(label)
 
     def add_clock(self) -> None:
         """
@@ -342,6 +436,11 @@ class ControlDesk(QGraphicsView):
                                     mode_duration=item.get("mode_duration", 0))
                 self.scene.addItem(button)
                 self.scene_items.append(button)
+            elif item["type"] == "label":
+                label = DeskLabel(self, item["x"], item["y"], item["width"], item["height"],
+                                label_uuid=item.get("uuid", None), label_text=item.get("label", "Label"))
+                self.scene.addItem(label)
+                self.scene_items.append(label)
         self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
@@ -365,6 +464,16 @@ class ControlDesk(QGraphicsView):
                     "mode": item.mode,
                     "mode_duration": item.mode_duration
                 })
+            elif isinstance(item, DeskLabel):
+                desk_configuration.append({
+                    "type": "label",
+                    "uuid": item.label_uuid,
+                    "label": item.label_text,
+                    "x": item.x(),
+                    "y": item.y(),
+                    "width": item.body.rect().width(),
+                    "height": item.body.rect().height()
+                })
         return desk_configuration
 
     def regenerate_hotkeys(self) -> None:
@@ -376,6 +485,8 @@ class ControlDesk(QGraphicsView):
             hotkey.deleteLater()
         self.available_hotkeys.clear()
         for item in self.scene_items:
+            if not hasattr(item, "hotkey"):
+                continue
             if not item.hotkey:
                 continue
             shortcut = QShortcut(QKeySequence(item.hotkey), self)
