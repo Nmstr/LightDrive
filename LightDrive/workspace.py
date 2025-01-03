@@ -118,6 +118,14 @@ class Workspace(QMainWindow):
             self.live_mode = True
             self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
         else:
+            if self.control_desk_view.has_active_item():  # Ask for confirmation, if at least one item is active on the desk
+                disable_live_dialog = QMessageBox()
+                disable_live_dialog.setWindowTitle("LightDrive - Disable Live Mode")
+                disable_live_dialog.setText("There is at least one item active on the desk.\nDo you really want to disable live mode? This will stop all running items.")
+                disable_live_dialog.addButton(QMessageBox.Yes)
+                disable_live_dialog.addButton(QMessageBox.No)
+                if disable_live_dialog.exec() == QMessageBox.No:  # Cancel disabling of live mode, if no
+                    return
             self.control_desk_view.disable_all_items()
             self.live_mode = False
             self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
