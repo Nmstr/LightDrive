@@ -145,3 +145,23 @@ class ControlDesk(QGraphicsView):
             shortcut = QShortcut(QKeySequence(item.hotkey), self)
             shortcut.activated.connect(item.clicked)
             self.available_hotkeys.append(shortcut)
+
+    def has_active_item(self) -> bool:
+        """
+        Check if the control desk has at least one active item.
+        :return: True if the control desk has at least one active item, false otherwise
+        """
+        for item in self.scene_items:
+            if isinstance(item, DeskButton):
+                if item.pressed:
+                    return True
+
+    def disable_all_items(self) -> None:
+        """
+        Disable all active control desk items.
+        :return: None
+        """
+        for item in self.scene_items:
+            if isinstance(item, DeskButton):
+                if item.pressed:
+                    item.clicked()
