@@ -118,6 +118,7 @@ class Workspace(QMainWindow):
             self.live_mode = True
             self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
         else:
+            self.control_desk_view.disable_all_items()
             self.live_mode = False
             self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
 
