@@ -5,7 +5,7 @@ from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from Workspace.Widgets.control_desk import ControlDesk
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter, QMessageBox
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile, QSize, Qt
@@ -318,6 +318,13 @@ class Workspace(QMainWindow):
         :param event:  The close event
         :return: None
         """
+        if self.live_mode:
+            event.ignore()
+            error_message = QMessageBox()
+            error_message.setWindowTitle("LightDrive - Error")
+            error_message.setText("LightDrive can not be closed while in live mode. Please change back to design mode first.")
+            error_message.exec()
+            return
         self.dmx_output.shutdown_output()
         super().closeEvent(event)
 
