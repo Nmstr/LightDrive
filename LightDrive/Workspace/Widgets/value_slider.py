@@ -124,6 +124,7 @@ class ValueSlider(QWidget):
         """
         self.slider.setValue(value)
         self.number_display.setValue(value)
+        # TODO: Reimplement this
         self.workspace_window.dmx_output.set_single_value(universe = self.workspace_window.console_current_universe,
                                                           channel = self.index + 1,
                                                           value = value)

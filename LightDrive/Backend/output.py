@@ -7,8 +7,8 @@ class OutputSnippet:
         :param dmx_output: An instance of the DmxOutput class (used to tick the output after updating values)
         :param values: The values to set.
                        (E.g.:
-                       1 universe - {universe_id: {channel: value, channel: value}} or
-                       multiple universes - {universe_id: {channel: value, channel: value}, universe_id: {channel: value}}
+                       1 universe - {universe_uuid: {channel: value, channel: value}} or
+                       multiple universes - {universe_uuid: {channel: value, channel: value}, universe_uuid: {channel: value}}
                        )
         """
         self.dmx_output = dmx_output
@@ -63,6 +63,15 @@ class DmxUniverse:
         else:
             self.artnet = None
 
+    def set_values(self, values: list) -> None:
+        """
+        Outputs the values provided to the backend
+        :param values: The values to output
+        :return: None
+        """
+        if self.artnet:
+            self.artnet.set_values(values)
+
     def stop(self) -> None:
         """
         Gracefully stops the backend
@@ -81,23 +90,6 @@ class DmxOutput:
         self.universes = {}
         self.universe_configuration = {}
         self.active_snippets = []
-
-    def set_single_value(self, universe: int, channel: int, value: int) -> None:
-        """
-        Sets a single channel to another value (this is kept for the console tab; console tab needs to be overhauled)
-        :param universe: The universe to output to
-        :param channel: The channel to set
-        :param value: The value that should be set
-        :return: None
-        """
-        if channel < 1 or channel > 512:
-            print("ERROR: Channel out of range.")
-            return
-        universe = self.universes.get(universe)
-        if universe is None:
-            return
-        for backend in universe:
-            backend.set_single_value(channel, value)
 
     def insert_snippet(self, snippet: OutputSnippet) -> None:
         """
@@ -129,8 +121,7 @@ class DmxOutput:
                     if snippet_universe == universe:
                         for channel in snippet.values[universe]:
                             universe_values[channel - 1] = snippet.values[universe][channel]
-            for backend in self.universes[universe]:
-                backend.set_multiple_values(universe_values)
+            self.universes[universe].set_values(universe_values)
 
     def create_universe(self, universe_uuid: str, universe_name: str) -> None:
         """

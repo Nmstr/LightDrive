@@ -67,6 +67,13 @@ class UniverseEntry(QWidget):
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
         universe_data = self.workspace_window.dmx_output.get_universe_configuration(self.universe_uuid)
         dlg = UniverseConfigurationDialog(universe_data)
+
+        # Test to see if output works
+        from Backend.output import OutputSnippet
+        snippet = OutputSnippet(self, {"d477bcb8-4d74-4bcd-9321-c78a500bac2e": {1: 255, 2: 255, 3: 255}, "75096eb2-2f41-428a-a021-e222dccb8373": {1: 255, 3: 255, 5: 255}})
+        self.workspace_window.dmx_output.insert_snippet(snippet)
+        print(self.workspace_window.dmx_output.active_snippets)
+
         if dlg.exec_():
             self.workspace_window.dmx_output.configure_artnet(universe_uuid = self.universe_uuid,
                                                               active = dlg.ui.enable_artnet_checkbox.isChecked(),
