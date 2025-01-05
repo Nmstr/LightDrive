@@ -1,13 +1,12 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QDialog
-from PySide6.QtGui import QPalette, QColor, QMouseEvent
+from PySide6.QtGui import QMouseEvent
 from PySide6.QtCore import Qt, QFile
 from PySide6.QtUiTools import QUiLoader
 
 class UniverseConfigurationDialog(QDialog):
-    def __init__(self, universe_index: int, universe_data: dict) -> None:
+    def __init__(self, universe_data: dict) -> None:
         """
         Creates the universe configuration dialog.
-        :param universe_index: The index of the universe
         :param universe_data: The current data of the universe
         """
         super().__init__()
@@ -67,7 +66,7 @@ class UniverseEntry(QWidget):
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
         universe_data = self.workspace_window.dmx_output.get_universe_configuration(self.universe_uuid)
-        dlg = UniverseConfigurationDialog(self.universe_uuid, universe_data)
+        dlg = UniverseConfigurationDialog(universe_data)
         if dlg.exec_():
             self.workspace_window.dmx_output.configure_artnet(universe_uuid = self.universe_uuid,
                                                               active = dlg.ui.enable_artnet_checkbox.isChecked(),

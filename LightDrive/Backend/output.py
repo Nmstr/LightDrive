@@ -1,4 +1,3 @@
-from PySide6.QtWidgets import QMessageBox
 from .artnet import ArtnetOutput
 
 class OutputSnippet:
