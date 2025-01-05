@@ -266,6 +266,8 @@ class Workspace(QMainWindow):
         #console_layout = self.ui.io_scroll_content.layout()
         self.ui.io_add_universe_btn.clicked.connect(self.io_add_universe)
         self.ui.io_add_universe_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.io_remove_universe_btn.clicked.connect(self.io_remove_universe)
+        self.ui.io_remove_universe_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
 
     def io_add_universe(self, universe_uuid: str) -> None:
         """
@@ -300,6 +302,22 @@ class Workspace(QMainWindow):
         universe_entry = UniverseEntry(self, universe_uuid, universe_name)
         item.setSizeHint(universe_entry.sizeHint())
         self.ui.io_universe_list.setItemWidget(item, universe_entry)
+
+    def io_remove_universe(self) -> None:
+        """
+        Removes a universe
+        :return: None
+        """
+        current_item = self.ui.io_universe_list.selectedItems()[0]
+        print(current_item)
+        print(self.dmx_output.get_configuration())
+        for universe in self.dmx_output.get_configuration():
+            print(universe)
+            widget = self.ui.io_universe_list.itemWidget(current_item)
+            if widget.universe_uuid == universe:
+                self.dmx_output.remove_universe(universe)
+        self.fixture_display_items()
+        self.ui.io_universe_list.takeItem(self.ui.io_universe_list.row(current_item))
 
     def setup_snippet_page(self) -> None:
         """

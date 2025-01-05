@@ -124,12 +124,21 @@ class DmxOutput:
 
     def create_universe(self, universe_uuid: str, universe_name: str) -> None:
         """
-        Adds a universe to the output
+        Creates a universe
         :param universe_uuid: The uuid of the universe
         :param universe_name: The name of the universe
         :return: None
         """
         self.universes[universe_uuid] = DmxUniverse(universe_uuid, universe_name)
+
+    def remove_universe(self, universe_uuid: str) -> None:
+        """
+        Removes a universe
+        :param universe_uuid: The uuid of the universe to remove
+        :return: None
+        """
+        self.universes[universe_uuid].stop()
+        del self.universes[universe_uuid]
 
     def configure_artnet(self, universe_uuid: str, active: bool, target_ip: str, artnet_universe: int, hz: int) -> None:
         """
