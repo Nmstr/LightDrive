@@ -19,20 +19,17 @@ class UniverseConfigurationDialog(QDialog):
         self.ui = loader.load(ui_file, self)
         ui_file.close()
 
-        self.ui.artnet_frame.setDisabled(True)
-        if universe_data:
-            match universe_data[0]:
-                case "ArtNet":
-                    self.ui.artnet_frame.setDisabled(False)
-                    self.ui.enable_artnet_checkbox.setChecked(True)
-                    self.ui.target_ip_edit.setText(universe_data[1].get("target_ip"))
-                    self.ui.universe_spin.setValue(universe_data[1].get("artnet_universe"))
+        artnet_config = universe_data.get("ArtNet")
+        self.ui.artnet_frame.setDisabled(not artnet_config.get("active"))
+        self.ui.enable_artnet_checkbox.setChecked(artnet_config.get("active"))
+        self.ui.target_ip_edit.setText(artnet_config.get("target_ip"))
+        self.ui.universe_spin.setValue(artnet_config.get("universe"))
 
         self.ui.enable_artnet_checkbox.checkStateChanged.connect(self.switch_artnet_state)
         self.ui.apply_btn.clicked.connect(self.apply)
         self.ui.cancel_btn.clicked.connect(self.close)
 
-        self.ui.universe_number_label.setText(f"Universe: {universe_index + 1}")
+        self.ui.universe_number_label.setText(universe_data.get("name"))
 
     def switch_artnet_state(self, state) -> None:
         """
@@ -69,17 +66,12 @@ class UniverseEntry(QWidget):
         self.setLayout(layout)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
-        universe_data = self.workspace_window.dmx_output.get_universe_data(self.universe_uuid)
-        print(universe_data)
-        return
+        universe_data = self.workspace_window.dmx_output.get_universe_configuration(self.universe_uuid)
         dlg = UniverseConfigurationDialog(self.universe_uuid, universe_data)
         if dlg.exec_():
-            if dlg.ui.enable_artnet_checkbox.isChecked():
-                self.workspace_window.dmx_output.setup_backend(universe = self.universe_index + 1,
-                                                                backend = "ArtNet",
-                                                                target_ip = dlg.ui.target_ip_edit.text(),
-                                                                artnet_universe = dlg.ui.universe_spin.value(),
-                                                                hz = dlg.ui.hz_spin.value())
-            else:
-                self.workspace_window.dmx_output.remove_backend(universe = self.universe_index + 1, backend = "ArtNet")
+            self.workspace_window.dmx_output.configure_artnet(universe_uuid = self.universe_uuid,
+                                                              active = dlg.ui.enable_artnet_checkbox.isChecked(),
+                                                              target_ip = dlg.ui.target_ip_edit.text(),
+                                                              artnet_universe = dlg.ui.universe_spin.value(),
+                                                              hz = dlg.ui.hz_spin.value())
         super().mouseDoubleClickEvent(event)

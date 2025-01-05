@@ -172,12 +172,13 @@ class DmxOutput:
                                   universe_data["ArtNet"]["hz"])
             self.window.io_add_universe_entry(universe_uuid, universe_data["name"])
 
-    def get_universe_data(self, universe_uuid: str) -> dict:
+    def get_universe_configuration(self, universe_uuid: str) -> dict:
         """
-        Gets the data about a specific universe
-        :param universe_uuid: The uuid of the universe to get the data from
-        :return: The data about the universe
+        Gets the configuration of one universe
+        :param universe_uuid: The uuid of the universe to get the configuration of
+        :return: The configuration of the universe
         """
+        return self.universes[universe_uuid].configuration
 
     def get_configuration(self) -> dict:
         """
@@ -194,6 +195,5 @@ class DmxOutput:
         Gracefully stops all backends
         :return: None
         """
-        print(self.universes)
         for universe in self.universes:
             self.universes[universe].stop()
