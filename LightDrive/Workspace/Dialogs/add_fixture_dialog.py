@@ -6,12 +6,13 @@ import json
 import os
 
 class AddFixtureDialog(QDialog):
-    def __init__(self) -> None:
-        self.current_selected_fixture_item = None
+    def __init__(self, window) -> None:
         super().__init__()
+        self.window = window
+        self.current_selected_fixture_item = None
+        self.channel_data = None
         self.setObjectName("AddFixtureDialog")
         self.setWindowTitle("LightDrive - Add Fixture")
-        self.channel_data = None
 
         # Load the UI file
         loader = QUiLoader()
@@ -31,7 +32,12 @@ class AddFixtureDialog(QDialog):
         layout.addWidget(self.ui)
         self.setLayout(layout)
 
+        self.load_universes()
         self.load_fixtures()
+
+    def load_universes(self):
+        for universe_uuid, universe_data in self.window.dmx_output.get_configuration().items():
+            self.ui.universe_combo.addItem(universe_data["name"], universe_uuid)
 
     def load_fixtures(self) -> None:
         """

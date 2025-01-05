@@ -154,41 +154,61 @@ class Workspace(QMainWindow):
         Show the dialog to add a fixture and if successful, add the fixture
         :return: None
         """
-        dlg = AddFixtureDialog()
+        dlg = AddFixtureDialog(self)
         if not dlg.exec() or not dlg.current_selected_fixture_item:
             return
         fixture_data = dlg.current_selected_fixture_item.extra_data
         amount = dlg.ui.amount_spin.value()
-        universe = dlg.ui.universe_combo.currentIndex() + 1
+        universe_uuid = dlg.ui.universe_combo.currentData()
         address = dlg.ui.address_spin.value()
-        self.add_fixture(amount, fixture_data, universe, address)
+        self.add_fixture(amount, fixture_data, universe_uuid, address)
 
     def fixture_display_items(self):
         self.ui.fixture_tree_widget.clear()
+        # Display all universes
         universe_configuration = self.dmx_output.get_configuration()
         for universe_uuid, universe_data in universe_configuration.items():
             universe_fixture_item = QTreeWidgetItem()
             universe_fixture_item.setText(0, universe_data["name"])
             universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
+            universe_fixture_item.universe_uuid = universe_uuid
             self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
+
+        # Display all fixtures
         for fixture in self.available_fixtures:
+            # Load fixture data
             fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
             with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
                 fixture_data = json.load(f)
-            parent_item = self.ui.fixture_tree_widget.topLevelItem(fixture["universe"] - 1)
+            # Find the parent item
+            parent_item = None
+            for item_index in range(self.ui.fixture_tree_widget.topLevelItemCount()):
+                item = self.ui.fixture_tree_widget.topLevelItem(item_index)
+                if item.universe_uuid == fixture.get("universe"):
+                    parent_item = item
+                    break
+            # Inform the user if the parent item could not be found
+            if not parent_item:
+                parent_error = QMessageBox()
+                parent_error.setWindowTitle("LightDrive - Error")
+                parent_error.setText(f"Could not find parent item for fixture {fixture['name']}.")
+                parent_error.setInformativeText("Please check your fixture configuration.")
+                parent_error.exec()
+                continue
+            # Add the fixture item
             parent_item.setExpanded(True)
             fixture_item = QTreeWidgetItem(parent_item)
             fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
             fixture_item.setText(0, fixture["name"])
-            fixture_item.setText(1, f"{fixture['universe']}>{fixture['address']}-{fixture['address'] + len(fixture_data["channels"]) - 1}")
+            fixture_item.setText(1, f"{universe_configuration[fixture['universe']]["name"]}>{fixture['address']}-{fixture['address'] + len(fixture_data["channels"]) - 1}")
             fixture_item.uuid = fixture["fixture_uuid"]
 
-    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int, provided_uuid: str = None) -> None:
+    def add_fixture(self, amount: int, fixture_data: dict, universe_uuid: str, address: int, provided_uuid: str = None) -> None:
         """
         Add the fixture
         :param amount: The amount of the fixture
         :param fixture_data: The fixture data
-        :param universe: The universe of the fixture
+        :param universe_uuid: The universe of the fixture
         :param address: The address of the fixture
         :param provided_uuid: The uuid of the fixture (used when loading workspace; defaults to None, setting a new one)
         :return: None
@@ -198,7 +218,7 @@ class Workspace(QMainWindow):
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
-                "universe": universe,
+                "universe": universe_uuid,
                 "address": address,
                 "fixture_uuid": provided_uuid if provided_uuid else fixture_uuid,
             })

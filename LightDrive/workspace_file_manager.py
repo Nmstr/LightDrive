@@ -185,7 +185,7 @@ class WorkspaceFileManager:
             # Add the fixture
             self.window.add_fixture(amount = 1,
                              fixture_data = fixture_data,
-                             universe = fixture["universe"],
+                             universe_uuid = fixture["universe"],
                              address = fixture["address"],
                              provided_uuid = fixture["fixture_uuid"])
 

@@ -88,7 +88,6 @@ class DmxOutput:
         """
         self.window = window
         self.universes = {}
-        self.universe_configuration = {}
         self.active_snippets = []
 
     def insert_snippet(self, snippet: OutputSnippet) -> None:
