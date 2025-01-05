@@ -11,7 +11,9 @@ from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile, QSize, Qt
 import uuid
+import json
 import sys
+import os
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
@@ -146,11 +148,6 @@ class Workspace(QMainWindow):
         self.ui.fixture_add_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
         self.ui.fixture_remove_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
-        for i in range(10):
-            universe_fixture_item = QTreeWidgetItem()
-            universe_fixture_item.setText(0, f"Universe: {i + 1}")
-            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
-            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
     def show_add_fixture_dialog(self) -> None:
         """
@@ -166,6 +163,26 @@ class Workspace(QMainWindow):
         address = dlg.ui.address_spin.value()
         self.add_fixture(amount, fixture_data, universe, address)
 
+    def fixture_display_items(self):
+        self.ui.fixture_tree_widget.clear()
+        universe_configuration = self.dmx_output.get_configuration()
+        for universe_uuid, universe_data in universe_configuration.items():
+            universe_fixture_item = QTreeWidgetItem()
+            universe_fixture_item.setText(0, universe_data["name"])
+            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
+            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
+        for fixture in self.available_fixtures:
+            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+            with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
+                fixture_data = json.load(f)
+            parent_item = self.ui.fixture_tree_widget.topLevelItem(fixture["universe"] - 1)
+            parent_item.setExpanded(True)
+            fixture_item = QTreeWidgetItem(parent_item)
+            fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
+            fixture_item.setText(0, fixture["name"])
+            fixture_item.setText(1, f"{fixture['universe']}>{fixture['address']}-{fixture['address'] + len(fixture_data["channels"]) - 1}")
+            fixture_item.uuid = fixture["fixture_uuid"]
+
     def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int, provided_uuid: str = None) -> None:
         """
         Add the fixture
@@ -177,25 +194,15 @@ class Workspace(QMainWindow):
         :return: None
         """
         for _ in range(amount):
-            parent_item = self.ui.fixture_tree_widget.topLevelItem(universe - 1)
-            parent_item.setExpanded(True)
-
-            fixture_item = QTreeWidgetItem(parent_item)
-            fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
-            fixture_item.setText(0, fixture_data["name"])
-            fixture_universe = universe
-            fixture_address = address
-            fixture_item.setText(1,
-                                 f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
             fixture_uuid = str(uuid.uuid4())
-            fixture_item.uuid = provided_uuid if provided_uuid else fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
-                "universe": fixture_universe,
-                "address": fixture_address,
+                "universe": universe,
+                "address": address,
                 "fixture_uuid": provided_uuid if provided_uuid else fixture_uuid,
             })
+        self.fixture_display_items()
 
     def remove_fixture(self) -> None:
         """
@@ -266,6 +273,7 @@ class Workspace(QMainWindow):
         # Add the universe
         self.dmx_output.create_universe(universe_uuid, universe_name)
         self.io_add_universe_entry(universe_uuid, universe_name)
+        self.fixture_display_items()
 
     def io_add_universe_entry(self, universe_uuid: str, universe_name: str) -> None:
         item = QListWidgetItem(self.ui.io_universe_list)
