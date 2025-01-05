@@ -126,7 +126,7 @@ class WorkspaceFileManager:
             snippet_configuration = self.get_snippet_configuration()
             write_workspace_file(workspace_file_path=self.current_workspace_file,
                                  fixtures=self.window.available_fixtures,
-                                 dmx_output_configuration=self.window.dmx_output.output_configuration,
+                                 dmx_output_configuration=self.window.dmx_output.get_configuration(),
                                  snippet_configuration=snippet_configuration,
                                  desk_configuration=self.window.control_desk_view.get_desk_configuration())
 
@@ -186,7 +186,7 @@ class WorkspaceFileManager:
                              provided_uuid = fixture["fixture_uuid"])
 
         # Configure the dmx output
-        self.window.dmx_output.write_universe_configuration(dmx_output_configuration)
+        self.window.dmx_output.write_output_configuration(dmx_output_configuration)
 
         # Add the snippets
         def add_snippets_to_parent(snippets, parent):

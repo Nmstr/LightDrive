@@ -1,11 +1,12 @@
 from workspace_file_manager import WorkspaceFileManager
 from Backend.output import DmxOutput
 from Functions.snippet_manager import SnippetManager
-from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
+from Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from Workspace.Widgets.control_desk import ControlDesk
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter, QMessageBox, \
+    QListWidgetItem, QInputDialog
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile, QSize, Qt
@@ -14,8 +15,6 @@ import sys
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
-        self.universe_entries = {}
-        self.selected_universe_entry = None
         self.console_current_universe = 1
         self.value_sliders = []
         self.available_fixtures =  []
@@ -37,7 +36,7 @@ class Workspace(QMainWindow):
         self.save_hotkey.activated.connect(lambda: self.workspace_file_manager.save_workspace())
 
         # Setup output
-        self.dmx_output = DmxOutput()
+        self.dmx_output = DmxOutput(self)
 
         self.workspace_file_manager = WorkspaceFileManager(self, app, EXIT_CODE_REBOOT, current_workspace_file)
         # Open any workspace if rebooted after workspace was opened
@@ -237,22 +236,42 @@ class Workspace(QMainWindow):
         Creates the io page
         :return: None
         """
-        console_layout = self.ui.io_scroll_content.layout()
+        #console_layout = self.ui.io_scroll_content.layout()
+        self.ui.io_add_universe_btn.clicked.connect(self.io_add_universe)
+        self.ui.io_add_universe_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
 
-        for i in range(10):
-            universe_entry = UniverseEntry(self, i)
-            console_layout.insertWidget(console_layout.count() - 1, universe_entry)
-            self.universe_entries[i] = universe_entry
-
-    def select_io_universe(self, universe_number: int) -> None:
+    def io_add_universe(self, universe_uuid: str) -> None:
         """
-        Selects a different universe in the io page
-        :param universe_number: The index of the universe to select
+        Creates a new universe and adds it to the io page
+        :param universe_uuid: The uuid of the universe (generates a new one if not provided)
         :return: None
         """
-        if self.selected_universe_entry:
-            self.selected_universe_entry.deselect()
-        self.selected_universe_entry = self.universe_entries[universe_number]
+        creation_dlg = QInputDialog()
+        creation_dlg.setWindowTitle("LightDrive - Add Universe")
+        creation_dlg.setLabelText("Enter the name of the universe:")
+        creation_dlg.setInputMode(QInputDialog.TextInput)
+        creation_dlg.setOkButtonText("Add")
+        creation_dlg.setCancelButtonText("Cancel")
+        if not creation_dlg.exec():
+            return  # Cancelled
+        universe_name = creation_dlg.textValue()
+        if not universe_name:
+            no_name_dlg = QMessageBox()
+            no_name_dlg.setWindowTitle("LightDrive - Error")
+            no_name_dlg.setText("You need to supply a name for the universe.")
+            no_name_dlg.exec()
+            return  # No name supplied
+        if not universe_uuid:  # Generate a new uuid if not provided
+            universe_uuid = str(uuid.uuid4())
+        # Add the universe
+        self.dmx_output.create_universe(universe_uuid, universe_name)
+        self.io_add_universe_entry(universe_uuid, universe_name)
+
+    def io_add_universe_entry(self, universe_uuid: str, universe_name: str) -> None:
+        item = QListWidgetItem(self.ui.io_universe_list)
+        universe_entry = UniverseEntry(self, universe_uuid, universe_name)
+        item.setSizeHint(universe_entry.sizeHint())
+        self.ui.io_universe_list.setItemWidget(item, universe_entry)
 
     def setup_snippet_page(self) -> None:
         """

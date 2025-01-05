@@ -53,49 +53,26 @@ class UniverseConfigurationDialog(QDialog):
         super().accept()
 
 class UniverseEntry(QWidget):
-    def __init__(self, parent = None, universe_index: int = 0):
-        self.universe_index = universe_index
-        self.workspace_window = parent
-        super().__init__(parent)
-        self.setObjectName("UniverseEntry")
-        self.setFixedHeight(100)
-        self.setAutoFillBackground(True)
-        self.set_color()
+    def __init__(self, window, universe_uuid: str, universe_name: str):
+        self.workspace_window = window
+        self.universe_uuid = universe_uuid
+        self.universe_name = universe_name
+        super().__init__()
 
         layout = QVBoxLayout()
 
         label = QLabel(self)
-        label.setText(f"Universe: {self.universe_index + 1}")
+        label.setText(universe_name)
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(label)
 
         self.setLayout(layout)
 
-    def deselect(self) -> None:
-        """
-        Deselects the currently selected universe entry.
-        :return: None
-        """
-        self.set_color()
-
-    def set_color(self, color: str = "#2c3035") -> None:
-        """
-        Sets the color of the slider
-        :param color: The hex value to be set (default: "#2c3035")
-        :return: None
-        """
-        pal = QPalette()
-        pal.setColor(self.backgroundRole(), QColor(color))
-        self.setPalette(pal)
-
-    def mousePressEvent(self, event: QMouseEvent):  # noqa: N802
-        self.set_color("#2a4129")
-        self.workspace_window.select_io_universe(self.universe_index)
-        super().mousePressEvent(event)
-
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
-        universe_data = self.workspace_window.dmx_output.get_universe_data(self.universe_index + 1)
-        dlg = UniverseConfigurationDialog(self.universe_index, universe_data)
+        universe_data = self.workspace_window.dmx_output.get_universe_data(self.universe_uuid)
+        print(universe_data)
+        return
+        dlg = UniverseConfigurationDialog(self.universe_uuid, universe_data)
         if dlg.exec_():
             if dlg.ui.enable_artnet_checkbox.isChecked():
                 self.workspace_window.dmx_output.setup_backend(universe = self.universe_index + 1,
