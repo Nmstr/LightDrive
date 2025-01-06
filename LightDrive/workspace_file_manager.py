@@ -175,6 +175,7 @@ class WorkspaceFileManager:
         # Configure the dmx output
         self.window.dmx_output.write_output_configuration(dmx_output_configuration)
 
+        self.window.console_display_universes()
         self.window.fixture_display_items()
         # Add the fixtures
         for fixture in fixtures:

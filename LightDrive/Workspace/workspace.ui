@@ -178,8 +178,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>1564</width>
+            <height>404</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -228,58 +228,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QComboBox" name="console_current_universe_combo">
-            <item>
-             <property name="text">
-              <string>Universe 1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 5</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 6</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 7</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 8</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 9</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 10</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="console_current_universe_combo"/>
           </item>
           <item>
            <widget class="QLabel" name="label_2">

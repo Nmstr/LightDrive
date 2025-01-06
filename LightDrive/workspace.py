@@ -242,21 +242,37 @@ class Workspace(QMainWindow):
         """
         self.ui.console_current_universe_combo.currentIndexChanged.connect(self.console_set_current_universe)
         console_layout = self.ui.console_scroll_content.layout()
+
         for i in range(512):
             value_slider = ValueSlider(self, i)
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
             self.value_sliders.append(value_slider)
 
-    def console_set_current_universe(self, universe: int) -> None:
+    #def console_update_value(self) -> None:
+        #"""
+        #This gets called once a value slider is changed. This will update the value in the universe.
+        #:return: None
+        #"""
+        #current_values = self.dmx_output.console_snippet.values
+        #current_values[self.console_current_universe] = [0] * 512
+        #for slider in self.value_sliders:
+        #    current_values[self.console_current_universe][slider.index] = slider.slider.value()
+        #print(current_values)
+        #self.dmx_output.console_snippet.update_values(current_values)
+
+    def console_set_current_universe(self) -> None:
         """
         Changes the current universe displayed in the console tab
-        :param universe: The universe to change to
         :return: None
         """
-        self.console_current_universe = universe + 1
+        self.console_current_universe = self.ui.console_current_universe_combo.currentData()
         for slider in self.value_sliders:
             slider.update_universe()
             slider.update_icon()
+
+    def console_display_universes(self) -> None:
+        for universe_uuid, universe_data in self.dmx_output.get_configuration().items():
+            self.ui.console_current_universe_combo.addItem(universe_data["name"], universe_uuid)
 
     def setup_io_page(self) -> None:
         """
@@ -309,10 +325,7 @@ class Workspace(QMainWindow):
         :return: None
         """
         current_item = self.ui.io_universe_list.selectedItems()[0]
-        print(current_item)
-        print(self.dmx_output.get_configuration())
         for universe in self.dmx_output.get_configuration():
-            print(universe)
             widget = self.ui.io_universe_list.itemWidget(current_item)
             if widget.universe_uuid == universe:
                 self.dmx_output.remove_universe(universe)

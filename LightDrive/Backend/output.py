@@ -23,6 +23,41 @@ class OutputSnippet:
         self.values = values
         self.dmx_output.tick_output()
 
+class ConsoleOutputSnippet(OutputSnippet):
+    def __init__(self, dmx_output) -> None:
+        """
+        Creates a custom snippet for the console output
+        :param dmx_output: An instance of the DmxOutput class (used to tick the output after updating values)
+        """
+        super().__init__(dmx_output, {})
+
+    def update_value(self, universe, channel, value) -> None:
+        """
+        Updates a single value of the snippet
+        :param universe: The universe to update
+        :param channel: The channel to update
+        :param value: The value to set
+        :return: None
+        """
+        if universe not in self.values:
+            self.values[universe] = {}
+        self.values[universe][channel] = value
+        self.dmx_output.tick_output()
+
+    def remove_value(self, universe, channel) -> None:
+        """
+        Removes a single value from the snippet
+        :param universe: The universe to remove the value from
+        :param channel: The channel to remove
+        :return: None
+        """
+        if universe in self.values:
+            if channel in self.values[universe]:
+                del self.values[universe][channel]
+                if not self.values[universe]:
+                    del self.values[universe]
+                self.dmx_output.tick_output()
+
 class DmxUniverse:
     def __init__(self, universe_uuid: str = None, universe_name: str = None, configuration: dict = None) -> None:
         """
@@ -89,6 +124,7 @@ class DmxOutput:
         self.window = window
         self.universes = {}
         self.active_snippets = []
+        self.console_snippet = ConsoleOutputSnippet(self)
 
     def insert_snippet(self, snippet: OutputSnippet) -> None:
         """
@@ -115,7 +151,8 @@ class DmxOutput:
         """
         for universe in self.universes:
             universe_values = [0] * 512
-            for snippet in self.active_snippets:
+            relevant_snippets = self.active_snippets + [self.console_snippet]  # Always include the console snippet last
+            for snippet in relevant_snippets:
                 for snippet_universe in snippet.values:
                     if snippet_universe == universe:
                         for channel in snippet.values[universe]:

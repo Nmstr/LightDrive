@@ -103,7 +103,7 @@ class ValueSlider(QWidget):
         self.slider = JumpSlider(self)
         self.slider.setRange(0, 255)
         self.slider.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        self.slider.valueChanged.connect(self.set_value)
+        self.slider.valueChanged.connect(self.number_display.setValue)
         layout.addWidget(self.slider)
 
         label = QLabel(self)
@@ -116,20 +116,18 @@ class ValueSlider(QWidget):
 
         self.setLayout(layout)
 
-    def set_value(self, value: int) -> None:
+    def set_value(self, value: int, ignore_dmx_update: bool = False) -> None:
         """
         Sets the value of the slider
         :param value: The integer value to be set
+        :param ignore_dmx_update: True if the DMX output should not be updated, false if it should be updated (set to false if slider got cleared to properly remove the value from the DMX output)
         :return: None
         """
         self.slider.setValue(value)
-        self.number_display.setValue(value)
-        # TODO: Reimplement this
-        self.workspace_window.dmx_output.set_single_value(universe = self.workspace_window.console_current_universe,
-                                                          channel = self.index + 1,
-                                                          value = value)
-        self.set_color("#2a4129")
         self.value_in_universe[self.workspace_window.console_current_universe] = value
+        if not ignore_dmx_update:
+            self.workspace_window.dmx_output.console_snippet.update_value(self.workspace_window.console_current_universe, self.index + 1, value)
+        self.set_color("#2a4129")
 
     def update_universe(self):
         """
@@ -150,8 +148,8 @@ class ValueSlider(QWidget):
         Resets the value of the slider
         :return: None
         """
-        self.slider.setValue(0)
-        self.number_display.setValue(0)
+        self.set_value(0, True)
+        self.workspace_window.dmx_output.console_snippet.remove_value(self.workspace_window.console_current_universe, self.index + 1)
         self.set_color()
 
     def set_color(self, color: str = "#2c3035") -> None:
