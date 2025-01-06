@@ -1,21 +1,22 @@
 from workspace_file_manager import WorkspaceFileManager
 from Backend.output import DmxOutput
 from Functions.snippet_manager import SnippetManager
-from LightDrive.Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
+from Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from Workspace.Widgets.control_desk import ControlDesk
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter, QMessageBox, \
+    QListWidgetItem, QInputDialog
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile, QSize, Qt
 import uuid
+import json
 import sys
+import os
 
 class Workspace(QMainWindow):
     def __init__(self) -> None:
-        self.universe_entries = {}
-        self.selected_universe_entry = None
         self.console_current_universe = 1
         self.value_sliders = []
         self.available_fixtures =  []
@@ -37,7 +38,7 @@ class Workspace(QMainWindow):
         self.save_hotkey.activated.connect(lambda: self.workspace_file_manager.save_workspace())
 
         # Setup output
-        self.dmx_output = DmxOutput()
+        self.dmx_output = DmxOutput(self)
 
         self.workspace_file_manager = WorkspaceFileManager(self, app, EXIT_CODE_REBOOT, current_workspace_file)
         # Open any workspace if rebooted after workspace was opened
@@ -147,56 +148,85 @@ class Workspace(QMainWindow):
         self.ui.fixture_add_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.fixture_remove_btn.clicked.connect(self.remove_fixture)
         self.ui.fixture_remove_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
-        for i in range(10):
-            universe_fixture_item = QTreeWidgetItem()
-            universe_fixture_item.setText(0, f"Universe: {i + 1}")
-            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
-            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
 
     def show_add_fixture_dialog(self) -> None:
         """
         Show the dialog to add a fixture and if successful, add the fixture
         :return: None
         """
-        dlg = AddFixtureDialog()
+        dlg = AddFixtureDialog(self)
         if not dlg.exec() or not dlg.current_selected_fixture_item:
             return
         fixture_data = dlg.current_selected_fixture_item.extra_data
         amount = dlg.ui.amount_spin.value()
-        universe = dlg.ui.universe_combo.currentIndex() + 1
+        universe_uuid = dlg.ui.universe_combo.currentData()
         address = dlg.ui.address_spin.value()
-        self.add_fixture(amount, fixture_data, universe, address)
+        self.add_fixture(amount, fixture_data, universe_uuid, address)
 
-    def add_fixture(self, amount: int, fixture_data: dict, universe: int, address: int, provided_uuid: str = None) -> None:
+    def fixture_display_items(self):
+        """
+        Displays all fixtures in the fixture tree widget
+        :return: None
+        """
+        self.ui.fixture_tree_widget.clear()
+        # Display all universes
+        universe_configuration = self.dmx_output.get_configuration()
+        for universe_uuid, universe_data in universe_configuration.items():
+            universe_fixture_item = QTreeWidgetItem()
+            universe_fixture_item.setText(0, universe_data["name"])
+            universe_fixture_item.setIcon(0, QPixmap("Assets/Icons/dmx_port.svg"))
+            universe_fixture_item.universe_uuid = universe_uuid
+            self.ui.fixture_tree_widget.addTopLevelItem(universe_fixture_item)
+
+        # Display all fixtures
+        for fixture in self.available_fixtures:
+            # Load fixture data
+            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+            with open(os.path.join(fixture_dir, fixture["id"] + ".json")) as f:
+                fixture_data = json.load(f)
+            # Find the parent item
+            parent_item = None
+            for item_index in range(self.ui.fixture_tree_widget.topLevelItemCount()):
+                item = self.ui.fixture_tree_widget.topLevelItem(item_index)
+                if item.universe_uuid == fixture.get("universe"):
+                    parent_item = item
+                    break
+            # Inform the user if the parent item could not be found
+            if not parent_item:
+                parent_error = QMessageBox()
+                parent_error.setWindowTitle("LightDrive - Error")
+                parent_error.setText(f"Could not find parent item for fixture {fixture['name']}.")
+                parent_error.setInformativeText("Please check your fixture configuration.")
+                parent_error.exec()
+                continue
+            # Add the fixture item
+            parent_item.setExpanded(True)
+            fixture_item = QTreeWidgetItem(parent_item)
+            fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
+            fixture_item.setText(0, fixture["name"])
+            fixture_item.setText(1, f"{universe_configuration[fixture['universe']]["name"]}>{fixture['address']}-{fixture['address'] + len(fixture_data["channels"]) - 1}")
+            fixture_item.uuid = fixture["fixture_uuid"]
+
+    def add_fixture(self, amount: int, fixture_data: dict, universe_uuid: str, address: int, provided_uuid: str = None) -> None:
         """
         Add the fixture
         :param amount: The amount of the fixture
         :param fixture_data: The fixture data
-        :param universe: The universe of the fixture
+        :param universe_uuid: The universe of the fixture
         :param address: The address of the fixture
         :param provided_uuid: The uuid of the fixture (used when loading workspace; defaults to None, setting a new one)
         :return: None
         """
         for _ in range(amount):
-            parent_item = self.ui.fixture_tree_widget.topLevelItem(universe - 1)
-            parent_item.setExpanded(True)
-
-            fixture_item = QTreeWidgetItem(parent_item)
-            fixture_item.setIcon(0, QPixmap(f"Assets/Icons/{fixture_data["light_type"].lower().replace(" ", "_")}.svg"))
-            fixture_item.setText(0, fixture_data["name"])
-            fixture_universe = universe
-            fixture_address = address
-            fixture_item.setText(1,
-                                 f"{fixture_universe}>{fixture_address}-{fixture_address + len(fixture_data["channels"]) - 1}")
             fixture_uuid = str(uuid.uuid4())
-            fixture_item.uuid = provided_uuid if provided_uuid else fixture_uuid
             self.available_fixtures.append({
                 "id": fixture_data["id"],
                 "name": fixture_data["name"],
-                "universe": fixture_universe,
-                "address": fixture_address,
+                "universe": universe_uuid,
+                "address": address,
                 "fixture_uuid": provided_uuid if provided_uuid else fixture_uuid,
             })
+        self.fixture_display_items()
 
     def remove_fixture(self) -> None:
         """
@@ -221,38 +251,89 @@ class Workspace(QMainWindow):
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
             self.value_sliders.append(value_slider)
 
-    def console_set_current_universe(self, universe: int) -> None:
+    def console_set_current_universe(self) -> None:
         """
         Changes the current universe displayed in the console tab
-        :param universe: The universe to change to
         :return: None
         """
-        self.console_current_universe = universe + 1
+        self.console_current_universe = self.ui.console_current_universe_combo.currentData()
         for slider in self.value_sliders:
             slider.update_universe()
             slider.update_icon()
+
+    def console_display_universes(self) -> None:
+        """
+        Updates the universe combo box in the console tab to display all available universes
+        :return: None
+        """
+        self.ui.console_current_universe_combo.clear()
+        for universe_uuid, universe_data in self.dmx_output.get_configuration().items():
+            self.ui.console_current_universe_combo.addItem(universe_data["name"], universe_uuid)
 
     def setup_io_page(self) -> None:
         """
         Creates the io page
         :return: None
         """
-        console_layout = self.ui.io_scroll_content.layout()
+        self.ui.io_add_universe_btn.clicked.connect(self.io_add_universe)
+        self.ui.io_add_universe_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.io_remove_universe_btn.clicked.connect(self.io_remove_universe)
+        self.ui.io_remove_universe_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
 
-        for i in range(10):
-            universe_entry = UniverseEntry(self, i)
-            console_layout.insertWidget(console_layout.count() - 1, universe_entry)
-            self.universe_entries[i] = universe_entry
-
-    def select_io_universe(self, universe_number: int) -> None:
+    def io_add_universe(self, universe_uuid: str) -> None:
         """
-        Selects a different universe in the io page
-        :param universe_number: The index of the universe to select
+        Creates a new universe and adds it to the io page
+        :param universe_uuid: The uuid of the universe (generates a new one if not provided)
         :return: None
         """
-        if self.selected_universe_entry:
-            self.selected_universe_entry.deselect()
-        self.selected_universe_entry = self.universe_entries[universe_number]
+        creation_dlg = QInputDialog()
+        creation_dlg.setWindowTitle("LightDrive - Add Universe")
+        creation_dlg.setLabelText("Enter the name of the universe:")
+        creation_dlg.setInputMode(QInputDialog.TextInput)
+        creation_dlg.setOkButtonText("Add")
+        creation_dlg.setCancelButtonText("Cancel")
+        if not creation_dlg.exec():
+            return  # Cancelled
+        universe_name = creation_dlg.textValue()
+        if not universe_name:
+            no_name_dlg = QMessageBox()
+            no_name_dlg.setWindowTitle("LightDrive - Error")
+            no_name_dlg.setText("You need to supply a name for the universe.")
+            no_name_dlg.exec()
+            return  # No name supplied
+        if not universe_uuid:  # Generate a new uuid if not provided
+            universe_uuid = str(uuid.uuid4())
+        # Add the universe
+        self.dmx_output.create_universe(universe_uuid, universe_name)
+        self.io_add_universe_entry(universe_uuid, universe_name)
+        self.fixture_display_items()
+        self.console_display_universes()
+
+    def io_add_universe_entry(self, universe_uuid: str, universe_name: str) -> None:
+        """
+        Adds a universe entry in the io tab
+        :param universe_uuid: The uuid of the universe
+        :param universe_name: The name of the universe
+        :return: None
+        """
+        item = QListWidgetItem(self.ui.io_universe_list)
+        universe_entry = UniverseEntry(self, universe_uuid, universe_name)
+        item.setSizeHint(universe_entry.sizeHint())
+        self.ui.io_universe_list.setItemWidget(item, universe_entry)
+
+    def io_remove_universe(self) -> None:
+        """
+        Removes a universe
+        :return: None
+        """
+        current_item = self.ui.io_universe_list.selectedItems()[0]
+        for universe in self.dmx_output.get_configuration():
+            widget = self.ui.io_universe_list.itemWidget(current_item)
+            if widget.universe_uuid == universe:
+                self.dmx_output.remove_universe(universe)
+        self.fixture_display_items()
+        self.ui.io_universe_list.takeItem(self.ui.io_universe_list.row(current_item))
+        self.console_display_universes()
 
     def setup_snippet_page(self) -> None:
         """

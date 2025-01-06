@@ -178,8 +178,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
-            <height>20</height>
+            <width>1564</width>
+            <height>404</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -228,58 +228,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QComboBox" name="console_current_universe_combo">
-            <item>
-             <property name="text">
-              <string>Universe 1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 5</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 6</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 7</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 8</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 9</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Universe 10</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="console_current_universe_combo"/>
           </item>
           <item>
            <widget class="QLabel" name="label_2">
@@ -335,36 +284,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QScrollArea" name="io_scroll">
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="io_scroll_content">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>66</width>
-            <height>18</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Orientation::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </widget>
+        <widget class="QListWidget" name="io_universe_list"/>
        </item>
       </layout>
      </widget>

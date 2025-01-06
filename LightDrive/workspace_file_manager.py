@@ -126,7 +126,7 @@ class WorkspaceFileManager:
             snippet_configuration = self.get_snippet_configuration()
             write_workspace_file(workspace_file_path=self.current_workspace_file,
                                  fixtures=self.window.available_fixtures,
-                                 dmx_output_configuration=self.window.dmx_output.output_configuration,
+                                 dmx_output_configuration=self.window.dmx_output.get_configuration(),
                                  snippet_configuration=snippet_configuration,
                                  desk_configuration=self.window.control_desk_view.get_desk_configuration())
 
@@ -172,6 +172,11 @@ class WorkspaceFileManager:
         :return: None
         """
         fixtures, dmx_output_configuration, snippets, desk_configuration = read_workspace_file(workspace_file_path)
+        # Configure the dmx output
+        self.window.dmx_output.write_output_configuration(dmx_output_configuration)
+
+        self.window.console_display_universes()
+        self.window.fixture_display_items()
         # Add the fixtures
         for fixture in fixtures:
             # Read the fixture data
@@ -181,12 +186,9 @@ class WorkspaceFileManager:
             # Add the fixture
             self.window.add_fixture(amount = 1,
                              fixture_data = fixture_data,
-                             universe = fixture["universe"],
+                             universe_uuid = fixture["universe"],
                              address = fixture["address"],
                              provided_uuid = fixture["fixture_uuid"])
-
-        # Configure the dmx output
-        self.window.dmx_output.write_universe_configuration(dmx_output_configuration)
 
         # Add the snippets
         def add_snippets_to_parent(snippets, parent):

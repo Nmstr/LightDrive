@@ -16,17 +16,7 @@ class ArtnetOutput:
         self.device = StupidArtnet(self.target_ip, self.artnet_universe, self.packet_size, self.hz, True, True)
         self.device.start()
 
-    def set_single_value(self, channel: int, value: int) -> None:
-        """
-        Sets a single channel to another value
-        :param channel: The channel to set
-        :param value: The value that should be set
-        :return: None
-        """
-        self.device.set_single_value(channel, value)
-        self.device.show()
-
-    def set_multiple_values(self, values: list[int]) -> None:
+    def set_values(self, values: list[int]) -> None:
         """
         Sets all channels to a list of values
         :param values: The list of values (must match the packet size (512)
