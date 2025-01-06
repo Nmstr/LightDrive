@@ -164,6 +164,10 @@ class Workspace(QMainWindow):
         self.add_fixture(amount, fixture_data, universe_uuid, address)
 
     def fixture_display_items(self):
+        """
+        Displays all fixtures in the fixture tree widget
+        :return: None
+        """
         self.ui.fixture_tree_widget.clear()
         # Display all universes
         universe_configuration = self.dmx_output.get_configuration()
@@ -258,6 +262,10 @@ class Workspace(QMainWindow):
             slider.update_icon()
 
     def console_display_universes(self) -> None:
+        """
+        Updates the universe combo box in the console tab to display all available universes
+        :return: None
+        """
         self.ui.console_current_universe_combo.clear()
         for universe_uuid, universe_data in self.dmx_output.get_configuration().items():
             self.ui.console_current_universe_combo.addItem(universe_data["name"], universe_uuid)
@@ -302,6 +310,12 @@ class Workspace(QMainWindow):
         self.console_display_universes()
 
     def io_add_universe_entry(self, universe_uuid: str, universe_name: str) -> None:
+        """
+        Adds a universe entry in the io tab
+        :param universe_uuid: The uuid of the universe
+        :param universe_name: The name of the universe
+        :return: None
+        """
         item = QListWidgetItem(self.ui.io_universe_list)
         universe_entry = UniverseEntry(self, universe_uuid, universe_name)
         item.setSizeHint(universe_entry.sizeHint())
