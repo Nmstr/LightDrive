@@ -271,6 +271,7 @@ class Workspace(QMainWindow):
             slider.update_icon()
 
     def console_display_universes(self) -> None:
+        self.ui.console_current_universe_combo.clear()
         for universe_uuid, universe_data in self.dmx_output.get_configuration().items():
             self.ui.console_current_universe_combo.addItem(universe_data["name"], universe_uuid)
 
