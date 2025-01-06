@@ -312,6 +312,7 @@ class Workspace(QMainWindow):
         self.dmx_output.create_universe(universe_uuid, universe_name)
         self.io_add_universe_entry(universe_uuid, universe_name)
         self.fixture_display_items()
+        self.console_display_universes()
 
     def io_add_universe_entry(self, universe_uuid: str, universe_name: str) -> None:
         item = QListWidgetItem(self.ui.io_universe_list)
@@ -331,6 +332,7 @@ class Workspace(QMainWindow):
                 self.dmx_output.remove_universe(universe)
         self.fixture_display_items()
         self.ui.io_universe_list.takeItem(self.ui.io_universe_list.row(current_item))
+        self.console_display_universes()
 
     def setup_snippet_page(self) -> None:
         """
