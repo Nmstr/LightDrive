@@ -348,6 +348,8 @@ class SnippetManager:
                 output_values[universe] = {}
 
             for channel_offset, channel_data in channels.items():
+                if not channel_data.get("checked"):
+                    continue
                 channel = address + int(channel_offset)
                 output_values[universe][channel] = channel_data["value"]
 
