@@ -242,23 +242,10 @@ class Workspace(QMainWindow):
         """
         self.ui.console_current_universe_combo.currentIndexChanged.connect(self.console_set_current_universe)
         console_layout = self.ui.console_scroll_content.layout()
-
         for i in range(512):
             value_slider = ValueSlider(self, i)
             console_layout.insertWidget(console_layout.count() - 1, value_slider)
             self.value_sliders.append(value_slider)
-
-    #def console_update_value(self) -> None:
-        #"""
-        #This gets called once a value slider is changed. This will update the value in the universe.
-        #:return: None
-        #"""
-        #current_values = self.dmx_output.console_snippet.values
-        #current_values[self.console_current_universe] = [0] * 512
-        #for slider in self.value_sliders:
-        #    current_values[self.console_current_universe][slider.index] = slider.slider.value()
-        #print(current_values)
-        #self.dmx_output.console_snippet.update_values(current_values)
 
     def console_set_current_universe(self) -> None:
         """
@@ -280,7 +267,6 @@ class Workspace(QMainWindow):
         Creates the io page
         :return: None
         """
-        #console_layout = self.ui.io_scroll_content.layout()
         self.ui.io_add_universe_btn.clicked.connect(self.io_add_universe)
         self.ui.io_add_universe_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.io_remove_universe_btn.clicked.connect(self.io_remove_universe)
