@@ -1,5 +1,3 @@
-import PySide6.QtWidgets
-
 from workspace_file_manager import WorkspaceFileManager
 from Backend.output import DmxOutput
 from Functions.snippet_manager import SnippetManager
