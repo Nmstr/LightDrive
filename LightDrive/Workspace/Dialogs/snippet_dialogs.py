@@ -10,7 +10,6 @@ class SnippetAddFixtureDialog(QDialog):
         self.added_fixtures = added_fixtures
         self.selected_fixtures = None
         super().__init__()
-        self.setObjectName("SnippetAddFixtureDialog")
         self.setWindowTitle("LightDrive - Scene Add Fixture")
 
         # Load the UI file

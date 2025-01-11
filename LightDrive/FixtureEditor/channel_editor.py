@@ -30,7 +30,6 @@ class AcceptInfoDialog(QDialog):
 class ChannelEditor(QDialog):
     def __init__(self) -> None:
         super().__init__()
-        self.setObjectName("ChannelEditor")
         self.setWindowTitle("LightDrive - Channel Editor")
         self.channel_data = None
 
