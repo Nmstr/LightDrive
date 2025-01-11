@@ -11,7 +11,6 @@ class AddFixtureDialog(QDialog):
         self.window = window
         self.current_selected_fixture_item = None
         self.channel_data = None
-        self.setObjectName("AddFixtureDialog")
         self.setWindowTitle("LightDrive - Add Fixture")
 
         # Load the UI file

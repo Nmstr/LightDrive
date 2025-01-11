@@ -6,6 +6,7 @@ from Functions.ui import clear_field
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
+import configparser
 import json
 import sys
 import os
@@ -50,14 +51,18 @@ class ChannelEntry(QWidget):
 class FixtureEditor(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setObjectName("FixtureEditor")
         self.setWindowTitle("LightDrive - Fixture Editor")
         self.file_path = None
         self.channels = []
 
-        # Load the stylesheet
-        with open('style.qss', 'r') as f:
-            app.setStyleSheet(f.read())
+        # Set the theme
+        if os.path.isdir("/usr/lib/qt6/plugins"):
+            app.addLibraryPath("/usr/lib/qt6/plugins")
+        config = configparser.ConfigParser()
+        config.read(os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/settings.ini')
+        if "Settings" in config:
+            app.setStyle(config["Settings"].get("theme", "Breeze"))
+
 
         # Load the UI file
         loader = QUiLoader()

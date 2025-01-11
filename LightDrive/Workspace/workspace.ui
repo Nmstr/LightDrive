@@ -85,9 +85,15 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="top_seperator_line"/>
+   </item>
+   <item>
     <widget class="QStackedWidget" name="content_page">
      <widget class="QWidget" name="fixture_page">
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="fixture_topper">
          <property name="frameShape">
@@ -165,6 +171,9 @@
      </widget>
      <widget class="QWidget" name="console_page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QScrollArea" name="console_scroll">
          <property name="frameShape">
@@ -244,6 +253,9 @@
      </widget>
      <widget class="QWidget" name="io_page">
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="io_header">
          <property name="frameShape">
@@ -290,6 +302,9 @@
      </widget>
      <widget class="QWidget" name="snippet_page">
       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="snippet_topper">
          <property name="frameShape">
@@ -355,6 +370,13 @@
            </spacer>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="snippet_top_seperator_line">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
         </widget>
        </item>
        <item>
@@ -471,6 +493,9 @@
                  <enum>QFrame::Shadow::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QPushButton" name="cue_add_fixture">
                    <property name="text">
@@ -530,6 +555,13 @@
                   </widget>
                  </item>
                 </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
                </widget>
               </item>
               <item>
@@ -698,6 +730,9 @@
      </widget>
      <widget class="QWidget" name="control_desk_page">
       <layout class="QVBoxLayout" name="verticalLayout_14">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="control_desk_topper">
          <property name="frameShape">
@@ -763,6 +798,13 @@
            </spacer>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="control_desk_top_seperator_line">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
         </widget>
        </item>
        <item>

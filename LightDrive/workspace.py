@@ -1,5 +1,6 @@
 from workspace_file_manager import WorkspaceFileManager
 from Backend.output import DmxOutput
+from Settings.settings import SettingsDialog
 from Functions.snippet_manager import SnippetManager
 from Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
@@ -10,6 +11,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeW
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
 from PySide6.QtCore import QFile, QSize, Qt
+import configparser
 import uuid
 import json
 import sys
@@ -52,12 +54,14 @@ class Workspace(QMainWindow):
         Sets up the main window
         :return: None
         """
-        self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
 
-        # Load the stylesheet
-        with open('style.qss', 'r') as f:
-            app.setStyleSheet(f.read())
+        # Set the theme
+        if os.path.isdir("/usr/lib/qt6/plugins"):
+            app.addLibraryPath("/usr/lib/qt6/plugins")
+        config = configparser.ConfigParser()
+        config.read(os.getenv("XDG_CONFIG_HOME", default=os.path.expanduser("~/.config")) + "/LightDrive/settings.ini")
+        app.setStyle(config.get("Settings", "theme", fallback="Breeze"))
 
         # Load the UI file
         loader = QUiLoader()
@@ -89,6 +93,12 @@ class Workspace(QMainWindow):
         save_as_action.setIcon(QPixmap("Assets/Icons/save_as.svg"))
         file_menu.addAction(save_as_action)
         save_as_action.triggered.connect(lambda: self.workspace_file_manager.save_workspace_as())
+        # Add Settings entry
+        settings_menu = QMenu("Settings", self)
+        menu_bar.addMenu(settings_menu)
+        preferences_action = QAction("Preferences", self)
+        settings_menu.addAction(preferences_action)
+        preferences_action.triggered.connect(self.show_settings)
 
         # Configure buttons
         self.ui.fixture_btn.clicked.connect(lambda: self.show_page(0))
@@ -130,6 +140,14 @@ class Workspace(QMainWindow):
             self.control_desk_view.disable_all_items()
             self.live_mode = False
             self.ui.toggle_live_mode_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
+
+    def show_settings(self) -> None:
+        """
+        Shows the settings dialog
+        :return: None
+        """
+        settings = SettingsDialog()
+        settings.exec()
 
     def show_page(self, page_index: int) -> None:
         """
