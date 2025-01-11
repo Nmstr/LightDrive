@@ -8,7 +8,7 @@ class SettingsDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("LightDrive - Settings")
-        self.settings_file = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/settings.ini'
+        self.settings_file = os.getenv("XDG_CONFIG_HOME", default=os.path.expanduser("~/.config")) + "/LightDrive/settings.ini"
         if not os.path.exists(self.settings_file):
             os.makedirs(os.path.dirname(self.settings_file), exist_ok=True)
         self.config = configparser.ConfigParser()
@@ -44,11 +44,11 @@ class SettingsDialog(QDialog):
         available_themes = QStyleFactory.keys()
         for theme in available_themes:
             self.ui.theme_combo.addItem(theme)
-        theme = self.config['Settings'].get('theme', 'Breeze')
+        theme = self.config.get("Settings", "theme", fallback="Breeze")
         self.ui.theme_combo.setCurrentText(theme)
 
     def save_settings(self):
         theme = self.ui.theme_combo.currentText()
-        self.config['Settings'] = {'theme': theme}
-        with open(self.settings_file, 'w') as configfile:
+        self.config["Settings"] = {"theme": theme}
+        with open(self.settings_file, "w") as configfile:
             self.config.write(configfile)

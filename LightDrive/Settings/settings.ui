@@ -59,7 +59,7 @@
       </font>
      </property>
      <property name="text">
-      <string>* Requires restart to apply</string>
+      <string>* Requires restart to apply | Only Breeze theme is officially supported</string>
      </property>
     </widget>
    </item>

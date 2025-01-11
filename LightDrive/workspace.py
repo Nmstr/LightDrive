@@ -60,9 +60,8 @@ class Workspace(QMainWindow):
         if os.path.isdir("/usr/lib/qt6/plugins"):
             app.addLibraryPath("/usr/lib/qt6/plugins")
         config = configparser.ConfigParser()
-        config.read(os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/settings.ini')
-        if "Settings" in config:
-            app.setStyle(config["Settings"].get("theme", "Breeze"))
+        config.read(os.getenv("XDG_CONFIG_HOME", default=os.path.expanduser("~/.config")) + "/LightDrive/settings.ini")
+        app.setStyle(config.get("Settings", "theme", fallback="Breeze"))
 
         # Load the UI file
         loader = QUiLoader()
