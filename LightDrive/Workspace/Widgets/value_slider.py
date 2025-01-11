@@ -94,6 +94,7 @@ class ValueSlider(QWidget):
 
         reset_button = ResetButton(self)
         layout.addWidget(reset_button)
+        layout.setAlignment(reset_button, Qt.AlignmentFlag.AlignHCenter)
 
         self.number_display = QSpinBox(self)
         self.number_display.setRange(0, 255)

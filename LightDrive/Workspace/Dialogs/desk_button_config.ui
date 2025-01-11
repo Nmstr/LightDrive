@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>base</class>
+ <widget class="QWidget" name="base">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -75,6 +75,13 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="general_line">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="trigger_frame">
      <property name="frameShape">
       <enum>QFrame::Shape::StyledPanel</enum>
@@ -122,6 +129,13 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="trigger_line">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>
@@ -174,6 +188,13 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="mode_line">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>

@@ -1,3 +1,5 @@
+import PySide6.QtWidgets
+
 from workspace_file_manager import WorkspaceFileManager
 from Backend.output import DmxOutput
 from Functions.snippet_manager import SnippetManager
@@ -55,9 +57,9 @@ class Workspace(QMainWindow):
         self.setObjectName("Workspace")
         self.setWindowTitle("LightDrive - Workspace")
 
-        # Load the stylesheet
-        with open('style.qss', 'r') as f:
-            app.setStyleSheet(f.read())
+        if os.path.isdir("/usr/lib/qt6/plugins"):
+            app.addLibraryPath("/usr/lib/qt6/plugins")
+        app.setStyle("Breeze")  # Attempt to load the Breeze style
 
         # Load the UI file
         loader = QUiLoader()

@@ -55,9 +55,9 @@ class FixtureEditor(QMainWindow):
         self.file_path = None
         self.channels = []
 
-        # Load the stylesheet
-        with open('style.qss', 'r') as f:
-            app.setStyleSheet(f.read())
+        if os.path.isdir("/usr/lib/qt6/plugins"):
+            app.addLibraryPath("/usr/lib/qt6/plugins")
+        app.setStyle("Breeze")  # Attempt to load the Breeze style
 
         # Load the UI file
         loader = QUiLoader()
