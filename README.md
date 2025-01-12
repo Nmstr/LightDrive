@@ -47,5 +47,6 @@ large number of lights.
   - ✅ Save
   - ✅ Open
 - ❌ Visualizer
+- ❌ Project Website (needs full rework)
 
 Feature requests are welcome! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for more information.
