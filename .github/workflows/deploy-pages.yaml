@@ -1,6 +1,8 @@
 name: Deploy Pages
 on:
   push:
+    paths:
+      - 'docs/**'
     branches:
       - master
 permissions:
