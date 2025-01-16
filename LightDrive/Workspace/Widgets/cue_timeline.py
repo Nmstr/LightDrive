@@ -6,17 +6,19 @@ import json
 import os
 
 class Keyframe(QGraphicsEllipseItem):
-    def __init__(self, track, x: float, y: float, diameter: int) -> None:
+    def __init__(self, track, x: float, y: float, diameter: int, is_minor: bool) -> None:
         """
         Create a keyframe
         :param track: The CueTimeline object
         :param x: The x position of the keyframe
         :param y: The y position of the keyframe
         :param diameter: The diameter of the keyframe
+        :param is_minor: Whether the keyframe is on a minor track
         :return: None
         """
-        self.track = track
         super().__init__(x - diameter / 2, y - diameter / 2, diameter, diameter)
+        self.track = track
+        self.is_minor = is_minor
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -99,6 +101,7 @@ class MajorTrackBar(QGraphicsRectItem):
         self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
         self.setBrush(Qt.lightGray)
         self.setOpacity(0.25)
+        self.setZValue(-1)
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -109,8 +112,10 @@ class MajorTrackBar(QGraphicsRectItem):
             # Add a new keyframe
             position = self.mapToScene(event.pos())
             timeline_y_center = self.rect().center().y()
-            keyframe = Keyframe(self, position.x() - self.track.cue_timeline.track_y_size, timeline_y_center + self.track.pos().y(), 10)
-            self.track.cue_timeline.scene.addItem(keyframe)
+            x_pos = position.x() - self.track.cue_timeline.track_y_size
+            y_pos = timeline_y_center + self.track.pos().y()
+            keyframe = Keyframe(self, x_pos, y_pos, 10, is_minor=False)
+            self.track.addToGroup(keyframe)
 
 class MinorTrackBar(QGraphicsRectItem):
     def __init__(self, track, channel_number: int) -> None:
@@ -121,7 +126,7 @@ class MinorTrackBar(QGraphicsRectItem):
         """
         super().__init__()
         self.track = track
-        self.channel_number = channel_number
+        self.track_number = channel_number + 1
 
         # Create the track
         self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
@@ -138,15 +143,16 @@ class MinorTrackBar(QGraphicsRectItem):
             position = self.mapToScene(event.pos())
             timeline_y_center = self.rect().center().y()
             x_pos = position.x() - self.track.cue_timeline.track_y_size
-            y_pos = timeline_y_center + self.track.pos().y() + (self.channel_number + 1) * self.track.cue_timeline.track_y_size
-            keyframe = Keyframe(self, x_pos, y_pos, 10)
-            self.track.cue_timeline.scene.addItem(keyframe)
+            y_pos = timeline_y_center + self.track.pos().y() + self.track_number * self.track.cue_timeline.track_y_size
+            keyframe = Keyframe(self, x_pos, y_pos, 10, is_minor=True)
+            self.track.addToGroup(keyframe)
 
 class Track(QGraphicsItemGroup):
     def __init__(self, cue_timeline, fixture_uuid: str) -> None:
         super().__init__()
         self.cue_timeline = cue_timeline
         self.expanded = False
+        self.minor_tracks = []
 
         # Create the fixture symbol
         self.fixture_symbol = FixtureSymbol(self.cue_timeline, fixture_uuid)
@@ -155,7 +161,6 @@ class Track(QGraphicsItemGroup):
         self.track_rect = MajorTrackBar(self)
         self.track_rect.setPos(self.cue_timeline.track_y_size, 0)
         self.addToGroup(self.track_rect)
-        self.minor_tracks = []
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -183,7 +188,7 @@ class Track(QGraphicsItemGroup):
 
         if self.expanded:  # If the already is expanded, collapse it
             for item in self.childItems():
-                if isinstance(item, MinorTrackBar):
+                if isinstance(item, MinorTrackBar) or (isinstance(item, Keyframe) and item.is_minor):
                     self.removeFromGroup(item)
                     self.cue_timeline.scene.removeItem(item)
             self.minor_tracks = []
