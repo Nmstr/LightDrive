@@ -6,16 +6,16 @@ import json
 import os
 
 class Keyframe(QGraphicsEllipseItem):
-    def __init__(self, timeline, x: float, y: float, diameter: int) -> None:
+    def __init__(self, track, x: float, y: float, diameter: int) -> None:
         """
         Create a keyframe
-        :param timeline: The CueTimeline object
+        :param track: The CueTimeline object
         :param x: The x position of the keyframe
         :param y: The y position of the keyframe
         :param diameter: The diameter of the keyframe
         :return: None
         """
-        self.timeline = timeline
+        self.track = track
         super().__init__(x - diameter / 2, y - diameter / 2, diameter, diameter)
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
@@ -24,9 +24,9 @@ class Keyframe(QGraphicsEllipseItem):
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
-            value.setY(round(value.y() / self.timeline.track_y_size) * self.timeline.track_y_size)
+            value.setY(round(value.y() / self.track.track.cue_timeline.track_y_size) * self.track.track.cue_timeline.track_y_size)
             if not QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
-                tick_interval = self.timeline.major_tick_interval / self.timeline.num_minor_ticks
+                tick_interval = self.track.track.cue_timeline.major_tick_interval / self.track.track.cue_timeline.num_minor_ticks
                 value.setX(round(value.x() / tick_interval) * tick_interval)
         return super().itemChange(change, value)
 
@@ -89,7 +89,7 @@ class FixtureSymbol(QGraphicsItemGroup):
 class MajorTrackBar(QGraphicsRectItem):
     def __init__(self, track) -> None:
         """
-        Create a track
+        Create a major track bar
         :param track: The cue timeline
         """
         super().__init__()
@@ -111,12 +111,42 @@ class MajorTrackBar(QGraphicsRectItem):
             timeline_y_center = self.rect().center().y()
             keyframe = Keyframe(self, position.x() - self.track.cue_timeline.track_y_size, timeline_y_center + self.track.pos().y(), 10)
             self.track.cue_timeline.scene.addItem(keyframe)
-        super().mousePressEvent(event)
+
+class MinorTrackBar(QGraphicsRectItem):
+    def __init__(self, track, channel_number: int) -> None:
+        """
+        Create a minor track bar
+        :param track: The cue timeline
+        :param channel_number: The channel number
+        """
+        super().__init__()
+        self.track = track
+        self.channel_number = channel_number
+
+        # Create the track
+        self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
+        self.setBrush(Qt.lightGray)
+        self.setOpacity(0.5)
+
+    def mousePressEvent(self, event) -> None:  # noqa: N802
+        """
+        Adds a keyframe on right-click
+        :param event: The event
+        """
+        if event.button() == Qt.RightButton:
+            # Add a new keyframe
+            position = self.mapToScene(event.pos())
+            timeline_y_center = self.rect().center().y()
+            x_pos = position.x() - self.track.cue_timeline.track_y_size
+            y_pos = timeline_y_center + self.track.pos().y() + (self.channel_number + 1) * self.track.cue_timeline.track_y_size
+            keyframe = Keyframe(self, x_pos, y_pos, 10)
+            self.track.cue_timeline.scene.addItem(keyframe)
 
 class Track(QGraphicsItemGroup):
     def __init__(self, cue_timeline, fixture_uuid: str) -> None:
         super().__init__()
         self.cue_timeline = cue_timeline
+        self.expanded = False
 
         # Create the fixture symbol
         self.fixture_symbol = FixtureSymbol(self.cue_timeline, fixture_uuid)
@@ -125,6 +155,7 @@ class Track(QGraphicsItemGroup):
         self.track_rect = MajorTrackBar(self)
         self.track_rect.setPos(self.cue_timeline.track_y_size, 0)
         self.addToGroup(self.track_rect)
+        self.minor_tracks = []
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -132,9 +163,56 @@ class Track(QGraphicsItemGroup):
         :param event: The event
         :return: None
         """
-        if self.track_rect.isUnderMouse():
-            self.track_rect.mousePressEvent(event)
-        super().mousePressEvent(event)
+        pass_on = True
+        for item in self.childItems():
+            if item.isUnderMouse():
+                item.mousePressEvent(event)
+                pass_on = False
+        if pass_on:
+            super().mousePressEvent(event)
+
+    def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
+        """
+        Propagate mouseDoubleClickEvents to the items in the track
+        :param event: The event
+        :return: None
+        """
+        if not self.fixture_symbol.isUnderMouse():
+            super().mouseDoubleClickEvent(event)
+            return  # Stop here if fixture symbol is not under the mouse
+
+        if self.expanded:  # If the already is expanded, collapse it
+            for item in self.childItems():
+                if isinstance(item, MinorTrackBar):
+                    self.removeFromGroup(item)
+                    self.cue_timeline.scene.removeItem(item)
+            self.minor_tracks = []
+            self.expanded = False
+        else:  # If the track is not expanded, expand it
+            self.expanded = True
+            # Get the fixtures channels
+            fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == self.fixture_symbol.fixture_uuid][0].get("id")
+            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+            with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
+                fixture_data = json.load(f)
+            channels = fixture_data["channels"]
+            for channel_number, channel_data in channels.items():
+                minor_track = MinorTrackBar(self, int(channel_number))
+                minor_track.setPos(self.cue_timeline.track_y_size, self.pos().y() + 50 + int(channel_number) * 50)
+                self.addToGroup(minor_track)
+                self.minor_tracks.append(minor_track)
+        self.cue_timeline.reposition_tracks()
+
+    def contextMenuEvent(self, event) -> None:  # noqa: N802
+        """
+        Propagate contextMenuEvents to the items in the track
+        :param event: The event
+        :return: None
+        """
+        if self.fixture_symbol.isUnderMouse():
+            self.fixture_symbol.contextMenuEvent(event)
+        else:
+            super().contextMenuEvent(event)
 
 class CueTimeline(QGraphicsView):
     def __init__(self, window: QMainWindow, cue_snippet) -> None:
@@ -183,6 +261,18 @@ class CueTimeline(QGraphicsView):
         track.setPos(0, len(self.tracks) * self.track_y_size + self.top_buffer_zone_y)
         self.scene.addItem(track)
         self.tracks.append(track)
+
+    def reposition_tracks(self) -> None:
+        """
+        Reposition the tracks in the timeline
+        :return: None
+        """
+        next_y_pos = self.top_buffer_zone_y
+        for i, track in enumerate(self.tracks):
+            track.setPos(0, next_y_pos)
+            next_y_pos += self.track_y_size
+            for _ in track.minor_tracks:
+                next_y_pos += self.track_y_size
 
     def add_ticks(self) -> None:
         """
