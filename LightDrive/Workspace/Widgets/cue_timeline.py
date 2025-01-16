@@ -246,7 +246,7 @@ class CueTimeline(QGraphicsView):
             self.is_clicked = True
         super().mousePressEvent(event)
 
-    def showEvent(self, event):
+    def showEvent(self, event):  # noqa: N802
         """
         Sets the initially shown part of the scene to the top left side
         :param event: The event
