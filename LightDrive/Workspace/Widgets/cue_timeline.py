@@ -51,17 +51,21 @@ class Playhead(QGraphicsItemGroup):
         self.setZValue(1)
 
 class FixtureSymbol(QGraphicsItemGroup):
-    def __init__(self, cue_timeline, fixture_data: list, fixture_uuid: str) -> None:
+    def __init__(self, cue_timeline, fixture_uuid: str) -> None:
         """
         Create a fixture symbol
         :param cue_timeline: The cue timeline
-        :param fixture_data: The fixture data
         :return: None
         """
         super().__init__()
         self.cue_timeline = cue_timeline
-        self.fixture_data = fixture_data
         self.fixture_uuid = fixture_uuid
+
+        # Get the fixture data
+        fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0].get("id")
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
+            fixture_data = json.load(f)
 
         # Add the fixture rect
         fixture_rect = QGraphicsRectItem(0, 0, self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
@@ -69,7 +73,7 @@ class FixtureSymbol(QGraphicsItemGroup):
         fixture_rect.setOpacity(0.25)
         self.addToGroup(fixture_rect)
         # Add the fixture icon
-        pixmap = QPixmap(f"Assets/Icons/{self.fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
+        pixmap = QPixmap(f"Assets/Icons/{fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
         fixture_pixmap_item = QGraphicsPixmapItem(pixmap)
         fixture_pixmap_item.setOpacity(0.25)
         self.addToGroup(fixture_pixmap_item)
@@ -82,21 +86,21 @@ class FixtureSymbol(QGraphicsItemGroup):
     def contextMenuEvent(self, event):  # noqa: N802
         self.context_menu.exec(event.screenPos())
 
-class Track(QGraphicsRectItem):
-    def __init__(self, cue_timeline):
+class MajorTrackBar(QGraphicsRectItem):
+    def __init__(self, track) -> None:
         """
         Create a track
-        :param cue_timeline: The cue timeline
+        :param track: The cue timeline
         """
         super().__init__()
-        self.cue_timeline = cue_timeline
+        self.track = track
 
         # Create the track
-        self.setRect(0, 0, self.cue_timeline.track_length, self.cue_timeline.track_y_size)
+        self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
         self.setBrush(Qt.lightGray)
         self.setOpacity(0.25)
 
-    def mousePressEvent(self, event):  # noqa: N802
+    def mousePressEvent(self, event) -> None:  # noqa: N802
         """
         Adds a keyframe on right-click
         :param event: The event
@@ -105,8 +109,31 @@ class Track(QGraphicsRectItem):
             # Add a new keyframe
             position = self.mapToScene(event.pos())
             timeline_y_center = self.rect().center().y()
-            keyframe = Keyframe(self, position.x(), timeline_y_center + self.pos().y(), 10)
-            self.cue_timeline.scene.addItem(keyframe)
+            keyframe = Keyframe(self, position.x() - self.track.cue_timeline.track_y_size, timeline_y_center + self.track.pos().y(), 10)
+            self.track.cue_timeline.scene.addItem(keyframe)
+        super().mousePressEvent(event)
+
+class Track(QGraphicsItemGroup):
+    def __init__(self, cue_timeline, fixture_uuid: str) -> None:
+        super().__init__()
+        self.cue_timeline = cue_timeline
+
+        # Create the fixture symbol
+        self.fixture_symbol = FixtureSymbol(self.cue_timeline, fixture_uuid)
+        self.addToGroup(self.fixture_symbol)
+        # Create the track
+        self.track_rect = MajorTrackBar(self)
+        self.track_rect.setPos(self.cue_timeline.track_y_size, 0)
+        self.addToGroup(self.track_rect)
+
+    def mousePressEvent(self, event) -> None:  # noqa: N802
+        """
+        Propagate mousePressEvents to the items in the track
+        :param event: The event
+        :return: None
+        """
+        if self.track_rect.isUnderMouse():
+            self.track_rect.mousePressEvent(event)
         super().mousePressEvent(event)
 
 class CueTimeline(QGraphicsView):
@@ -152,28 +179,17 @@ class CueTimeline(QGraphicsView):
         :param fixture_uuid: The UUID of the fixture associated with this track
         :return: None
         """
-        # Get fixture data
-        fixture_id = [item for item in self.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0].get("id")
-        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
-        with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
-            fixture_data = json.load(f)
-
-        # Create the fixture symbol
-        fixture_symbol = FixtureSymbol(self, fixture_data, fixture_uuid)
-        fixture_symbol.setPos(0, len(self.tracks) * self.track_y_size + self.top_buffer_zone_y)
-        self.scene.addItem(fixture_symbol)
-        # Create the track
-        track_rect = Track(self)
-        track_rect.setPos(self.track_y_size, len(self.tracks) * self.track_y_size + self.top_buffer_zone_y)
-        self.scene.addItem(track_rect)
-        self.tracks.append(track_rect)
+        track = Track(self, fixture_uuid)
+        track.setPos(0, len(self.tracks) * self.track_y_size + self.top_buffer_zone_y)
+        self.scene.addItem(track)
+        self.tracks.append(track)
 
     def add_ticks(self) -> None:
         """
         Add beats to the timeline
         :return: None
         """
-        num_ticks = int(self.tracks[0].rect().width() / self.major_tick_interval)
+        num_ticks = int(self.tracks[0].track_rect.rect().width() / self.major_tick_interval)
         major_tick_top = 10 + self.top_buffer_zone_y
         major_tick_bottom = -10 + self.top_buffer_zone_y
         minor_tick_top = 5 + self.top_buffer_zone_y
