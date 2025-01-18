@@ -157,6 +157,25 @@ class MajorTrack(QGraphicsRectItem):
         self.fixture_symbol.setPos(0, y_pos)
         self.cue_timeline.scene.addItem(self.fixture_symbol)
 
+        self.add_minor_tracks()
+
+    def add_minor_tracks(self) -> None:
+        """
+        Adds the minor tracks to the track
+        :return: None
+        """
+        # Get the fixtures channels
+        fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == self.fixture_symbol.fixture_uuid][0].get("id")
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
+            fixture_data = json.load(f)
+        channels = fixture_data["channels"]
+        # Create the minor tracks
+        for channel_number, channel_data in channels.items():
+            minor_track = MinorTrack(self, int(channel_number))
+            minor_track.setPos(self.cue_timeline.track_y_size, self.pos().y() + 50 + int(channel_number) * 50)
+            self.minor_tracks.append(minor_track)
+
     def expand_track(self) -> None:
         """
         Expand the track to show the minor tracks
@@ -164,17 +183,10 @@ class MajorTrack(QGraphicsRectItem):
         """
         if self.expanded:  # Don't expand the track if it is already expanded
             return
-        # Get the fixtures channels
-        fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == self.fixture_symbol.fixture_uuid][0].get("id")
-        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
-        with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
-            fixture_data = json.load(f)
-        channels = fixture_data["channels"]
-        for channel_number, channel_data in channels.items():
-            minor_track = MinorTrack(self, int(channel_number))
-            minor_track.setPos(self.cue_timeline.track_y_size, self.pos().y() + 50 + int(channel_number) * 50)
-            self.minor_tracks.append(minor_track)
-            self.cue_timeline.scene.addItem(minor_track)
+        for track in self.minor_tracks:  # Show tracks
+            self.cue_timeline.scene.addItem(track)
+            for keyframe in track.keyframes:  # Show keyframes
+                self.cue_timeline.scene.addItem(keyframe)
         self.expanded = True
         self.cue_timeline.reposition_tracks()
 
@@ -190,7 +202,6 @@ class MajorTrack(QGraphicsRectItem):
             keyframe_to_remove = isinstance(item, Keyframe) and item.track == self and item.minor_track_number
             if minor_track_to_remove or keyframe_to_remove:
                 self.cue_timeline.scene.removeItem(item)
-        self.minor_tracks = []
         self.expanded = False
         self.cue_timeline.reposition_tracks()
 
@@ -256,6 +267,8 @@ class MinorTrack(QGraphicsRectItem):
         for line in self.lines:
             self.track.cue_timeline.scene.removeItem(line)
             self.lines = []
+        if not self.track.expanded:
+            return  # Don't draw lines if the track is collapsed
         for i in range(len(self.keyframes) - 1):
             line = KeyframeLine(self.keyframes[i], self.keyframes[i + 1])
             self.track.cue_timeline.scene.addItem(line)
@@ -330,9 +343,10 @@ class CueTimeline(QGraphicsView):
             track.setY(next_y_pos)
             track.fixture_symbol.setY(next_y_pos)
             next_y_pos += self.track_y_size
-            for minor_track in track.minor_tracks:
-                minor_track.setY(next_y_pos)
-                next_y_pos += self.track_y_size
+            if track.expanded:
+                for minor_track in track.minor_tracks:
+                    minor_track.setY(next_y_pos)
+                    next_y_pos += self.track_y_size
         # Move the keyframes
         for item in self.scene.items():
             if isinstance(item, Keyframe):
