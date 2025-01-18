@@ -65,6 +65,19 @@ class Playhead(QGraphicsItemGroup):
         self.setPos(self.cue_timeline.track_y_size, 0)
         self.setZValue(1)
 
+    def adjust_height(self) -> None:
+        """
+        Adjust the height of the playhead to match the number of tracks
+        :return: None
+        """
+        new_height = 0
+        for track in self.cue_timeline.tracks:
+            new_height += self.cue_timeline.track_y_size
+            if track.expanded:
+                for _ in track.minor_tracks:
+                    new_height += self.cue_timeline.track_y_size
+        self.body.setRect(0, 0, 3, new_height)
+
 class FixtureSymbol(QGraphicsItemGroup):
     def __init__(self, track, fixture_uuid: str) -> None:
         """
@@ -239,7 +252,7 @@ class CueTimeline(QGraphicsView):
         for fixture_uuid in self.cue_snippet.fixtures:
             self.create_track(fixture_uuid)
         self.add_ticks()
-        self.add_playhead()
+        self.playhead = self.add_playhead()
 
         # Create timers and vars for playback
         self.play_timer = QTimer()
@@ -275,6 +288,7 @@ class CueTimeline(QGraphicsView):
         for item in self.scene.items():
             if isinstance(item, Keyframe):
                 item.set_y_from_value()
+        self.playhead.adjust_height()
 
     def add_ticks(self) -> None:
         """
@@ -296,7 +310,7 @@ class CueTimeline(QGraphicsView):
                 x_minor = x + j * self.major_tick_interval / (self.num_minor_ticks + 1)
                 self.scene.addLine(x_minor, minor_tick_top, x_minor, minor_tick_bottom, pen)
 
-    def add_playhead(self):
+    def add_playhead(self) -> Playhead:
         """
         Adds the playhead to the timeline
         :return: None
@@ -304,6 +318,7 @@ class CueTimeline(QGraphicsView):
         playhead = Playhead(self)
         playhead.setPos(self.track_y_size, self.top_buffer_zone_y)
         self.scene.addItem(playhead)
+        return playhead
 
     def play(self) -> None:
         """
