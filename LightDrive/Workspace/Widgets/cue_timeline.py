@@ -6,31 +6,44 @@ import json
 import os
 
 class Keyframe(QGraphicsEllipseItem):
-    def __init__(self, track, x: float, y: float, diameter: int, is_minor: bool) -> None:
+    def __init__(self, track, x: float, y: float, diameter: int, minor_track_number: int = 0) -> None:
         """
         Create a keyframe
         :param track: The CueTimeline object
         :param x: The x position of the keyframe
         :param y: The y position of the keyframe
         :param diameter: The diameter of the keyframe
-        :param is_minor: Whether the keyframe is on a minor track
+        :param minor_track_number: The minor track the keyframe is on (0 if it is not on a minor track)
         :return: None
         """
         super().__init__(x - diameter / 2, y - diameter / 2, diameter, diameter)
         self.track = track
-        self.is_minor = is_minor
+        self.value = 127
+        self.minor_track_number = minor_track_number
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
+        self.setZValue(1)
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
-            value.setY(round(value.y() / self.track.track.cue_timeline.track_y_size) * self.track.track.cue_timeline.track_y_size)
+            # Keep y position within the track
+            minor_track_offset = self.minor_track_number * self.track.cue_timeline.track_y_size
+            if value.y() < self.track.pos().y() + minor_track_offset:
+                value.setY(self.track.pos().y() + minor_track_offset)
+            if value.y() > self.track.pos().y() + self.track.cue_timeline.track_y_size + minor_track_offset:
+                value.setY(self.track.pos().y() + self.track.cue_timeline.track_y_size + minor_track_offset)
+            self.value = (value.y() - self.track.pos().y() - minor_track_offset) / 50 * 255
+            # Snap to the major ticks
             if not QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
-                tick_interval = self.track.track.cue_timeline.major_tick_interval / self.track.track.cue_timeline.num_minor_ticks
+                tick_interval = self.track.cue_timeline.major_tick_interval / self.track.cue_timeline.num_minor_ticks
                 value.setX(round(value.x() / tick_interval) * tick_interval)
         return super().itemChange(change, value)
+
+    def set_y_from_value(self):
+        minor_track_offset = self.minor_track_number * self.track.cue_timeline.track_y_size
+        self.setY(self.track.pos().y() + minor_track_offset + self.value / 255 * 50)
 
 class Playhead(QGraphicsItemGroup):
     def __init__(self, cue_timeline) -> None:
@@ -53,29 +66,29 @@ class Playhead(QGraphicsItemGroup):
         self.setZValue(1)
 
 class FixtureSymbol(QGraphicsItemGroup):
-    def __init__(self, cue_timeline, fixture_uuid: str) -> None:
+    def __init__(self, track, fixture_uuid: str) -> None:
         """
         Create a fixture symbol
-        :param cue_timeline: The cue timeline
+        :param track: The track the fixture is on
         :return: None
         """
         super().__init__()
-        self.cue_timeline = cue_timeline
+        self.track = track
         self.fixture_uuid = fixture_uuid
 
         # Get the fixture data
-        fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0].get("id")
+        fixture_id = [item for item in self.track.cue_timeline.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0].get("id")
         fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
         with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
             fixture_data = json.load(f)
 
         # Add the fixture rect
-        fixture_rect = QGraphicsRectItem(0, 0, self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
+        fixture_rect = QGraphicsRectItem(0, 0, self.track.cue_timeline.track_y_size, self.track.cue_timeline.track_y_size)
         fixture_rect.setBrush(Qt.darkGray)
         fixture_rect.setOpacity(0.25)
         self.addToGroup(fixture_rect)
         # Add the fixture icon
-        pixmap = QPixmap(f"Assets/Icons/{fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.cue_timeline.track_y_size, self.cue_timeline.track_y_size)
+        pixmap = QPixmap(f"Assets/Icons/{fixture_data['light_type'].lower().replace(' ', '_')}.svg").scaled(self.track.cue_timeline.track_y_size, self.track.cue_timeline.track_y_size)
         fixture_pixmap_item = QGraphicsPixmapItem(pixmap)
         fixture_pixmap_item.setOpacity(0.25)
         self.addToGroup(fixture_pixmap_item)
@@ -83,25 +96,74 @@ class FixtureSymbol(QGraphicsItemGroup):
         # Create context menu
         self.context_menu = QMenu()
         remove_fixture_action = self.context_menu.addAction("Remove Fixture")
-        remove_fixture_action.triggered.connect(lambda: self.cue_timeline.window.snippet_manager.cue_manager.cue_remove_fixture(fixture_uuid=self.fixture_uuid))
+        remove_fixture_action.triggered.connect(lambda: self.track.cue_timeline.window.snippet_manager.cue_manager.cue_remove_fixture(fixture_uuid=self.fixture_uuid))
+
+    def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
+        if self.track.expanded:
+            self.track.collapse_track()
+        else:
+            self.track.expand_track()
 
     def contextMenuEvent(self, event):  # noqa: N802
         self.context_menu.exec(event.screenPos())
 
-class MajorTrackBar(QGraphicsRectItem):
-    def __init__(self, track) -> None:
+class MajorTrack(QGraphicsRectItem):
+    def __init__(self, cue_timeline, fixture_uuid: str) -> None:
         """
         Create a major track bar
-        :param track: The cue timeline
+        :param cue_timeline: The cue timeline
+        :param fixture_uuid: The UUID of the fixture associated with this track
         """
         super().__init__()
-        self.track = track
+        self.cue_timeline = cue_timeline
+        self.minor_tracks = []
+        self.expanded = False
 
         # Create the track
-        self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
+        self.setRect(0, 0, self.cue_timeline.track_length, self.cue_timeline.track_y_size)
         self.setBrush(Qt.lightGray)
         self.setOpacity(0.25)
-        self.setZValue(-1)
+        self.fixture_symbol = FixtureSymbol(self, fixture_uuid)
+        y_pos = len(self.cue_timeline.tracks) * self.cue_timeline.track_y_size + self.cue_timeline.top_buffer_zone_y
+        self.fixture_symbol.setPos(0, y_pos)
+        self.cue_timeline.scene.addItem(self.fixture_symbol)
+
+    def expand_track(self) -> None:
+        """
+        Expand the track to show the minor tracks
+        :return: None
+        """
+        if self.expanded:  # Don't expand the track if it is already expanded
+            return
+        # Get the fixtures channels
+        fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == self.fixture_symbol.fixture_uuid][0].get("id")
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
+            fixture_data = json.load(f)
+        channels = fixture_data["channels"]
+        for channel_number, channel_data in channels.items():
+            minor_track = MinorTrack(self, int(channel_number))
+            minor_track.setPos(self.cue_timeline.track_y_size, self.pos().y() + 50 + int(channel_number) * 50)
+            self.minor_tracks.append(minor_track)
+            self.cue_timeline.scene.addItem(minor_track)
+        self.expanded = True
+        self.cue_timeline.reposition_tracks()
+
+    def collapse_track(self) -> None:
+        """
+        Collapse the track to hide the minor tracks
+        :return: None
+        """
+        if not self.expanded:  # Don't collapse the track if it is already collapsed
+            return
+        for item in self.cue_timeline.scene.items():
+            minor_track_to_remove = isinstance(item, MinorTrack) and item.track == self
+            keyframe_to_remove = isinstance(item, Keyframe) and item.track == self and item.minor_track_number
+            if minor_track_to_remove or keyframe_to_remove:
+                self.cue_timeline.scene.removeItem(item)
+        self.minor_tracks = []
+        self.expanded = False
+        self.cue_timeline.reposition_tracks()
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -112,15 +174,16 @@ class MajorTrackBar(QGraphicsRectItem):
             # Add a new keyframe
             position = self.mapToScene(event.pos())
             timeline_y_center = self.rect().center().y()
-            x_pos = position.x() - self.track.cue_timeline.track_y_size
-            y_pos = timeline_y_center + self.track.pos().y()
-            keyframe = Keyframe(self, x_pos, y_pos, 10, is_minor=False)
-            self.track.addToGroup(keyframe)
+            keyframe = Keyframe(self, 0, 0, 10)
+            x_pos = position.x()
+            y_pos = timeline_y_center + self.pos().y()
+            keyframe.setPos(x_pos, y_pos)
+            self.cue_timeline.scene.addItem(keyframe)
 
-class MinorTrackBar(QGraphicsRectItem):
+class MinorTrack(QGraphicsRectItem):
     def __init__(self, track, channel_number: int) -> None:
         """
-        Create a minor track bar
+        Create a minor track
         :param track: The cue timeline
         :param channel_number: The channel number
         """
@@ -142,82 +205,11 @@ class MinorTrackBar(QGraphicsRectItem):
             # Add a new keyframe
             position = self.mapToScene(event.pos())
             timeline_y_center = self.rect().center().y()
-            x_pos = position.x() - self.track.cue_timeline.track_y_size
+            keyframe = Keyframe(self.track, 0, 0, 10, minor_track_number=self.track_number)
+            x_pos = position.x()
             y_pos = timeline_y_center + self.track.pos().y() + self.track_number * self.track.cue_timeline.track_y_size
-            keyframe = Keyframe(self, x_pos, y_pos, 10, is_minor=True)
-            self.track.addToGroup(keyframe)
-
-class Track(QGraphicsItemGroup):
-    def __init__(self, cue_timeline, fixture_uuid: str) -> None:
-        super().__init__()
-        self.cue_timeline = cue_timeline
-        self.expanded = False
-        self.minor_tracks = []
-
-        # Create the fixture symbol
-        self.fixture_symbol = FixtureSymbol(self.cue_timeline, fixture_uuid)
-        self.addToGroup(self.fixture_symbol)
-        # Create the track
-        self.track_rect = MajorTrackBar(self)
-        self.track_rect.setPos(self.cue_timeline.track_y_size, 0)
-        self.addToGroup(self.track_rect)
-
-    def mousePressEvent(self, event) -> None:  # noqa: N802
-        """
-        Propagate mousePressEvents to the items in the track
-        :param event: The event
-        :return: None
-        """
-        pass_on = True
-        for item in self.childItems():
-            if item.isUnderMouse():
-                item.mousePressEvent(event)
-                pass_on = False
-        if pass_on:
-            super().mousePressEvent(event)
-
-    def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
-        """
-        Propagate mouseDoubleClickEvents to the items in the track
-        :param event: The event
-        :return: None
-        """
-        if not self.fixture_symbol.isUnderMouse():
-            super().mouseDoubleClickEvent(event)
-            return  # Stop here if fixture symbol is not under the mouse
-
-        if self.expanded:  # If the already is expanded, collapse it
-            for item in self.childItems():
-                if isinstance(item, MinorTrackBar) or (isinstance(item, Keyframe) and item.is_minor):
-                    self.removeFromGroup(item)
-                    self.cue_timeline.scene.removeItem(item)
-            self.minor_tracks = []
-            self.expanded = False
-        else:  # If the track is not expanded, expand it
-            self.expanded = True
-            # Get the fixtures channels
-            fixture_id = [item for item in self.cue_timeline.window.available_fixtures if item["fixture_uuid"] == self.fixture_symbol.fixture_uuid][0].get("id")
-            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
-            with open(os.path.join(fixture_dir, fixture_id + ".json")) as f:
-                fixture_data = json.load(f)
-            channels = fixture_data["channels"]
-            for channel_number, channel_data in channels.items():
-                minor_track = MinorTrackBar(self, int(channel_number))
-                minor_track.setPos(self.cue_timeline.track_y_size, self.pos().y() + 50 + int(channel_number) * 50)
-                self.addToGroup(minor_track)
-                self.minor_tracks.append(minor_track)
-        self.cue_timeline.reposition_tracks()
-
-    def contextMenuEvent(self, event) -> None:  # noqa: N802
-        """
-        Propagate contextMenuEvents to the items in the track
-        :param event: The event
-        :return: None
-        """
-        if self.fixture_symbol.isUnderMouse():
-            self.fixture_symbol.contextMenuEvent(event)
-        else:
-            super().contextMenuEvent(event)
+            keyframe.setPos(x_pos, y_pos)
+            self.track.cue_timeline.scene.addItem(keyframe)
 
 class CueTimeline(QGraphicsView):
     def __init__(self, window: QMainWindow, cue_snippet) -> None:
@@ -241,7 +233,7 @@ class CueTimeline(QGraphicsView):
         self.scene = QGraphicsScene(window)
         self.setSceneRect(0, 0, self.track_length, self.window.ui.cue_timeline_frame.height())
         self.setScene(self.scene)
-        if not fixture_uuids:  # If there are no fixtures, stop here
+        if not self.cue_snippet.fixtures:  # If there are no fixtures, stop here
             return  # This prevents errors when opening empty cues
         self.tracks = []
         for fixture_uuid in self.cue_snippet.fixtures:
@@ -262,8 +254,8 @@ class CueTimeline(QGraphicsView):
         :param fixture_uuid: The UUID of the fixture associated with this track
         :return: None
         """
-        track = Track(self, fixture_uuid)
-        track.setPos(0, len(self.tracks) * self.track_y_size + self.top_buffer_zone_y)
+        track = MajorTrack(self, fixture_uuid)
+        track.setPos(self.track_y_size, len(self.tracks) * self.track_y_size + self.top_buffer_zone_y)
         self.scene.addItem(track)
         self.tracks.append(track)
 
@@ -274,17 +266,22 @@ class CueTimeline(QGraphicsView):
         """
         next_y_pos = self.top_buffer_zone_y
         for i, track in enumerate(self.tracks):
-            track.setPos(0, next_y_pos)
+            track.setY(next_y_pos)
+            track.fixture_symbol.setY(next_y_pos)
             next_y_pos += self.track_y_size
-            for _ in track.minor_tracks:
+            for minor_track in track.minor_tracks:
+                minor_track.setY(next_y_pos)
                 next_y_pos += self.track_y_size
+        for item in self.scene.items():
+            if isinstance(item, Keyframe):
+                item.set_y_from_value()
 
     def add_ticks(self) -> None:
         """
         Add beats to the timeline
         :return: None
         """
-        num_ticks = int(self.tracks[0].track_rect.rect().width() / self.major_tick_interval)
+        num_ticks = int(self.tracks[0].rect().width() / self.major_tick_interval)
         major_tick_top = 10 + self.top_buffer_zone_y
         major_tick_bottom = -10 + self.top_buffer_zone_y
         minor_tick_top = 5 + self.top_buffer_zone_y
