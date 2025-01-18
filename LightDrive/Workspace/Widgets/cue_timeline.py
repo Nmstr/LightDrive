@@ -289,6 +289,7 @@ class CueTimeline(QGraphicsView):
             if isinstance(item, Keyframe):
                 item.set_y_from_value()
         self.playhead.adjust_height()
+        self.adjust_scene_height()
 
     def add_ticks(self) -> None:
         """
@@ -346,6 +347,21 @@ class CueTimeline(QGraphicsView):
         self.current_virtual_frame = 0
         self.play_timer.stop()
         self.is_playing = False
+
+    def adjust_scene_height(self) -> None:
+        """
+        Adjust the height of the scene to match the number of tracks
+        :return: None
+        """
+        new_height = self.top_buffer_zone_y * 2
+        for track in self.tracks:
+            new_height += self.track_y_size
+            if track.expanded:
+                for _ in track.minor_tracks:
+                    new_height += self.track_y_size
+        if new_height < self.window.ui.cue_timeline_frame.height():
+            new_height = self.window.ui.cue_timeline_frame.height()
+        self.setSceneRect(0, 0, self.track_length, new_height)
 
     def update_virtual_frame(self) -> None:
         """
