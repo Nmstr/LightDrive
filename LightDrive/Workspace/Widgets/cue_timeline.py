@@ -1,9 +1,17 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsEllipseItem, \
-    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication, QGraphicsPixmapItem, QMenu
+    QGraphicsItem, QGraphicsItemGroup, QGraphicsPolygonItem, QApplication, QGraphicsPixmapItem, QMenu, QGraphicsLineItem
 from PySide6.QtGui import QPen, QPolygonF, QPixmap
 from PySide6.QtCore import Qt, QPointF, QTimer, QElapsedTimer
 import json
 import os
+
+class KeyframeLine(QGraphicsLineItem):
+    def __init__(self, start_item, end_item):
+        super().__init__()
+        self.setPen(QPen(Qt.black, 2))
+        start_pos = start_item.scenePos()
+        end_pos = end_item.scenePos()
+        self.setLine(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
 
 class Keyframe(QGraphicsEllipseItem):
     def __init__(self, track, x: float, y: float, diameter: int, minor_track_number: int = 0) -> None:
@@ -39,6 +47,12 @@ class Keyframe(QGraphicsEllipseItem):
             if not QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
                 tick_interval = self.track.cue_timeline.major_tick_interval / self.track.cue_timeline.num_minor_ticks
                 value.setX(round(value.x() / tick_interval) * tick_interval)
+            # Update the lines
+            if self.minor_track_number:  # Minor
+                self.track.minor_tracks[self.minor_track_number - 1].update_lines()
+            else:  # Major
+                self.track.update_lines()
+
         return super().itemChange(change, value)
 
     def set_y_from_value(self):
@@ -131,6 +145,8 @@ class MajorTrack(QGraphicsRectItem):
         self.cue_timeline = cue_timeline
         self.minor_tracks = []
         self.expanded = False
+        self.keyframes = []
+        self.lines = []
 
         # Create the track
         self.setRect(0, 0, self.cue_timeline.track_length, self.cue_timeline.track_y_size)
@@ -178,6 +194,25 @@ class MajorTrack(QGraphicsRectItem):
         self.expanded = False
         self.cue_timeline.reposition_tracks()
 
+    def add_keyframe(self, position) -> None:
+        keyframe = Keyframe(self, 0, 0, 10)
+        x_pos = position.x()
+        y_pos = self.rect().center().y() + self.pos().y()
+        keyframe.setPos(x_pos, y_pos)
+        self.cue_timeline.scene.addItem(keyframe)
+        self.keyframes.append(keyframe)
+        self.update_lines()
+
+    def update_lines(self):
+        self.keyframes.sort(key=lambda kf: kf.x())
+        for line in self.lines:
+            self.cue_timeline.scene.removeItem(line)
+            self.lines = []
+        for i in range(len(self.keyframes) - 1):
+            line = KeyframeLine(self.keyframes[i], self.keyframes[i + 1])
+            self.cue_timeline.scene.addItem(line)
+            self.lines.append(line)
+
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
         Adds a keyframe on right-click
@@ -186,12 +221,7 @@ class MajorTrack(QGraphicsRectItem):
         if event.button() == Qt.RightButton:
             # Add a new keyframe
             position = self.mapToScene(event.pos())
-            timeline_y_center = self.rect().center().y()
-            keyframe = Keyframe(self, 0, 0, 10)
-            x_pos = position.x()
-            y_pos = timeline_y_center + self.pos().y()
-            keyframe.setPos(x_pos, y_pos)
-            self.cue_timeline.scene.addItem(keyframe)
+            self.add_keyframe(position)
 
 class MinorTrack(QGraphicsRectItem):
     def __init__(self, track, channel_number: int) -> None:
@@ -203,11 +233,33 @@ class MinorTrack(QGraphicsRectItem):
         super().__init__()
         self.track = track
         self.track_number = channel_number + 1
+        self.keyframes = []
+        self.lines = []
 
         # Create the track
         self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
         self.setBrush(Qt.lightGray)
         self.setOpacity(0.5)
+
+    def add_keyframe(self, position) -> None:
+        # Add a new keyframe
+        keyframe = Keyframe(self.track, 0, 0, 10, minor_track_number=self.track_number)
+        x_pos = position.x()
+        y_pos = self.rect().center().y() + self.track.pos().y() + self.track_number * self.track.cue_timeline.track_y_size
+        keyframe.setPos(x_pos, y_pos)
+        self.track.cue_timeline.scene.addItem(keyframe)
+        self.keyframes.append(keyframe)
+        self.update_lines()
+
+    def update_lines(self):
+        self.keyframes.sort(key=lambda kf: kf.x())
+        for line in self.lines:
+            self.track.cue_timeline.scene.removeItem(line)
+            self.lines = []
+        for i in range(len(self.keyframes) - 1):
+            line = KeyframeLine(self.keyframes[i], self.keyframes[i + 1])
+            self.track.cue_timeline.scene.addItem(line)
+            self.lines.append(line)
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -217,12 +269,7 @@ class MinorTrack(QGraphicsRectItem):
         if event.button() == Qt.RightButton:
             # Add a new keyframe
             position = self.mapToScene(event.pos())
-            timeline_y_center = self.rect().center().y()
-            keyframe = Keyframe(self.track, 0, 0, 10, minor_track_number=self.track_number)
-            x_pos = position.x()
-            y_pos = timeline_y_center + self.track.pos().y() + self.track_number * self.track.cue_timeline.track_y_size
-            keyframe.setPos(x_pos, y_pos)
-            self.track.cue_timeline.scene.addItem(keyframe)
+            self.add_keyframe(position)
 
 class CueTimeline(QGraphicsView):
     def __init__(self, window: QMainWindow, cue_snippet) -> None:
@@ -278,6 +325,7 @@ class CueTimeline(QGraphicsView):
         :return: None
         """
         next_y_pos = self.top_buffer_zone_y
+        # Move the tracks
         for i, track in enumerate(self.tracks):
             track.setY(next_y_pos)
             track.fixture_symbol.setY(next_y_pos)
@@ -285,9 +333,16 @@ class CueTimeline(QGraphicsView):
             for minor_track in track.minor_tracks:
                 minor_track.setY(next_y_pos)
                 next_y_pos += self.track_y_size
+        # Move the keyframes
         for item in self.scene.items():
             if isinstance(item, Keyframe):
                 item.set_y_from_value()
+        # Update the lines
+        for track in self.tracks:
+            track.update_lines()
+            for minor_track in track.minor_tracks:
+                minor_track.update_lines()
+        # Adjust playhead and scene height
         self.playhead.adjust_height()
         self.adjust_scene_height()
 
