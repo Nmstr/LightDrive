@@ -26,8 +26,9 @@ class Keyframe(QGraphicsEllipseItem):
         """
         super().__init__(x - diameter / 2, y - diameter / 2, diameter, diameter)
         self.track = track
-        self.value = 127
         self.minor_track_number = minor_track_number
+        self.value = 127
+        self.frame = round((self.x() - self.track.cue_timeline.track_y_size) / self.track.cue_timeline.major_tick_interval * 100)
         self.setBrush(Qt.blue)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -52,6 +53,9 @@ class Keyframe(QGraphicsEllipseItem):
                 self.track.minor_tracks[self.minor_track_number - 1].update_lines()
             else:  # Major
                 self.track.update_lines()
+            # Update the keyframe config
+            self.frame = round((self.x() - self.track.cue_timeline.track_y_size) / self.track.cue_timeline.major_tick_interval * 100)
+            self.track.cue_timeline.update_keyframe_config()
 
         return super().itemChange(change, value)
 
@@ -207,12 +211,12 @@ class MajorTrack(QGraphicsRectItem):
 
     def add_keyframe(self, position) -> None:
         keyframe = Keyframe(self, 0, 0, 10)
-        x_pos = position.x()
-        y_pos = self.rect().center().y() + self.pos().y()
-        keyframe.setPos(x_pos, y_pos)
+        keyframe.setPos(position.x(), position.y())
+        keyframe.frame = round((keyframe.x() - self.cue_timeline.track_y_size) / self.cue_timeline.major_tick_interval * 100)
         self.cue_timeline.scene.addItem(keyframe)
         self.keyframes.append(keyframe)
         self.update_lines()
+        self.cue_timeline.update_keyframe_config()
 
     def update_lines(self):
         self.keyframes.sort(key=lambda kf: kf.x())
@@ -255,12 +259,12 @@ class MinorTrack(QGraphicsRectItem):
     def add_keyframe(self, position) -> None:
         # Add a new keyframe
         keyframe = Keyframe(self.track, 0, 0, 10, minor_track_number=self.track_number)
-        x_pos = position.x()
-        y_pos = self.rect().center().y() + self.track.pos().y() + self.track_number * self.track.cue_timeline.track_y_size
-        keyframe.setPos(x_pos, y_pos)
+        keyframe.setPos(position.x(), position.y())
+        keyframe.frame = round((keyframe.x() - self.track.cue_timeline.track_y_size) / self.track.cue_timeline.major_tick_interval * 100)
         self.track.cue_timeline.scene.addItem(keyframe)
         self.keyframes.append(keyframe)
         self.update_lines()
+        self.track.cue_timeline.update_keyframe_config()
 
     def update_lines(self):
         self.keyframes.sort(key=lambda kf: kf.x())
@@ -285,11 +289,12 @@ class MinorTrack(QGraphicsRectItem):
             self.add_keyframe(position)
 
 class CueTimeline(QGraphicsView):
-    def __init__(self, window: QMainWindow, cue_snippet) -> None:
+    def __init__(self, window: QMainWindow, cue_snippet, keyframes: dict) -> None:
         """
         Create the timeline object
         :param window: The main window
         :param: cue_snippet: The cue snippet
+        :param keyframes: The keyframes that should be loaded
         """
         super().__init__(window)
         # Set some vars
@@ -320,6 +325,9 @@ class CueTimeline(QGraphicsView):
         self.play_timer.timeout.connect(self.update_virtual_frame)
         self.start_frame = 0
         self.is_playing = False
+
+        # Load keyframes
+        self.load_keyframes(keyframes)
 
     def create_track(self, fixture_uuid) -> None:
         """
@@ -444,6 +452,40 @@ class CueTimeline(QGraphicsView):
         elapsed_time = self.play_elapsed_timer.elapsed() / 1000.0  # Elapsed time in seconds
         virtual_frames = elapsed_time * vfps + self.start_frame
         self.current_virtual_frame = virtual_frames
+
+    def load_keyframes(self, keyframes: dict) -> None:
+        for fixture_uuid, keyframe_list in keyframes.items():
+            for keyframe in keyframe_list:
+                for track in self.tracks:
+                    if track.fixture_symbol.fixture_uuid == fixture_uuid:
+                        if keyframe["minor_track"]:
+                            track.minor_tracks[keyframe["minor_track"] - 1].add_keyframe(QPointF(keyframe["frame"] / 100 * self.major_tick_interval + self.track_y_size, keyframe["value"] / 255 * 50 + track.pos().y() + keyframe["minor_track"] * self.track_y_size))
+                        else:
+                            track.add_keyframe(QPointF(keyframe["frame"] / 100 * self.major_tick_interval + self.track_y_size, keyframe["value"] / 255 * 50 + track.pos().y()))
+        for track in self.tracks:
+            track.expand_track()
+            track.collapse_track()
+
+    def update_keyframe_config(self) -> None:
+        self.window.snippet_manager.available_snippets[self.window.snippet_manager.current_snippet.uuid].keyframes = {}
+        for track in self.tracks:
+            for keyframe in track.keyframes:
+                self.window.snippet_manager.available_snippets[
+                    self.window.snippet_manager.current_snippet.uuid].keyframes.setdefault(
+                    track.fixture_symbol.fixture_uuid, []).append({
+                    "minor_track": keyframe.minor_track_number,
+                    "frame": keyframe.frame,
+                    "value": keyframe.value
+                })
+            for minor_track in track.minor_tracks:
+                for keyframe in minor_track.keyframes:
+                    self.window.snippet_manager.available_snippets[
+                        self.window.snippet_manager.current_snippet.uuid].keyframes.setdefault(
+                        track.fixture_symbol.fixture_uuid, []).append({
+                        "minor_track": keyframe.minor_track_number,
+                        "frame": keyframe.frame,
+                        "value": keyframe.value
+                    })
 
     def mousePressEvent(self, event):  # noqa: N802
         """
