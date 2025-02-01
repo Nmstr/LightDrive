@@ -33,12 +33,19 @@ class DirectoryManager:
         self.sm.add_item(dir_entry, parent)
         return dir_entry
 
-    def dir_rename(self) -> None:
+    def dir_rename(self, dir_uuid: str = None, new_name: str = None) -> None:
         """
-        Renames the directory to the new name
+        Renames a directory with the given uuid to the new name
+        :param dir_uuid: The uuid of the directory to rename (if None, uses the currently selected snippets uuid)
+        :param new_name: The new name of the directory (if None, uses the name from ui.directory_name_edit)
         :return: None
         """
-        self.sm.current_snippet.name = self.sm.window.ui.directory_name_edit.text()
-        dir_entry = self.sm.find_snippet_entry_by_uuid(self.sm.current_snippet.uuid)
-        dir_entry.setText(0, self.sm.current_snippet.name)
+        if not dir_uuid:
+            dir_uuid = self.sm.current_snippet.uuid
+        if not new_name:
+            new_name = self.sm.window.ui.directory_name_edit.text()
+        dir_snippet = self.sm.available_snippets.get(dir_uuid)
+        dir_snippet.name = new_name
+        dir_entry = self.sm.find_snippet_entry_by_uuid(dir_uuid)
+        dir_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)

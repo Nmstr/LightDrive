@@ -70,34 +70,6 @@ class SnippetManager:
             case "script":
                 self.window.ui.snippet_editor.setCurrentIndex(5)
 
-    def find_snippet_by_uuid(self, snippet_uuid: str) -> dict:
-        """
-        Finds a snippet by its UUID
-        :param snippet_uuid: The UUID of the snippet to find
-        :return: The data of the snippet
-        """
-        def _find_snippet_by_uuid(snippet_config, target_uuid: str) -> dict:
-            if isinstance(snippet_config, list):
-                for snippet in snippet_config:
-                    if snippet["uuid"] == target_uuid:
-                        return snippet
-                    if snippet["type"] == "directory" and "content" in snippet:
-                        result = _find_snippet_by_uuid(snippet["content"], target_uuid)
-                        if result:
-                            return result
-            elif isinstance(snippet_config, dict):
-                for key, snippet in snippet_config.items():
-                    if snippet["uuid"] == target_uuid:
-                        return snippet
-                    if snippet["type"] == "directory" and "content" in snippet:
-                        result = _find_snippet_by_uuid(snippet["content"], target_uuid)
-                        if result:
-                            return result
-            return {}
-
-        snippet_configuration = self.window.workspace_file_manager.get_snippet_configuration()
-        return _find_snippet_by_uuid(snippet_configuration, snippet_uuid)
-
     def find_snippet_entry_by_uuid(self, snippet_uuid: str) -> QTreeWidgetItem | None:
         """
         Finds a snippet entry by its UUID
