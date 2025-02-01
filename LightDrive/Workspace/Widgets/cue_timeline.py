@@ -289,7 +289,7 @@ class MinorTrack(QGraphicsRectItem):
             self.add_keyframe(position)
 
 class CueTimeline(QGraphicsView):
-    def __init__(self, window: QMainWindow, cue_snippet, keyframes: dict) -> None:
+    def __init__(self, window: QMainWindow, cue_snippet) -> None:
         """
         Create the timeline object
         :param window: The main window
@@ -327,7 +327,7 @@ class CueTimeline(QGraphicsView):
         self.is_playing = False
 
         # Load keyframes
-        self.load_keyframes(keyframes)
+        self.load_keyframes(self.cue_snippet.keyframes)
 
     def create_track(self, fixture_uuid) -> None:
         """
