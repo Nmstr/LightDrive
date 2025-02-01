@@ -58,7 +58,7 @@ class SnippetManager:
             case "cue":
                 self.window.ui.snippet_editor.setCurrentIndex(2)
                 self.window.ui.cue_name_edit.setText(self.current_snippet.name)
-                self._load_cue_timeline()
+                self.cue_manager.cue_display(self.current_snippet.uuid)
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
                 self.window.ui.scene_name_edit.setText(self.current_snippet.name)
