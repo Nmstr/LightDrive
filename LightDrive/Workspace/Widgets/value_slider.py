@@ -176,13 +176,14 @@ class ValueSlider(QWidget):
             self.icon.update_icon(fixture["id"], fixture["address"])
 
 class SceneSlider(QWidget):
-    def __init__(self, parent=None, index: int = 0, fixture_data: dict = None) -> None:
+    def __init__(self, parent=None, index: int = 0, fixture_data: dict = None, scene_snippet = None) -> None:
         self.window = parent
         self.snippet_manager = self.window.snippet_manager
         self.index = index
         if not fixture_data:
             fixture_data = {}
         self.fixture_data = fixture_data
+        self.scene_snippet = scene_snippet
         super().__init__(parent)
         self.setAutoFillBackground(True)
 
@@ -217,22 +218,20 @@ class SceneSlider(QWidget):
         self.update_icon()
 
         # Add any maybe missing required attributes to the scene
-        if not self.snippet_manager.current_snippet.extra_data.get("fixture_configs"):
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"] = {}
-        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"].get(self.fixture_data["fixture_uuid"]):
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]] = {}
-        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]].get(str(self.index)):
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)] = {}
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = 0
-        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"]:
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
-        if not self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"]:
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = 0
+        if not self.scene_snippet.fixture_configs.get(self.fixture_data["fixture_uuid"]):
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]] = {}
+        if not self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]].get(str(self.index)):
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)] = {}
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = 0
+        if not self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["checked"]:
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
+        if not self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["value"]:
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = 0
 
         # Load values
-        self.set_value(self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)].get("value", 0))
-        if self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)].get("checked", False):
+        self.set_value(self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)].get("value", 0))
+        if self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)].get("checked", False):
             self.activation_box.setChecked(True)
 
     def set_value(self, value: int) -> None:
@@ -243,7 +242,7 @@ class SceneSlider(QWidget):
         """
         self.slider.setValue(value)
         self.number_display.setValue(value)
-        self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = value
+        self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["value"] = value
 
     def set_activated(self, activated: bool) -> None:
         """
@@ -262,11 +261,11 @@ class SceneSlider(QWidget):
         if state == Qt.CheckState.Checked:
             self.number_display.setEnabled(True)
             self.slider.setEnabled(True)
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = True
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = True
         else:
             self.number_display.setEnabled(False)
             self.slider.setEnabled(False)
-            self.snippet_manager.current_snippet.extra_data["fixture_configs"][self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
+            self.scene_snippet.fixture_configs[self.fixture_data["fixture_uuid"]][str(self.index)]["checked"] = False
 
     def update_icon(self):
         """

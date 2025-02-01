@@ -62,7 +62,7 @@ class SnippetManager:
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
                 self.window.ui.scene_name_edit.setText(self.current_snippet.name)
-                self._scene_load_fixtures(self.current_snippet.get("fixtures", []))
+                self.scene_manager.scene_display(self.current_snippet.uuid)
             case "two_d_efx":
                 self.window.ui.snippet_editor.setCurrentIndex(3)
             case "rgb_matrix":

@@ -20,10 +20,12 @@ class SceneData:
     fixture_configs: dict
 
 class SceneFixtureConfigScreen(QWidget):
-    def __init__(self, parent=None, fixture_data=None):
+    def __init__(self, parent=None, fixture_data=None, snippet_manager=None):
         self.window = parent
         self.fixture_data = fixture_data
+        self.sm = snippet_manager
         super().__init__(parent)
+        self.clipboard = None
 
         layout = QVBoxLayout()
 
@@ -58,7 +60,8 @@ class SceneFixtureConfigScreen(QWidget):
             amount_channels = len(json.load(f)["channels"])  # Get the amount of channels
         self.sliders = []
         for i in range(amount_channels):
-            self.sliders.append(SceneSlider(self.window, i, fixture_data))
+            scene_snippet = self.sm.available_snippets.get(self.sm.current_snippet.uuid)
+            self.sliders.append(SceneSlider(self.window, i, fixture_data, scene_snippet))
             scroll_layout.addWidget(self.sliders[i])
 
         self.spacer = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -71,19 +74,19 @@ class SceneFixtureConfigScreen(QWidget):
         Copy the dmx values, that the current fixture in the scene is configured to, to the clipboard.
         :return: None
         """
-        scene_config = copy.deepcopy(self.window.snippet_manager.current_snippet.extra_data.get("fixture_configs"))
+        scene_config = copy.deepcopy(self.sm.current_snippet.fixture_configs)
         fixture_config = {
-            "type": self.window.snippet_manager.current_snippet.extra_data.get("type"),
+            "type": "scene",
             "data": scene_config.get(self.fixture_data["fixture_uuid"])
         }
-        self.window.snippet_manager.clipboard = fixture_config
+        self.sm.clipboard = fixture_config
 
     def paste_clipboard(self):
         """
         Pastes the dmx values, that are currently in the clipboard, to the currently selected fixture in the scene.
         :return: None
         """
-        clipboard_data = self.window.snippet_manager.clipboard
+        clipboard_data = self.sm.clipboard
         if not isinstance(clipboard_data, dict):
             return  # The clipboard is empty or contains invalid data
         match clipboard_data.get("type"):
@@ -96,6 +99,15 @@ class SceneManager:
     def __init__(self, snippet_manager) -> None:
         self.sm = snippet_manager
         self.clipboard = None
+
+    def scene_display(self, scene_uuid: str) -> None:
+        """
+        Displays the scene editor
+        :param scene_uuid: The uuid of the scene to display
+        :return: None
+        """
+        scene_snippet = self.sm.available_snippets.get(scene_uuid)
+        self._scene_load_fixtures(scene_snippet.fixtures)
 
     def scene_create(self, *, parent: QTreeWidgetItem = None, scene_data: SceneData = None) -> None:
         """
@@ -115,14 +127,22 @@ class SceneManager:
         scene_entry.setText(0, self.sm.available_snippets[scene_data.uuid].name)
         self.sm.add_item(scene_entry, parent)
 
-    def scene_rename(self) -> None:
+    def scene_rename(self, scene_uuid: str = None, new_name: str = None) -> None:
         """
-        Changes the name of the current scene to a new name from ui.scene_name_edit
+        Renames a scene with the given uuid to the new name
+        :param scene_uuid: The uuid of the scene to rename (if None, uses the currently selected snippets uuid)
+        :param new_name: The new name of the scene (if None, uses the name from ui.scene_name_edit)
         :return: None
         """
-        self.current_snippet.extra_data["name"] = self.window.ui.scene_name_edit.text()
-        self.current_snippet.setText(0, self.window.ui.scene_name_edit.text())
-        self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+        if not scene_uuid:
+            scene_uuid = self.sm.current_snippet.uuid
+        if not new_name:
+            new_name = self.sm.window.ui.scene_name_edit.text()
+        scene_snippet = self.sm.available_snippets.get(scene_uuid)
+        scene_snippet.name = new_name
+        scene_entry = self.sm.find_snippet_entry_by_uuid(scene_uuid)
+        scene_entry.setText(0, new_name)
+        self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
     def _scene_load_fixtures(self, fixture_ids: dict) -> None:
         """
@@ -130,18 +150,18 @@ class SceneManager:
         :param fixture_ids: The ids of the fixtures to load
         :return: None
         """
-        self.window.ui.scene_fixture_list.clear()  # First delete old data
-        for i in reversed(range(self.window.ui.scene_config_tab.count() - 1)):
-            self.window.ui.scene_config_tab.removeTab(i + 1)
+        self.sm.window.ui.scene_fixture_list.clear()  # First remove all the fixtures from the QListWidget
+        for i in reversed(range(self.sm.window.ui.scene_config_tab.count() - 1)):
+            self.sm.window.ui.scene_config_tab.removeTab(i + 1)
 
         scene_fixtures = []
         for fixture_uuid in fixture_ids:  # Get the data from all the fixtures in the scene
-            matching_fixture = [item for item in self.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0]
+            matching_fixture = [item for item in self.sm.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0]
             scene_fixtures.append(matching_fixture)
         for fixture in scene_fixtures:  # Add the fixture to the QListWidget
             fixture_item = QListWidgetItem(fixture["name"])
             fixture_item.extra_data = fixture
-            self.window.ui.scene_fixture_list.addItem(fixture_item)
+            self.sm.window.ui.scene_fixture_list.addItem(fixture_item)
             self._scene_load_fixture_tab(fixture)
 
     def _scene_load_fixture_tab(self, fixture_data: dict) -> None:
@@ -150,31 +170,38 @@ class SceneManager:
         :param fixture_data: The data of the fixture
         :return: None
         """
-        self.window.ui.scene_config_tab.addTab(SceneFixtureConfigScreen(self.window, fixture_data), fixture_data["name"])
+        self.sm.window.ui.scene_config_tab.addTab(SceneFixtureConfigScreen(self.sm.window, fixture_data, self.sm), fixture_data["name"])
 
-    def scene_add_fixture(self) -> None:
+    def scene_add_fixture(self, scene_uuid: str = None) -> None:
         """
-        Shows a dialog to add fixtures to the scene+ui.scene_fixture_list and adds them if successful
+        Shows a dialog to add fixtures to the scene+ui.scene_fixture_list and adds them to the scene specified by uuid if successful
+        :param scene_uuid: The uuid of the scene to add the fixtures to
         :return: None
         """
-        dlg = SnippetAddFixtureDialog(self.window, self.current_snippet.extra_data.get("fixtures", []))
+        if not scene_uuid:
+            scene_uuid = self.sm.current_snippet.uuid
+        scene_snippet = self.sm.available_snippets.get(scene_uuid)
+        print(scene_snippet)
+        dlg = SnippetAddFixtureDialog(self.sm.window, scene_snippet.fixtures)
         if not dlg.exec():
             return
 
-        if not self.current_snippet.extra_data.get("fixtures"):  # Add fixtures to extra_data if it doesn't exist
-            self.current_snippet.extra_data["fixtures"] = []
         for fixture in dlg.selected_fixtures:
-            self.current_snippet.extra_data["fixtures"].append(fixture.extra_data["fixture_uuid"])
-            self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+            scene_snippet.fixtures.append(fixture.extra_data["fixture_uuid"])
+            self._scene_load_fixtures(scene_snippet.fixtures)
 
-    def scene_remove_fixture(self) -> None:
+    def scene_remove_fixture(self, scene_uuid: str = None, fixture_uuid: str = None) -> None:
         """
-        Removes a fixture from the scene+ui.scene_fixture_list
+        Removes a fixture from the scene.ui.scene_fixture_list
         :return: None
         """
-        selected_uuid = self.window.ui.scene_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
-        self.current_snippet.extra_data["fixtures"].remove(selected_uuid)
-        self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
+        if not scene_uuid:
+            scene_uuid = self.sm.current_snippet.uuid
+        if not fixture_uuid:
+            fixture_uuid = self.sm.window.ui.scene_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
+        scene_snippet = self.sm.available_snippets.get(scene_uuid)
+        scene_snippet.fixtures.remove(fixture_uuid)
+        self._scene_load_fixtures(scene_snippet.fixtures)
 
     def scene_construct_output_values(self, snippet_uuid: str) -> dict:
         """
@@ -183,9 +210,8 @@ class SceneManager:
         :return: The output values
         """
         output_values = {}
-
-        fixture_configs = self.find_snippet_by_uuid(snippet_uuid).get("fixture_configs", {})
-        available_fixtures = self.window.available_fixtures
+        fixture_configs = self.sm.available_snippets.get(snippet_uuid).fixture_configs
+        available_fixtures = self.sm.window.available_fixtures
 
         for fixture_uuid, channels in fixture_configs.items():
             fixture = next((f for f in available_fixtures if f["fixture_uuid"] == fixture_uuid), None)
@@ -211,13 +237,13 @@ class SceneManager:
         Toggles whether the scene is being outputted over dmx or not
         :return: None
         """
-        if self.current_display_snippet is not None:  # Remove the current display snippet if it exists
-            self.window.dmx_output.remove_snippet(self.current_display_snippet)
-            self.current_display_snippet = None
+        if self.sm.current_display_snippet is not None:  # Remove the current display snippet if it exists
+            self.sm.window.dmx_output.remove_snippet(self.sm.current_display_snippet)
+            self.sm.current_display_snippet = None
 
-        if self.window.ui.scene_show_btn.isChecked():  # Add the new snippet if necessary
-            output_values = self.scene_construct_output_values(self.current_snippet.extra_data.get("uuid"))
+        if self.sm.window.ui.scene_show_btn.isChecked():  # Add the new snippet if necessary
+            output_values = self.scene_construct_output_values(self.sm.current_snippet.uuid)
             if not output_values:
                 return
-            self.current_display_snippet = OutputSnippet(self.window.dmx_output, output_values)
-            self.window.dmx_output.insert_snippet(self.current_display_snippet)
+            self.sm.current_display_snippet = OutputSnippet(self.sm.window.dmx_output, output_values)
+            self.sm.window.dmx_output.insert_snippet(self.sm.current_display_snippet)
