@@ -38,6 +38,7 @@ class DirectoryManager:
         Renames the directory to the new name
         :return: None
         """
-        self.current_snippet.extra_data["name"] = self.window.ui.directory_name_edit.text()
-        self.current_snippet.setText(0, self.window.ui.directory_name_edit.text())
-        self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+        self.sm.current_snippet.name = self.sm.window.ui.directory_name_edit.text()
+        dir_entry = self.sm.find_snippet_entry_by_uuid(self.sm.current_snippet.uuid)
+        dir_entry.setText(0, self.sm.current_snippet.name)
+        self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)

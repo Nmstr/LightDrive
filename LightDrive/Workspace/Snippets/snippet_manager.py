@@ -50,20 +50,20 @@ class SnippetManager:
         :param item: The snippet to edit
         :return: None
         """
-        self.current_snippet = item
-        match self.current_snippet.extra_data["type"]:
+        self.current_snippet = self.available_snippets[item.uuid]
+        match self.current_snippet.type:
             case "directory":
                 self.window.ui.snippet_editor.setCurrentIndex(1)
-                self.window.ui.directory_name_edit.setText(self.current_snippet.extra_data["name"])
+                self.window.ui.directory_name_edit.setText(self.current_snippet.name)
             case "cue":
                 self.window.ui.snippet_editor.setCurrentIndex(2)
-                self.window.ui.cue_name_edit.setText(self.current_snippet.extra_data["name"])
+                self.window.ui.cue_name_edit.setText(self.current_snippet.name)
                 self._load_cue_timeline()
             case "scene":
                 self.window.ui.snippet_editor.setCurrentIndex(6)
-                self.window.ui.scene_name_edit.setText(self.current_snippet.extra_data["name"])
-                self._scene_load_fixtures(self.current_snippet.extra_data.get("fixtures", []))
-            case "efx_2d":
+                self.window.ui.scene_name_edit.setText(self.current_snippet.name)
+                self._scene_load_fixtures(self.current_snippet.get("fixtures", []))
+            case "two_d_efx":
                 self.window.ui.snippet_editor.setCurrentIndex(3)
             case "rgb_matrix":
                 self.window.ui.snippet_editor.setCurrentIndex(4)
@@ -97,3 +97,25 @@ class SnippetManager:
 
         snippet_configuration = self.window.workspace_file_manager.get_snippet_configuration()
         return _find_snippet_by_uuid(snippet_configuration, snippet_uuid)
+
+    def find_snippet_entry_by_uuid(self, snippet_uuid: str) -> QTreeWidgetItem | None:
+        """
+        Finds a snippet entry by its UUID
+        :param snippet_uuid: The UUID of the snippet to find
+        :return: The QTreeWidgetItem of the snippet
+        """
+        def _find_snippet_entry_by_uuid(snippet_entry, target_uuid: str) -> QTreeWidgetItem | None:
+            if snippet_entry.uuid == target_uuid:
+                return snippet_entry
+            for i in range(snippet_entry.childCount()):
+                result = _find_snippet_entry_by_uuid(snippet_entry.child(i), target_uuid)
+                if result:
+                    return result
+            return None
+
+        snippet_selector_tree = self.window.ui.snippet_selector_tree
+        for i in range(snippet_selector_tree.topLevelItemCount()):
+            result = _find_snippet_entry_by_uuid(snippet_selector_tree.topLevelItem(i), snippet_uuid)
+            if result:
+                return result
+        return None
