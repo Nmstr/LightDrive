@@ -41,7 +41,7 @@ class Playhead(QGraphicsItemGroup):
         self.cue_timeline = cue_timeline
 
         # Create the parts of the playhead
-        self.body = QGraphicsRectItem(0, 0, 3, len(self.cue_timeline.fixture_uuids) * self.cue_timeline.track_y_size)
+        self.body = QGraphicsRectItem(0, 0, 3, len(self.cue_timeline.cue_snippet.fixtures) * self.cue_timeline.track_y_size)
         self.body.setBrush(Qt.red)
         self.addToGroup(self.body)
         self.head = QGraphicsPolygonItem(QPolygonF([QPointF(-8.5, -20), QPointF(11.5, -20), QPointF(1.5, 0)]))
@@ -78,21 +78,21 @@ class FixtureSymbol(QGraphicsItemGroup):
         # Create context menu
         self.context_menu = QMenu()
         remove_fixture_action = self.context_menu.addAction("Remove Fixture")
-        remove_fixture_action.triggered.connect(lambda: self.cue_timeline.window.snippet_manager.cue_remove_fixture(self.fixture_uuid))
+        remove_fixture_action.triggered.connect(lambda: self.cue_timeline.window.snippet_manager.cue_manager.cue_remove_fixture(fixture_uuid=self.fixture_uuid))
 
     def contextMenuEvent(self, event):  # noqa: N802
         self.context_menu.exec(event.screenPos())
 
 class CueTimeline(QGraphicsView):
-    def __init__(self, window: QMainWindow, fixture_uuids: list) -> None:
+    def __init__(self, window: QMainWindow, cue_snippet) -> None:
         """
         Create the timeline object
-        :param fixture_uuids: The list of fixture UUIDs in this cue
         :param window: The main window
+        :param: cue_snippet: The cue snippet
         """
         super().__init__(window)
         self.window = window
-        self.fixture_uuids = fixture_uuids
+        self.cue_snippet = cue_snippet
         self.is_clicked = False
         self.major_tick_interval = 50
         self.num_minor_ticks = 3
@@ -100,7 +100,7 @@ class CueTimeline(QGraphicsView):
         self.scene = QGraphicsScene(window)
         self.setScene(self.scene)
         self.tracks = []
-        for fixture_uuid in fixture_uuids:
+        for fixture_uuid in self.cue_snippet.fixtures:
             self.create_track(fixture_uuid)
         self.add_ticks()
         self.add_playhead()

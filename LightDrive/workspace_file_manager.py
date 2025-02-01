@@ -1,11 +1,18 @@
+from Workspace.Snippets.scene import SceneData
+from Workspace.Snippets.cue import CueData
+from Workspace.Snippets.rgb_matrix import RgbMatrixData
+from Workspace.Snippets.script import ScriptData
+from Workspace.Snippets.two_d_efx import TwoDEfxData
+from Workspace.Snippets.directory import DirectoryData
 from PySide6.QtWidgets import QFileDialog
+from dataclasses import asdict
 import tempfile
 import tarfile
 import shutil
 import json
 import os
 
-def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, dict, list]:
+def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, list, list]:
     """
     Reads a workspace file and returns its contents.
     :param workspace_file_path: The path to the workspace file
@@ -30,11 +37,11 @@ def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, dict, lis
     else:
         dmx_output_configuration = {}
 
-    if os.path.exists(os.path.join(tmp_dir, 'snippets.json')):
-        with open(os.path.join(tmp_dir, 'snippets.json')) as f:
-            snippets = json.load(f)
-    else:
-        snippets = {}
+    snippets = []
+    if os.path.exists(os.path.join(tmp_dir, 'snippets')):
+        for file in os.listdir(os.path.join(tmp_dir, 'snippets')):
+            with open(os.path.join(tmp_dir, 'snippets', file)) as f:
+                snippets.append(json.load(f))
 
     if os.path.exists(os.path.join(tmp_dir, 'desk_configuration.json')):
         with open(os.path.join(tmp_dir, 'desk_configuration.json')) as f:
@@ -47,7 +54,10 @@ def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, dict, lis
 
     return fixtures, dmx_output_configuration, snippets, desk_configuration
 
-def write_workspace_file(workspace_file_path: str, fixtures: list, dmx_output_configuration: dict, snippet_configuration: dict, desk_configuration: list) -> None:
+def write_workspace_file(workspace_file_path: str, fixtures: list,
+                         dmx_output_configuration: dict,
+                         snippet_configuration: list,
+                         desk_configuration: list) -> None:
     """
     Creates a workspace file
     :param workspace_file_path: The path to the workspace file
@@ -59,22 +69,36 @@ def write_workspace_file(workspace_file_path: str, fixtures: list, dmx_output_co
     """
     tmp_dir = tempfile.mkdtemp()
 
-    # Create files inside the tmp dir to create the workspace file later
+    # Create temp file for the fixtures
     with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as fixtures_file:
         fixtures_file.write(json.dumps(fixtures, indent=4).encode())
+
+    # Create temp file for the dmx output
     with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as dmx_output_file:
         dmx_output_file.write(json.dumps(dmx_output_configuration, indent=4).encode())
-    with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as snippet_file:
-        snippet_file.write(json.dumps(snippet_configuration, indent=4).encode())
+
+    # Create temp files for the snippets
+    snippet_dir = os.path.join(tmp_dir, "snippets")
+    os.makedirs(snippet_dir)
+    snippet_files = {}
+    for snippet in snippet_configuration:
+        with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as snippet_file:
+            snippet_file.write(json.dumps(snippet, indent=4).encode())
+        snippet_files[snippet_file.name] = snippet
+
+    # Create temp file for the desk
     with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as desk_file:
         desk_file.write(json.dumps(desk_configuration, indent=4).encode())
 
-    # Archive the files in the tmp dir into the workspace file
+    # Add the files to the archive
     with tarfile.open(workspace_file_path, "w") as archive:
         archive.add(fixtures_file.name, "fixtures.json")
         archive.add(dmx_output_file.name, "dmx_output_configuration.json")
-        archive.add(snippet_file.name, "snippets.json")
         archive.add(desk_file.name, "desk_configuration.json")
+        archive.add(snippet_dir, "snippets")
+        for snippet_file, snippet in snippet_files.items():
+            file_name = os.path.join("snippets", f"{snippet['name'].lower().replace(' ', '_')}-{snippet['uuid']}.json")
+            archive.add(snippet_file, file_name)
 
     if os.path.exists(tmp_dir):
         shutil.rmtree(tmp_dir)
@@ -130,27 +154,15 @@ class WorkspaceFileManager:
                                  snippet_configuration=snippet_configuration,
                                  desk_configuration=self.window.control_desk_view.get_desk_configuration())
 
-    def get_snippet_configuration(self) -> dict:
+    def get_snippet_configuration(self) -> list:
         """
         Gets the current snippet configuration
-        :return: The current snippet configuration (dictionary)
+        :return: A list of the current snippet configuration
         """
-        snippet_selector = self.window.ui.snippet_selector_tree
-        snippet_configuration = {}
-
-        def add_directory_content(item):
-            if item.extra_data["type"] == "directory":
-                item.extra_data["content"] = []
-                for j in range(item.childCount()):
-                    child = item.child(j)
-                    item.extra_data["content"].append(child.extra_data)
-                    add_directory_content(child)
-
-        for i in range(snippet_selector.topLevelItemCount()):
-            item = snippet_selector.topLevelItem(i)
-            snippet_configuration[str(i)] = item.extra_data
-            add_directory_content(item)
-        return snippet_configuration
+        snippets = []
+        for uuid, snippet in self.window.snippet_manager.available_snippets.items():
+            snippets.append(asdict(snippet))
+        return snippets
 
     def show_open_workspace_dialog(self) -> None:
         """
@@ -191,40 +203,26 @@ class WorkspaceFileManager:
                              provided_uuid = fixture["fixture_uuid"])
 
         # Add the snippets
-        def add_snippets_to_parent(snippets, parent):
-            for snippet in snippets:
-                match snippet["type"]:
-                    case "cue":
-                        self.window.snippet_manager.create_cue(extra_data=snippet, parent=parent)
-                    case "scene":
-                        self.window.snippet_manager.create_scene(extra_data=snippet, parent=parent)
-                    case "efx_2d":
-                        self.window.snippet_manager.create_efx_2d(extra_data=snippet, parent=parent)
-                    case "rbg_matrix":
-                        self.window.snippet_manager.create_rgb_matrix(extra_data=snippet, parent=parent)
-                    case "script":
-                        self.window.snippet_manager.create_script(extra_data=snippet, parent=parent)
-                    case "directory":
-                        new_parent = self.window.snippet_manager.create_dir(extra_data=snippet, parent=parent)
-                        if "content" in snippet:
-                            add_snippets_to_parent(snippet["content"], new_parent)
-
-        for i, snippet in snippets.items():
+        for snippet in snippets:
             match snippet["type"]:
-                case "cue":
-                    self.window.snippet_manager.create_cue(extra_data=snippet)
                 case "scene":
-                    self.window.snippet_manager.create_scene(extra_data=snippet)
-                case "efx_2d":
-                    self.window.snippet_manager.create_efx_2d(extra_data=snippet)
-                case "rbg_matrix":
-                    self.window.snippet_manager.create_rgb_matrix(extra_data=snippet)
+                    scene_data = SceneData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), fixture_configs=snippet.get("fixture_configs", {}))
+                    self.window.snippet_manager.scene_manager.scene_create(scene_data=scene_data)
+                case "cue":
+                    cue_data = CueData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), keyframes=snippet.get("keyframes", {}))
+                    self.window.snippet_manager.cue_manager.cue_create(cue_data=cue_data)
+                case "two_d_efx":
+                    efx_2d_data = TwoDEfxData(snippet["uuid"], snippet["name"])
+                    self.window.snippet_manager.two_d_efx_manager.two_d_efx_create(two_d_efx_data=efx_2d_data)
+                case "rgb_matrix":
+                    rgb_matrix_data = RgbMatrixData(snippet["uuid"], snippet["name"])
+                    self.window.snippet_manager.rgb_matrix_manager.rgb_matrix_create(rgb_matrix_data=rgb_matrix_data)
                 case "script":
-                    self.window.snippet_manager.create_script(extra_data=snippet)
+                    script_data = ScriptData(snippet["uuid"], snippet["name"])
+                    self.window.snippet_manager.script_manager.script_create(script_data=script_data)
                 case "directory":
-                    parent = self.window.snippet_manager.create_dir(extra_data=snippet)
-                    if "content" in snippet:
-                        add_snippets_to_parent(snippet["content"], parent)
+                    directory_data = DirectoryData(snippet["uuid"], snippet["name"])
+                    self.window.snippet_manager.directory_manager.dir_create(directory_data=directory_data)
 
         # Load the desk configuration
         self.window.control_desk_view.load_desk_configuration(desk_configuration)

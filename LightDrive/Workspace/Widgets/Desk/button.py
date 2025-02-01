@@ -37,7 +37,7 @@ class SnippetLinkingSelection(QDialog):
                 child = source_item.child(i)
                 new_item = QTreeWidgetItem(target_parent)
                 new_item.setText(0, child.text(0))
-                new_item.snippet_uuid = child.extra_data["uuid"]
+                new_item.snippet_uuid = child.uuid
                 add_items(child, new_item)
 
         root = self.window.ui.snippet_selector_tree.invisibleRootItem()
@@ -82,9 +82,9 @@ class DeskButtonConfig(QDialog):
 
         # Set the initial values
         self.ui.label_edit.setText(self.button_label)
-        snippet_data = self.window.snippet_manager.find_snippet_by_uuid(linked_snippet_uuid)
+        snippet_data = self.window.snippet_manager.available_snippets.get(linked_snippet_uuid)
         if snippet_data:
-            self.ui.snippet_edit.setText(snippet_data["name"])
+            self.ui.snippet_edit.setText(snippet_data.name)
         self.ui.hotkey_edit.setText(hotkey)
         if mode == "toggle":
             self.ui.toggle_mode_radio.setChecked(True)
@@ -103,8 +103,8 @@ class DeskButtonConfig(QDialog):
         link_dlg = SnippetLinkingSelection(self.window)
         if link_dlg.exec():
             selected_uuid = link_dlg.snippet_tree.currentItem().snippet_uuid
-            snippet_data = self.window.snippet_manager.find_snippet_by_uuid(selected_uuid)
-            self.ui.snippet_edit.setText(snippet_data["name"])
+            snippet_data = self.window.snippet_manager.available_snippets.get(selected_uuid)
+            self.ui.snippet_edit.setText(snippet_data.name)
             self.linked_snippet_uuid = selected_uuid
 
     def start_key_capture(self) -> None:
@@ -208,7 +208,10 @@ class DeskButton(AbstractDeskItem):
         if self.pressed:
             self.body.setBrush(Qt.darkGray)
             self.body.setPen(QPen(Qt.green, 2))
-            values = self.desk.window.snippet_manager.scene_construct_output_values(self.linked_snippet_uuid)
+            values = {}
+            linked_snippet = self.desk.window.snippet_manager.available_snippets.get(self.linked_snippet_uuid)
+            if linked_snippet.type == "scene":
+                values = self.desk.window.snippet_manager.scene_manager.scene_construct_output_values(self.linked_snippet_uuid)
             if values:
                 self.output_snippet = OutputSnippet(self.desk.window.dmx_output, values)
                 self.desk.window.dmx_output.insert_snippet(self.output_snippet)

@@ -1,7 +1,7 @@
 from workspace_file_manager import WorkspaceFileManager
 from Backend.output import DmxOutput
 from Settings.settings import SettingsDialog
-from Functions.snippet_manager import SnippetManager
+from Workspace.Snippets.snippet_manager import SnippetManager
 from Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
@@ -366,38 +366,38 @@ class Workspace(QMainWindow):
 
         self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.show_editor)
 
-        self.ui.cue_btn.clicked.connect(self.snippet_manager.create_cue)
+        self.ui.cue_btn.clicked.connect(self.snippet_manager.cue_manager.cue_create)
         self.ui.cue_btn.setIcon(QPixmap("Assets/Icons/cue.svg"))
-        self.ui.scene_btn.clicked.connect(self.snippet_manager.create_scene)
+        self.ui.scene_btn.clicked.connect(self.snippet_manager.scene_manager.scene_create)
         self.ui.scene_btn.setIcon(QPixmap("Assets/Icons/scene.svg"))
-        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.create_efx_2d)
+        self.ui.efx_2d_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_create)
         self.ui.efx_2d_btn.setIcon(QPixmap("Assets/Icons/efx_2d.svg"))
-        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.create_rgb_matrix)
+        self.ui.rgb_matrix_btn.clicked.connect(self.snippet_manager.rgb_matrix_manager.rgb_matrix_create)
         self.ui.rgb_matrix_btn.setIcon(QPixmap("Assets/Icons/rgb_matrix.svg"))
-        self.ui.script_btn.clicked.connect(self.snippet_manager.create_script)
+        self.ui.script_btn.clicked.connect(self.snippet_manager.script_manager.script_create)
         self.ui.script_btn.setIcon(QPixmap("Assets/Icons/script.svg"))
-        self.ui.directory_btn.clicked.connect(self.snippet_manager.create_dir)
+        self.ui.directory_btn.clicked.connect(self.snippet_manager.directory_manager.dir_create)
         self.ui.directory_btn.setIcon(QPixmap("Assets/Icons/directory.svg"))
 
-        self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_add_fixture)
+        self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_manager.scene_add_fixture)
         self.ui.scene_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
-        self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_remove_fixture)
+        self.ui.scene_remove_fixture.clicked.connect(self.snippet_manager.scene_manager.scene_remove_fixture)
         self.ui.scene_remove_fixture.setIcon(QPixmap("Assets/Icons/remove.svg"))
-        self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.rename_scene)
-        self.ui.scene_show_btn.clicked.connect(self.snippet_manager.scene_toggle_show)
+        self.ui.scene_name_edit.editingFinished.connect(self.snippet_manager.scene_manager.scene_rename)
+        self.ui.scene_show_btn.clicked.connect(self.snippet_manager.scene_manager.scene_toggle_show)
         self.ui.scene_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
-        self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.rename_cue)
-        self.ui.cue_add_fixture.clicked.connect(self.snippet_manager.cue_add_fixture)
+        self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.cue_manager.cue_rename)
+        self.ui.cue_add_fixture.clicked.connect(self.snippet_manager.cue_manager.cue_add_fixture)
         self.ui.cue_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
-        self.ui.cue_play_btn.clicked.connect(self.snippet_manager.cue_play)
+        self.ui.cue_play_btn.clicked.connect(self.snippet_manager.cue_manager.cue_play)
         self.ui.cue_play_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
-        self.ui.cue_pause_btn.clicked.connect(self.snippet_manager.cue_pause)
+        self.ui.cue_pause_btn.clicked.connect(self.snippet_manager.cue_manager.cue_pause)
         self.ui.cue_pause_btn.setIcon(QPixmap("Assets/Icons/pause.svg"))
-        self.ui.cue_stop_btn.clicked.connect(self.snippet_manager.cue_stop)
+        self.ui.cue_stop_btn.clicked.connect(self.snippet_manager.cue_manager.cue_stop)
         self.ui.cue_stop_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
 
-        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.rename_dir)
+        self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.directory_manager.dir_rename)
 
     def setup_control_desk_page(self) -> None:
         """
