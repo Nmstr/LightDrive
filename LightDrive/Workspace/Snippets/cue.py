@@ -1,3 +1,4 @@
+from Backend.output import OutputSnippet
 from Workspace.Dialogs.snippet_dialogs import SnippetAddFixtureDialog
 from Workspace.Widgets.cue_timeline import CueTimeline
 from Functions.ui import clear_field
@@ -18,6 +19,7 @@ class CueData:
 class CueManager:
     def __init__(self, snippet_manager) -> None:
         self.sm = snippet_manager
+        self.cue_snippet = OutputSnippet(self.sm.window.dmx_output, {})
 
     def cue_display(self, cue_uuid: str) -> None:
         """
@@ -124,3 +126,13 @@ class CueManager:
         :return: None
         """
         self.cue_timeline.stop()
+
+    def cue_toggle_show(self) -> None:
+        """
+        Shows the cue
+        :return: None
+        """
+        if self.sm.window.ui.cue_show_btn.isChecked():
+            self.sm.window.dmx_output.insert_snippet(self.cue_snippet)
+        else:
+            self.sm.window.dmx_output.remove_snippet(self.cue_snippet)
