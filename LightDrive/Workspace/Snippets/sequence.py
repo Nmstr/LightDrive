@@ -120,7 +120,7 @@ class SequenceManager:
             scene_entry.setText(2, scene_snippet.name)
             self.sm.window.ui.sequence_content_tree.addTopLevelItem(scene_entry)
 
-    def sequence_add_scene(self, sequence_uuid = None, scene_uuid = None):
+    def sequence_add_scene(self, sequence_uuid: str = None, scene_uuid: str = None):
         if not sequence_uuid:
             sequence_uuid = self.sm.current_snippet.uuid
         dlg = SequenceAddSceneDialog(self.sm.window)
@@ -132,8 +132,17 @@ class SequenceManager:
             sequence_snippet.scenes.append({"scene_uuid": scene_entry.uuid, "entry_uuid": str(uuid.uuid4()),"duration": 500})
             self._sequence_load_scenes(sequence_snippet.uuid)
 
-    def sequence_remove_scene(self, sequence_uuid = None, scene_uuid = None):
-        print("Remove Scene", sequence_uuid, scene_uuid)
+    def sequence_remove_scene(self, sequence_uuid: str = None, entry_uuid: str = None):
+        if not sequence_uuid:
+            sequence_uuid = self.sm.current_snippet.uuid
+        if not entry_uuid:
+            entry_uuid = self.sm.window.ui.sequence_content_tree.currentItem().entry_uuid
+        sequence_snippet = self.sm.available_snippets.get(sequence_uuid)
+        for scene_config in sequence_snippet.scenes:
+            if scene_config["entry_uuid"] == entry_uuid:
+                sequence_snippet.scenes.remove(scene_config)
+                break
+        self._sequence_load_scenes(sequence_snippet.uuid)
 
     def sequence_toggle_show(self):
         print("Show")
