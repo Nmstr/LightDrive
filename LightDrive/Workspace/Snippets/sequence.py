@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox, QTreeWidget, QTreeWidgetItem, QTableWidgetItem
+from PySide6.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
