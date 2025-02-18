@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox, QTreeWidget, QTreeWidgetItem, QTableWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
@@ -9,7 +9,50 @@ class SequenceData:
     uuid: str
     name: str
     type: str = field(default="sequence", init=False)
-    scenes: dict  # e.g.: {scene_uuid: {"duration": 5}}
+    scenes: list[dict]  # [{"scene_uuid": "---", "entry_uuid": "---", "duration": 500}, ...]
+
+class SequenceAddSceneDialog(QDialog):
+    def __init__(self, window) -> None:
+        self.window = window
+        self.selected_scenes = None
+        super().__init__()
+        self.setWindowTitle("LightDrive - Add Scene to Sequence")
+
+        layout = QVBoxLayout()
+        self.scene_selection_tree = QTreeWidget()
+        self.scene_selection_tree.setHeaderHidden(True)
+        self.scene_selection_tree.itemDoubleClicked.connect(self.accept)
+        layout.addWidget(self.scene_selection_tree)
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+        self.load_scenes()
+
+    def load_scenes(self) -> None:
+        """
+        Loads all (non-added) scenes and shows them in the scene_selection_tree
+        :return: None
+        """
+        for snippet_uuid, snippet in self.window.snippet_manager.available_snippets.items():
+            if snippet.type != "scene":
+                continue
+
+            # Add the scene to the tree
+            scene_entry = QTreeWidgetItem()
+            scene_entry.uuid = snippet_uuid
+            scene_entry.setText(0, snippet.name)
+            self.scene_selection_tree.addTopLevelItem(scene_entry)
+
+    def accept(self) -> None:
+        """
+        Accept the dialog to add the selected scenes to the sequence
+        :return:
+        """
+        self.selected_scenes = self.scene_selection_tree.selectedItems()
+        super().accept()
 
 class SequenceManager:
     def __init__(self, snippet_manager) -> None:
@@ -21,7 +64,8 @@ class SequenceManager:
         :param sequence_uuid: The uuid of the sequence to display
         :return: None
         """
-        print(sequence_uuid)
+        sequence_snippet = self.sm.available_snippets.get(sequence_uuid)
+        self._sequence_load_scenes(sequence_snippet.uuid)
 
     def sequence_create(self, *, parent: QTreeWidgetItem = None, sequence_data: SequenceData = None) -> None:
         """
@@ -58,8 +102,35 @@ class SequenceManager:
         sequence_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
+    def _sequence_load_scenes(self, sequence_uuid: str) -> None:
+        """
+        Loads the scenes that are in a sequence specified by the sequence_uuid to the sequence_content_tree
+        :param sequence_uuid: The scenes to load
+        :return: None
+        """
+        self.sm.window.ui.sequence_content_tree.clear()
+
+        sequence_snippet = self.sm.available_snippets.get(sequence_uuid)
+        for scene_config in sequence_snippet.scenes:
+            scene_entry = QTreeWidgetItem()
+            scene_entry.entry_uuid = scene_config["entry_uuid"]
+            scene_entry.setText(0, str(sequence_snippet.scenes.index(scene_config) + 1))
+            scene_entry.setText(1, f"{scene_config['duration']}ms")
+            scene_snippet = self.sm.available_snippets.get(scene_config["scene_uuid"])
+            scene_entry.setText(2, scene_snippet.name)
+            self.sm.window.ui.sequence_content_tree.addTopLevelItem(scene_entry)
+
     def sequence_add_scene(self, sequence_uuid = None, scene_uuid = None):
-        print("Add Scene", sequence_uuid, scene_uuid)
+        if not sequence_uuid:
+            sequence_uuid = self.sm.current_snippet.uuid
+        dlg = SequenceAddSceneDialog(self.sm.window)
+        if not dlg.exec():
+            return
+
+        sequence_snippet = self.sm.available_snippets.get(sequence_uuid)
+        for scene_entry in dlg.selected_scenes:
+            sequence_snippet.scenes.append({"scene_uuid": scene_entry.uuid, "entry_uuid": str(uuid.uuid4()),"duration": 500})
+            self._sequence_load_scenes(sequence_snippet.uuid)
 
     def sequence_remove_scene(self, sequence_uuid = None, scene_uuid = None):
         print("Remove Scene", sequence_uuid, scene_uuid)
