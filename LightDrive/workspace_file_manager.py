@@ -1,4 +1,5 @@
 from Workspace.Snippets.scene import SceneData
+from Workspace.Snippets.sequence import SequenceData
 from Workspace.Snippets.cue import CueData
 from Workspace.Snippets.rgb_matrix import RgbMatrixData
 from Workspace.Snippets.script import ScriptData
@@ -208,6 +209,9 @@ class WorkspaceFileManager:
                 case "scene":
                     scene_data = SceneData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), fixture_configs=snippet.get("fixture_configs", {}))
                     self.window.snippet_manager.scene_manager.scene_create(scene_data=scene_data)
+                case "sequence":
+                    sequence_data = SequenceData(snippet["uuid"], snippet["name"], scenes=snippet.get("scenes", {}))
+                    self.window.snippet_manager.sequence_manager.sequence_create(sequence_data=sequence_data)
                 case "cue":
                     cue_data = CueData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), keyframes=snippet.get("keyframes", {}))
                     self.window.snippet_manager.cue_manager.cue_create(cue_data=cue_data)

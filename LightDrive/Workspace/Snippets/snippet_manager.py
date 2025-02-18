@@ -1,4 +1,5 @@
 from Workspace.Snippets.scene import SceneManager
+from Workspace.Snippets.sequence import SequenceManager
 from Workspace.Snippets.cue import CueManager
 from Workspace.Snippets.rgb_matrix import RgbMatrixManager
 from Workspace.Snippets.script import ScriptManager
@@ -19,6 +20,7 @@ class SnippetManager:
         self.window = window
 
         self.scene_manager = SceneManager(self)
+        self.sequence_manager = SequenceManager(self)
         self.cue_manager = CueManager(self)
         self.rgb_matrix_manager = RgbMatrixManager(self)
         self.script_manager = ScriptManager(self)
@@ -63,6 +65,10 @@ class SnippetManager:
                 self.window.ui.snippet_editor.setCurrentIndex(6)
                 self.window.ui.scene_name_edit.setText(self.current_snippet.name)
                 self.scene_manager.scene_display(self.current_snippet.uuid)
+            case "sequence":
+                self.window.ui.snippet_editor.setCurrentIndex(7)
+                self.window.ui.sequence_name_edit.setText(self.current_snippet.name)
+                self.sequence_manager.sequence_display(self.current_snippet.uuid)
             case "two_d_efx":
                 self.window.ui.snippet_editor.setCurrentIndex(3)
             case "rgb_matrix":

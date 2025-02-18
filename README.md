@@ -22,8 +22,9 @@ large number of lights.
   - 🚧 Creation of custom fixtures
   - ❌ Large selection of pre-defined fixtures
 - 🚧 Snippets
-  - 🚧 Cues
   - ✅ Scenes
+  - 🚧 Sequences
+  - 🚧 Cues
   - ❌ 2d Efx
   - ❌ RGB Matrix
   - ❌ Scripts
