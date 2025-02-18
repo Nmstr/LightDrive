@@ -24,11 +24,16 @@ class Workspace(QMainWindow):
         self.available_fixtures =  []
         self.control_desk_view = None
         self.live_mode = False
-        self.snippet_manager = SnippetManager(self)
         super().__init__()
 
+        # Setup output
+        self.dmx_output = DmxOutput(self)
+
+        # Setup snippet manager
+        self.snippet_manager = SnippetManager(self)
+
+        # Setup gui
         self.setup_main_window()
-        # Setup pages
         self.setup_fixture_page()
         self.setup_console_page()
         self.setup_io_page()
@@ -38,9 +43,6 @@ class Workspace(QMainWindow):
         # Setup hotkeys
         self.save_hotkey = QShortcut(QKeySequence.Save, self)
         self.save_hotkey.activated.connect(lambda: self.workspace_file_manager.save_workspace())
-
-        # Setup output
-        self.dmx_output = DmxOutput(self)
 
         self.workspace_file_manager = WorkspaceFileManager(self, app, EXIT_CODE_REBOOT, current_workspace_file)
         # Open any workspace if rebooted after workspace was opened
@@ -396,6 +398,8 @@ class Workspace(QMainWindow):
         self.ui.cue_pause_btn.setIcon(QPixmap("Assets/Icons/pause.svg"))
         self.ui.cue_stop_btn.clicked.connect(self.snippet_manager.cue_manager.cue_stop)
         self.ui.cue_stop_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
+        self.ui.cue_show_btn.clicked.connect(self.snippet_manager.cue_manager.cue_toggle_show)
+        self.ui.cue_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.directory_manager.dir_rename)
 

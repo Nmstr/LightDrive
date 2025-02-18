@@ -228,6 +228,14 @@ class MajorTrack(QGraphicsRectItem):
             self.cue_timeline.scene.addItem(line)
             self.lines.append(line)
 
+    def value_at_frame(self, frame: int) -> int | None:
+        self.keyframes.sort(key=lambda kf: kf.frame)
+        for i in range(len(self.keyframes) - 1):
+            if self.keyframes[i].frame <= frame <= self.keyframes[i + 1].frame:
+                kf1, kf2 = self.keyframes[i], self.keyframes[i + 1]
+                t = (frame - kf1.frame) / (kf2.frame - kf1.frame)
+                return 255 - round(kf1.value + t * (kf2.value - kf1.value))
+
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
         Adds a keyframe on right-click
@@ -250,6 +258,13 @@ class MinorTrack(QGraphicsRectItem):
         self.track_number = channel_number + 1
         self.keyframes = []
         self.lines = []
+
+        # Set the fixture address so it can be used when updating the output snippet
+        self.fixture_address = None
+        for fixture in self.track.cue_timeline.window.available_fixtures:
+            if fixture["fixture_uuid"] == self.track.fixture_symbol.fixture_uuid:
+                self.fixture_address = fixture["address"]
+                break
 
         # Create the track
         self.setRect(0, 0, self.track.cue_timeline.track_length, self.track.cue_timeline.track_y_size)
@@ -277,6 +292,14 @@ class MinorTrack(QGraphicsRectItem):
             line = KeyframeLine(self.keyframes[i], self.keyframes[i + 1])
             self.track.cue_timeline.scene.addItem(line)
             self.lines.append(line)
+
+    def value_at_frame(self, frame: int) -> int | None:
+        self.keyframes.sort(key=lambda kf: kf.frame)
+        for i in range(len(self.keyframes) - 1):
+            if self.keyframes[i].frame <= frame <= self.keyframes[i + 1].frame:
+                kf1, kf2 = self.keyframes[i], self.keyframes[i + 1]
+                t = (frame - kf1.frame) / (kf2.frame - kf1.frame)
+                return 255 - round(kf1.value + t * (kf2.value - kf1.value))
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -550,3 +573,24 @@ class CueTimeline(QGraphicsView):
                 break
         # Update the virtual frame label
         self.window.ui.cue_virtual_frame_label.setText(f"Virtual Frame: {frame}")
+
+        # Construct the output values
+        output = {}
+        for track in self.tracks:
+            # Print universe of the fixture
+            fixture_universe = None
+            for fixture in self.window.available_fixtures:
+                if fixture["fixture_uuid"] == track.fixture_symbol.fixture_uuid:
+                    fixture_universe = fixture["universe"]
+                    if fixture_universe not in output:
+                        output[fixture_universe] = {}
+                    break
+            position_max_value = track.value_at_frame(frame)
+            if position_max_value is None:
+                position_max_value = 255
+            for minor_track in track.minor_tracks:
+                position_value = minor_track.value_at_frame(frame)
+                if position_value is not None:
+                    new_value = position_value if position_value < position_max_value else position_max_value
+                    output[fixture_universe][minor_track.track_number + minor_track.fixture_address - 1] = new_value
+        self.window.snippet_manager.cue_manager.cue_snippet.update_values(output)
