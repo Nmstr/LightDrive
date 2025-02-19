@@ -120,7 +120,12 @@ class SequenceManager:
             scene_entry.setText(2, scene_snippet.name)
             self.sm.window.ui.sequence_content_tree.addTopLevelItem(scene_entry)
 
-    def sequence_add_scene(self, sequence_uuid: str = None, scene_uuid: str = None):
+    def sequence_add_scene(self, sequence_uuid: str = None) -> None:
+        """
+        Adds a scene to the sequence
+        :param sequence_uuid: The UUID of the sequence to add the scene to (if not set, the current selected sequence is used)
+        :return: None
+        """
         if not sequence_uuid:
             sequence_uuid = self.sm.current_snippet.uuid
         dlg = SequenceAddSceneDialog(self.sm.window)
@@ -132,7 +137,13 @@ class SequenceManager:
             sequence_snippet.scenes.append({"scene_uuid": scene_entry.uuid, "entry_uuid": str(uuid.uuid4()),"duration": 500})
             self._sequence_load_scenes(sequence_snippet.uuid)
 
-    def sequence_remove_scene(self, sequence_uuid: str = None, entry_uuid: str = None):
+    def sequence_remove_scene(self, sequence_uuid: str = None, entry_uuid: str = None) -> None:
+        """
+        Removes a scene from the sequence
+        :param sequence_uuid: The UUID of the sequence to remove the scene from
+        :param entry_uuid: The UUID of the scene to remove
+        :return: None
+        """
         if not sequence_uuid:
             sequence_uuid = self.sm.current_snippet.uuid
         if not entry_uuid:
@@ -145,6 +156,14 @@ class SequenceManager:
         self._sequence_load_scenes(sequence_snippet.uuid)
 
     def _sequence_move_shared(self, sequence_uuid: str = None, entry_uuid: str = None) -> tuple | None:
+        """
+        Shared code for moving an entry in a sequence
+        First checks if sequence_uuid and entry_uuid are set and if not, sets them to the current sequence and entry
+        Then finds the current entry in the sequence and returns the sequence snippet and entry
+        :param sequence_uuid: The UUID of the sequence to move the entry in
+        :param entry_uuid: The UUID of the entry to move
+        :return: The sequence snippet and entry
+        """
         # Ensure that the sequence_uuid and entry_uuid are set
         if not sequence_uuid:
             sequence_uuid = self.sm.current_snippet.uuid
@@ -165,6 +184,12 @@ class SequenceManager:
         return sequence_snippet, entry
 
     def sequence_move_up(self, sequence_uuid: str = None, entry_uuid: str = None) -> None:
+        """
+        Moves an entry up in the sequence
+        :param sequence_uuid: The UUID of the sequence to move the entry in
+        :param entry_uuid: The UUID of the entry to move
+        :return:
+        """
         sequence_snippet, entry = self._sequence_move_shared(sequence_uuid, entry_uuid)
         if sequence_snippet is None:
             return  # Either no sequence snippet or entry found
@@ -181,6 +206,12 @@ class SequenceManager:
         self.sm.window.ui.sequence_content_tree.setCurrentItem(self.sm.window.ui.sequence_content_tree.topLevelItem(index - 1))
 
     def sequence_move_down(self, sequence_uuid: str = None, entry_uuid: str = None) -> None:
+        """
+        Moves an entry down in the sequence
+        :param sequence_uuid: The UUID of the sequence to move the entry in
+        :param entry_uuid: The UUID of the entry to move
+        :return: None
+        """
         sequence_snippet, entry = self._sequence_move_shared(sequence_uuid, entry_uuid)
 
         # Move the entry down in the sequence
