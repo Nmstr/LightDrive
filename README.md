@@ -28,7 +28,7 @@ large number of lights.
   - ❌ 2d Efx
   - ❌ RGB Matrix
   - ❌ Scripts
-  - ✅ Directories
+  - 🚧 Directories
 - 🚧 Console (Live individual channel control)
 - ❌ Show Creator (Fully timed light shows to music)
 - 🚧 Control Desk (Virtual lighting console)

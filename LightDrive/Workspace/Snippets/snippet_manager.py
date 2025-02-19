@@ -39,11 +39,7 @@ class SnippetManager:
             parent.addChild(item)
             parent.setExpanded(True)
             return
-        if selector_tree.selectedItems() and selector_tree.selectedItems()[0].extra_data["type"] == "directory":
-            selector_tree.selectedItems()[0].addChild(item)
-            selector_tree.selectedItems()[0].setExpanded(True)
-        else:
-            selector_tree.addTopLevelItem(item)
+        selector_tree.addTopLevelItem(item)
         self.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
 
     def show_editor(self, item) -> None:
