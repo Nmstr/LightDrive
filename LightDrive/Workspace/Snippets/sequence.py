@@ -226,7 +226,7 @@ class SequenceManager:
         self._sequence_load_scenes(sequence_snippet.uuid)
         self.sm.window.ui.sequence_content_tree.setCurrentItem(self.sm.window.ui.sequence_content_tree.topLevelItem(index + 1))
 
-    def sequence_toggle_show(self):
+    def sequence_toggle_show(self) -> None:
         """
         Toggles whether the sequence is outputted over DMX
         :return: None
