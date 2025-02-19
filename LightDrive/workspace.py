@@ -417,6 +417,7 @@ class Workspace(QMainWindow):
         self.ui.cue_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
         self.ui.two_d_efx_name_edit.editingFinished.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_rename)
+        self.ui.two_d_efx_pattern_combo.currentTextChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_pattern)
         self.ui.two_d_efx_show_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_toggle_show)
         self.ui.two_d_efx_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 

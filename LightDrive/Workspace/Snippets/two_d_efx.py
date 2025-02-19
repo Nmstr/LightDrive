@@ -1,6 +1,6 @@
 from Functions.ui import clear_field
-from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem
-from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, QGraphicsPathItem
+from PySide6.QtGui import QPixmap, QPen, QPainterPath
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
 import uuid
@@ -31,10 +31,45 @@ class TwoDEfxMovementDisplay(QGraphicsView):
         self.vertical_line = QGraphicsLineItem(255, 511, 255, 0)
         self.scene.addItem(self.vertical_line)
 
+        self.path = None
+
+    def change_pattern(self, pattern: str) -> None:
+        """
+        Changes the pattern of the 2d efx
+        :param pattern: The new pattern
+        :return: None
+        """
+        if self.path:
+            self.scene.removeItem(self.path)
+        painter_path = None
+        if pattern == "Circle":
+            painter_path = QPainterPath()
+            painter_path.addEllipse(0, 0, 511, 511)
+        elif pattern == "Square":
+            painter_path = QPainterPath()
+            painter_path.addRect(0, 0, 511, 511)
+        elif pattern == "Triangle":
+            painter_path = QPainterPath()
+            painter_path.moveTo(255, 0)
+            painter_path.lineTo(511, 511)
+            painter_path.lineTo(0, 511)
+            painter_path.lineTo(255, 0)
+        elif pattern == "Line":
+            painter_path = QPainterPath()
+            painter_path.moveTo(0, 255)
+            painter_path.lineTo(511, 255)
+        elif pattern == "Eight":
+            painter_path = QPainterPath()
+            # TODO: Implement eight pattern
+        if painter_path:
+            self.path = QGraphicsPathItem(painter_path)
+            self.path.setPen(QPen(Qt.white, 2))
+            self.scene.addItem(self.path)
+
 class TwoDEfxManager:
     def __init__(self, snippet_manager) -> None:
         self.sm = snippet_manager
-        self.two_d_efx_snippet = None
+        self.two_d_efx_movement_display = None
 
     def two_d_efx_display(self, two_d_efx_uuid: str = None) -> None:
         print(two_d_efx_uuid)
@@ -77,6 +112,18 @@ class TwoDEfxManager:
         two_d_efx_entry = self.sm.find_snippet_entry_by_uuid(two_d_efx_uuid)
         two_d_efx_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def two_d_efx_change_pattern(self, pattern: str, two_d_efx_uuid: str = None) -> None:
+        """
+        Changes the pattern of the 2d efx with the given UUID to the new pattern
+        :param pattern: The new pattern of the 2d efx
+        :param two_d_efx_uuid: The UUID of the 2d efx to change the pattern of
+        :return: None
+        """
+        if not two_d_efx_uuid:
+            two_d_efx_uuid = self.sm.current_snippet.uuid
+        if self.two_d_efx_movement_display:
+            self.two_d_efx_movement_display.change_pattern(pattern)
 
     def two_d_efx_toggle_show(self) -> None:
         """

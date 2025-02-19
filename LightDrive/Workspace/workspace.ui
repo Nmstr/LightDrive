@@ -774,7 +774,7 @@
                      </widget>
                     </item>
                     <item row="0" column="1" colspan="2">
-                     <widget class="QComboBox" name="two_d_efxpattern_combo">
+                     <widget class="QComboBox" name="two_d_efx_pattern_combo">
                       <item>
                        <property name="text">
                         <string>Circle</string>
