@@ -187,8 +187,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
-            <height>20</height>
+            <width>100</width>
+            <height>30</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -780,6 +780,20 @@
                   <widget class="QPushButton" name="sequence_remove_btn">
                    <property name="text">
                     <string>Remove Scene</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="sequence_move_up_btn">
+                   <property name="text">
+                    <string>Move Up</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="sequence_move_down_btn">
+                   <property name="text">
+                    <string>Move Down</string>
                    </property>
                   </widget>
                  </item>

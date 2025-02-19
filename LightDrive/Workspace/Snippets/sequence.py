@@ -144,5 +144,55 @@ class SequenceManager:
                 break
         self._sequence_load_scenes(sequence_snippet.uuid)
 
+    def _sequence_move_shared(self, sequence_uuid: str = None, entry_uuid: str = None) -> tuple | None:
+        # Ensure that the sequence_uuid and entry_uuid are set
+        if not sequence_uuid:
+            sequence_uuid = self.sm.current_snippet.uuid
+        if not entry_uuid:
+            if not self.sm.window.ui.sequence_content_tree.currentItem():
+                return None
+            entry_uuid = self.sm.window.ui.sequence_content_tree.currentItem().entry_uuid
+
+        # Find the current entry in the sequence
+        sequence_snippet = self.sm.available_snippets.get(sequence_uuid)
+        entry = None
+        for scene_config in sequence_snippet.scenes:
+            if scene_config["entry_uuid"] == entry_uuid:
+                entry = scene_config
+                break
+        if not entry:
+            return None
+        return sequence_snippet, entry
+
+    def sequence_move_up(self, sequence_uuid: str = None, entry_uuid: str = None) -> None:
+        sequence_snippet, entry = self._sequence_move_shared(sequence_uuid, entry_uuid)
+        if sequence_snippet is None:
+            return  # Either no sequence snippet or entry found
+
+        # Move the entry up in the sequence
+        index = sequence_snippet.scenes.index(entry)
+        if index == 0:
+            return  # Already at the top
+        sequence_snippet.scenes.pop(index)
+        sequence_snippet.scenes.insert(index - 1, entry)
+
+        # Update the ui
+        self._sequence_load_scenes(sequence_snippet.uuid)
+        self.sm.window.ui.sequence_content_tree.setCurrentItem(self.sm.window.ui.sequence_content_tree.topLevelItem(index - 1))
+
+    def sequence_move_down(self, sequence_uuid: str = None, entry_uuid: str = None) -> None:
+        sequence_snippet, entry = self._sequence_move_shared(sequence_uuid, entry_uuid)
+
+        # Move the entry down in the sequence
+        index = sequence_snippet.scenes.index(entry)
+        if index == len(sequence_snippet.scenes) - 1:
+            return  # Already at the bottom
+        sequence_snippet.scenes.pop(index)
+        sequence_snippet.scenes.insert(index + 1, entry)
+
+        # Update the ui
+        self._sequence_load_scenes(sequence_snippet.uuid)
+        self.sm.window.ui.sequence_content_tree.setCurrentItem(self.sm.window.ui.sequence_content_tree.topLevelItem(index + 1))
+
     def sequence_toggle_show(self):
         print("Show")

@@ -398,6 +398,10 @@ class Workspace(QMainWindow):
         self.ui.sequence_remove_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
         self.ui.sequence_show_btn.clicked.connect(self.snippet_manager.sequence_manager.sequence_toggle_show)
         self.ui.sequence_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
+        self.ui.sequence_move_up_btn.clicked.connect(self.snippet_manager.sequence_manager.sequence_move_up)
+        self.ui.sequence_move_up_btn.setIcon(QPixmap("Assets/Icons/arrow_up.svg"))
+        self.ui.sequence_move_down_btn.clicked.connect(self.snippet_manager.sequence_manager.sequence_move_down)
+        self.ui.sequence_move_down_btn.setIcon(QPixmap("Assets/Icons/arrow_down.svg"))
 
         self.ui.cue_name_edit.editingFinished.connect(self.snippet_manager.cue_manager.cue_rename)
         self.ui.cue_add_fixture.clicked.connect(self.snippet_manager.cue_manager.cue_add_fixture)
