@@ -1,7 +1,8 @@
 from Functions.ui import clear_field
-from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, QGraphicsPathItem
+from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, \
+    QGraphicsPathItem, QGraphicsEllipseItem
 from PySide6.QtGui import QPixmap, QPen, QPainterPath
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from dataclasses import dataclass, field
 import uuid
 
@@ -32,6 +33,15 @@ class TwoDEfxMovementDisplay(QGraphicsView):
         self.scene.addItem(self.vertical_line)
 
         self.path = None
+        self.tracer_dot = QGraphicsEllipseItem(0, 0, 20, 20)
+        self.tracer_dot.setBrush(Qt.red)
+        self.tracer_dot.setZValue(1)
+        self.scene.addItem(self.tracer_dot)
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_tracer_dot_position)
+        self.angle = 0
+
         self.change_pattern(self.two_d_efx_snippet.pattern)
 
     def change_pattern(self, pattern: str) -> None:
@@ -66,6 +76,14 @@ class TwoDEfxMovementDisplay(QGraphicsView):
             self.path = QGraphicsPathItem(painter_path)
             self.path.setPen(QPen(Qt.white, 2))
             self.scene.addItem(self.path)
+            self.timer.start(8)
+
+    def update_tracer_dot_position(self) -> None:
+        if self.path:
+            length = self.path.path().length()
+            point = self.path.path().pointAtPercent((self.angle % length) / length)
+            self.tracer_dot.setPos(point.x() - 10, point.y() - 10)  # Adjust by half of the dot's width and height
+            self.angle += 1
 
 class TwoDEfxManager:
     def __init__(self, snippet_manager) -> None:
