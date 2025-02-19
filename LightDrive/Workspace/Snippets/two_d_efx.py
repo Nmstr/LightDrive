@@ -17,10 +17,10 @@ class TwoDEfxData:
     y_offset: int
 
 class TwoDEfxMovementDisplay(QGraphicsView):
-    def __init__(self, window, two_d_efx_data: TwoDEfxData) -> None:
+    def __init__(self, window, two_d_efx_snippet: TwoDEfxData) -> None:
         super().__init__(window)
         self.window = window
-        self.two_d_efx_data = two_d_efx_data
+        self.two_d_efx_snippet = two_d_efx_snippet
 
         self.scene = QGraphicsScene(window)
         self.setSceneRect(0, 0, 511, 511)
@@ -32,6 +32,7 @@ class TwoDEfxMovementDisplay(QGraphicsView):
         self.scene.addItem(self.vertical_line)
 
         self.path = None
+        self.change_pattern(self.two_d_efx_snippet.pattern)
 
     def change_pattern(self, pattern: str) -> None:
         """
@@ -89,7 +90,7 @@ class TwoDEfxManager:
         efx_2d_entry.setIcon(0, QPixmap("Assets/Icons/efx_2d.svg"))
         if not two_d_efx_data:
             two_2_efx_uuid = str(uuid.uuid4())
-            two_d_efx_data = TwoDEfxData(two_2_efx_uuid, "New 2D Efx", "circle", 512, 512, 0, 0)
+            two_d_efx_data = TwoDEfxData(two_2_efx_uuid, "New 2D Efx", "Circle", 512, 512, 0, 0)
         efx_2d_entry.uuid = two_d_efx_data.uuid
         self.sm.available_snippets[two_d_efx_data.uuid] = two_d_efx_data
 
@@ -122,6 +123,7 @@ class TwoDEfxManager:
         """
         if not two_d_efx_uuid:
             two_d_efx_uuid = self.sm.current_snippet.uuid
+        self.sm.available_snippets[two_d_efx_uuid].pattern = pattern
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.change_pattern(pattern)
 
