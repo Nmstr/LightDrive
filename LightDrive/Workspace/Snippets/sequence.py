@@ -1,3 +1,4 @@
+from Backend.snippets import SequenceOutputSnippet
 from PySide6.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
@@ -226,4 +227,18 @@ class SequenceManager:
         self.sm.window.ui.sequence_content_tree.setCurrentItem(self.sm.window.ui.sequence_content_tree.topLevelItem(index + 1))
 
     def sequence_toggle_show(self):
-        print("Show")
+        """
+        Toggles whether the sequence is outputted over DMX
+        :return: None
+        """
+        if self.sm.current_display_snippet is not None:  # Remove the current display snippet if it exists
+            self.sm.window.dmx_output.remove_snippet(self.sm.current_display_snippet)
+            self.sm.current_display_snippet = None
+
+        if self.sm.window.ui.sequence_show_btn.isChecked():  # Add the new snippet if necessary
+            # Select the first item, if none is selected
+            if not self.sm.window.ui.sequence_content_tree.currentItem():
+                self.sm.window.ui.sequence_content_tree.setCurrentItem(self.sm.window.ui.sequence_content_tree.topLevelItem(0))
+            current_item_index = self.sm.window.ui.sequence_content_tree.indexOfTopLevelItem(self.sm.window.ui.sequence_content_tree.currentItem())
+            self.sm.current_display_snippet = SequenceOutputSnippet(self.sm.window, self.sm.current_snippet.uuid, current_item_index, True)
+            self.sm.window.dmx_output.insert_snippet(self.sm.current_display_snippet)
