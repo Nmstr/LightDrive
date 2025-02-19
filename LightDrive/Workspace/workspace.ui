@@ -734,7 +734,14 @@
                      </spacer>
                     </item>
                     <item row="6" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_y_offset_spin"/>
+                     <widget class="QSpinBox" name="two_d_efx_y_offset_spin">
+                      <property name="minimum">
+                       <number>-1000</number>
+                      </property>
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="4" column="0">
                      <widget class="QLabel" name="two_d_efx_height_label">
@@ -744,7 +751,11 @@
                      </widget>
                     </item>
                     <item row="4" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_height_spin"/>
+                     <widget class="QSpinBox" name="two_d_efx_height_spin">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="0" column="0">
                      <widget class="QLabel" name="two_d_efx_pattern_label">
@@ -754,10 +765,24 @@
                      </widget>
                     </item>
                     <item row="5" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_x_offset_spin"/>
+                     <widget class="QSpinBox" name="two_d_efx_x_offset_spin">
+                      <property name="minimum">
+                       <number>-1000</number>
+                      </property>
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="value">
+                       <number>0</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="3" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_width_spin"/>
+                     <widget class="QSpinBox" name="two_d_efx_width_spin">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="3" column="0">
                      <widget class="QLabel" name="two_d_efx_width_label">

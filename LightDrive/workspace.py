@@ -418,6 +418,10 @@ class Workspace(QMainWindow):
 
         self.ui.two_d_efx_name_edit.editingFinished.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_rename)
         self.ui.two_d_efx_pattern_combo.currentTextChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_pattern)
+        self.ui.two_d_efx_width_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_width)
+        self.ui.two_d_efx_height_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_height)
+        self.ui.two_d_efx_x_offset_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_x_offset)
+        self.ui.two_d_efx_y_offset_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_y_offset)
         self.ui.two_d_efx_show_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_toggle_show)
         self.ui.two_d_efx_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
