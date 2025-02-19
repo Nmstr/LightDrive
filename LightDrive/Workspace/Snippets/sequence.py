@@ -1,5 +1,5 @@
 from Backend.snippets import SequenceOutputSnippet
-from PySide6.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
+from PySide6.QtWidgets import QVBoxLayout, QDialog, QInputDialog, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
@@ -154,6 +154,42 @@ class SequenceManager:
             if scene_config["entry_uuid"] == entry_uuid:
                 sequence_snippet.scenes.remove(scene_config)
                 break
+        self._sequence_load_scenes(sequence_snippet.uuid)
+
+    def sequence_edit_entry_duration_wrapper(self) -> None:
+        """
+        This function just calls sequence_edit_entry_duration
+        It is needed to discard the default arguments when calling the function from the UI
+        :return:
+        """
+        self.sequence_edit_entry_duration()
+
+    def sequence_edit_entry_duration(self, sequence_uuid: str = None, entry_uuid: str = None, duration: int = None):
+        """
+        Changes the duration an entry is shown in the sequence for
+        :param sequence_uuid: The UUID of the sequence to change the entry duration in
+        :param entry_uuid: The UUID of the entry to change the duration of
+        :param duration: The new duration in ms
+        :return: None
+        """
+        # Ensure that the sequence_uuid, entry_uuid and duration are set
+        if not sequence_uuid:
+            sequence_uuid = self.sm.current_snippet.uuid
+        if not entry_uuid:
+            if not self.sm.window.ui.sequence_content_tree.currentItem():
+                return None
+            entry_uuid = self.sm.window.ui.sequence_content_tree.currentItem().entry_uuid
+        if not duration:
+            dlg = QInputDialog()
+            duration, ok = dlg.getInt(self.sm.window, "LightDrive - Edit Entry Duration", "Duration (ms):", 500, 0, 1000000, 1)
+
+        # Change the duration of the entry
+        sequence_snippet = self.sm.available_snippets.get(sequence_uuid)
+        for scene_config in sequence_snippet.scenes:
+            if scene_config["entry_uuid"] == entry_uuid:
+                scene_config["duration"] = duration
+                break
+        # Update the ui
         self._sequence_load_scenes(sequence_snippet.uuid)
 
     def _sequence_move_shared(self, sequence_uuid: str = None, entry_uuid: str = None) -> tuple | None:

@@ -392,6 +392,7 @@ class Workspace(QMainWindow):
         self.ui.scene_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
         self.ui.sequence_name_edit.editingFinished.connect(self.snippet_manager.sequence_manager.sequence_rename)
+        self.ui.sequence_content_tree.itemDoubleClicked.connect(self.snippet_manager.sequence_manager.sequence_edit_entry_duration_wrapper)
         self.ui.sequence_add_btn.clicked.connect(self.snippet_manager.sequence_manager.sequence_add_scene)
         self.ui.sequence_add_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.sequence_remove_btn.clicked.connect(self.snippet_manager.sequence_manager.sequence_remove_scene)
