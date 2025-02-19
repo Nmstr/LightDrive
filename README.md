@@ -23,7 +23,7 @@ large number of lights.
   - ❌ Large selection of pre-defined fixtures
 - 🚧 Snippets
   - ✅ Scenes
-  - 🚧 Sequences
+  - ✅ Sequences
   - 🚧 Cues
   - ❌ 2d Efx
   - ❌ RGB Matrix
