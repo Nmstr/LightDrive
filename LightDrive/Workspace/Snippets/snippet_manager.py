@@ -67,6 +67,8 @@ class SnippetManager:
                 self.sequence_manager.sequence_display(self.current_snippet.uuid)
             case "two_d_efx":
                 self.window.ui.snippet_editor.setCurrentIndex(3)
+                self.window.ui.two_d_efx_name_edit.setText(self.current_snippet.name)
+                self.two_d_efx_manager.two_d_efx_display(self.current_snippet.uuid)
             case "rgb_matrix":
                 self.window.ui.snippet_editor.setCurrentIndex(4)
             case "script":
