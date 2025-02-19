@@ -78,7 +78,7 @@ class SequenceManager:
         sequence_entry.setIcon(0, QPixmap("Assets/Icons/sequence.svg"))
         if not sequence_data:
             cue_uuid = str(uuid.uuid4())
-            sequence_data = SequenceData(cue_uuid, "New Sequence", scenes={})
+            sequence_data = SequenceData(cue_uuid, "New Sequence", scenes=[])
         sequence_entry.uuid = sequence_data.uuid
         self.sm.available_snippets[sequence_data.uuid] = sequence_data
 
