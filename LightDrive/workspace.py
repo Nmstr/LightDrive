@@ -422,6 +422,7 @@ class Workspace(QMainWindow):
         self.ui.two_d_efx_height_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_height)
         self.ui.two_d_efx_x_offset_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_x_offset)
         self.ui.two_d_efx_y_offset_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_y_offset)
+        self.ui.two_d_efx_fixture_list.itemDoubleClicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_edit_fixture_mapping_wrapper)
         self.ui.two_d_efx_add_fixture_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_add_fixture)
         self.ui.two_d_efx_add_fixture_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
         self.ui.two_d_efx_remove_fixture_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_remove_fixture)

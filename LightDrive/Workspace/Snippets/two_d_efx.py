@@ -1,6 +1,7 @@
 from Functions.ui import clear_field
 from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, \
-    QGraphicsPathItem, QGraphicsEllipseItem, QGraphicsTextItem, QDialog, QDialogButtonBox, QTreeWidget, QListWidgetItem
+    QGraphicsPathItem, QGraphicsEllipseItem, QGraphicsTextItem, QDialog, QDialogButtonBox, QTreeWidget, \
+    QListWidgetItem, QFrame, QHBoxLayout, QLabel, QComboBox
 from PySide6.QtGui import QPixmap, QPen, QPainterPath
 from PySide6.QtCore import Qt, QTimer
 from dataclasses import dataclass, field
@@ -70,6 +71,52 @@ class TwoDEfxAddFixtureDialog(QDialog):
         :return:
         """
         self.selected_fixtures = self.fixture_selection_tree.selectedItems()
+        super().accept()
+
+class TwoDEfxFixtureMappingDialog(QDialog):
+    def __init__(self, window, fixture_uuid, two_d_efx_uuid) -> None:
+        super().__init__()
+        self.window = window
+        self.fixture_uuid = fixture_uuid
+        self.two_d_efx_uuid = two_d_efx_uuid
+        self.result = []
+        self.setWindowTitle("LightDrive - Edit Fixture Mapping")
+
+        layout = QVBoxLayout()
+        # Load fixture data
+        fixture = [item for item in self.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0]
+        fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+        with open(os.path.join(fixture_dir, fixture["id"] + ".json"), 'r') as f:
+            fixture_data = json.load(f)
+        self.combos = []
+        for channel_number, channel_data in fixture_data["channels"].items():
+            frame = QFrame()
+            frame_layout = QHBoxLayout()
+            frame.setLayout(frame_layout)
+            frame_layout.addWidget(QLabel("Channel: " + channel_number))
+            frame_layout.addWidget(QLabel("Name: " + channel_data["name"]))
+            frame_layout.addWidget(QLabel("Mapping: "))
+            combo = QComboBox()
+            combo.addItem("None")
+            combo.addItem("X")
+            combo.addItem("Y")
+            self.combos.append(combo)
+            frame_layout.addWidget(combo)
+            layout.addWidget(frame)
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+    def accept(self) -> None:
+        """
+        Accept the dialog to modify the fixture mapping
+        :return:
+        """
+        for combo in self.combos:
+            self.result.append(combo.currentText())
         super().accept()
 
 class TwoDEfxMovementDisplay(QGraphicsView):
@@ -327,6 +374,26 @@ class TwoDEfxManager:
         self.sm.available_snippets[two_d_efx_uuid].y_offset = y_offset
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
+
+    def two_d_efx_edit_fixture_mapping_wrapper(self, fixture_entry: QTreeWidgetItem) -> None:
+        """
+        This function just calls the actual function with the correct arguments
+        It is needed to change the default arguments when calling the function from the UI
+        :return: None
+        """
+        self.two_d_efx_edit_fixture_mapping(fixture_entry.extra_data["fixture_uuid"])
+
+    def two_d_efx_edit_fixture_mapping(self, fixture_uuid: str = None, two_d_efx_uuid: str = None) -> None:
+        if not fixture_uuid:
+            fixture_uuid = self.sm.window.ui.two_d_efx_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
+        if not two_d_efx_uuid:
+            two_d_efx_uuid = self.sm.current_snippet.uuid
+        dlg = TwoDEfxFixtureMappingDialog(self.sm.window, fixture_uuid, two_d_efx_uuid)
+        if not dlg.exec():
+            return
+        print(dlg.result)
+        for channel_number, mapping in enumerate(dlg.result):
+            self.sm.available_snippets[two_d_efx_uuid].fixture_mappings[fixture_uuid][channel_number] = mapping
 
     def two_d_efx_toggle_show(self) -> None:
         """
