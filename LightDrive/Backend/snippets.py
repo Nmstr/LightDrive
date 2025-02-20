@@ -48,11 +48,6 @@ class TwoDEfxOutputSnippet(OutputSnippet):
         self.window = window
         self.two_d_efx_snippet = self.window.snippet_manager.available_snippets[two_d_efx_uuid]
 
-        self.timer = QTimer()
-        self.timer.setInterval(10)
-        self.timer.timeout.connect(self.next_frame)
-        self.timer.start()
-
         self.internal_graphics_view = QGraphicsView()
         self.scene = QGraphicsScene(window)
         self.internal_graphics_view.setSceneRect(0, 0, 511, 511)
@@ -91,9 +86,10 @@ class TwoDEfxOutputSnippet(OutputSnippet):
         """
         if self.path:
             length = self.path.path().length()
+            increment = length / (self.two_d_efx_snippet.duration / 8)  # Calculate the increment based on the duration
             point = self.path.path().pointAtPercent((self.angle % length) / length)
             self.tracer_dot.setPos(point.x() - 10, point.y() - 10)  # Adjust by half of the dot's width and height
-            self.angle += 1
+            self.angle += increment
             x_value = min(max(round(point.x() / 2), 0), 255)
             y_value = min(max(round(point.y() / 2), 0), 255)
             output = {}
