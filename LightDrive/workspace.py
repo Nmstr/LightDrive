@@ -416,6 +416,22 @@ class Workspace(QMainWindow):
         self.ui.cue_show_btn.clicked.connect(self.snippet_manager.cue_manager.cue_toggle_show)
         self.ui.cue_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
+        self.ui.two_d_efx_name_edit.editingFinished.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_rename)
+        self.ui.two_d_efx_pattern_combo.currentTextChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_pattern)
+        self.ui.two_d_efx_width_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_width)
+        self.ui.two_d_efx_height_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_height)
+        self.ui.two_d_efx_x_offset_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_x_offset)
+        self.ui.two_d_efx_y_offset_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_y_offset)
+        self.ui.two_d_efx_duration_spin.valueChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_duration)
+        self.ui.two_d_efx_direction_combo.currentTextChanged.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_change_direction)
+        self.ui.two_d_efx_fixture_list.itemDoubleClicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_edit_fixture_mapping_wrapper)
+        self.ui.two_d_efx_add_fixture_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_add_fixture)
+        self.ui.two_d_efx_add_fixture_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.two_d_efx_remove_fixture_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_remove_fixture)
+        self.ui.two_d_efx_remove_fixture_btn.setIcon(QPixmap("Assets/Icons/remove.svg"))
+        self.ui.two_d_efx_show_btn.clicked.connect(self.snippet_manager.two_d_efx_manager.two_d_efx_toggle_show)
+        self.ui.two_d_efx_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
+
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.directory_manager.dir_rename)
 
     def setup_control_desk_page(self) -> None:

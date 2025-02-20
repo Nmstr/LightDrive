@@ -25,7 +25,7 @@ large number of lights.
   - ✅ Scenes
   - ✅ Sequences
   - 🚧 Cues
-  - ❌ 2d Efx
+  - ✅ 2D Efx
   - ❌ RGB Matrix
   - ❌ Scripts
   - 🚧 Directories

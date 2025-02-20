@@ -1,6 +1,6 @@
 from .abstract_desk_item import AbstractDeskItem
 from Backend.output import OutputSnippet
-from Backend.snippets import SequenceOutputSnippet
+from Backend.snippets import SequenceOutputSnippet, TwoDEfxOutputSnippet
 from PySide6.QtWidgets import QGraphicsItem, QDialog, QVBoxLayout, QGraphicsTextItem, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
 from PySide6.QtGui import QPen, QKeySequence
 from PySide6.QtUiTools import QUiLoader
@@ -217,6 +217,9 @@ class DeskButton(AbstractDeskItem):
                     self.desk.window.dmx_output.insert_snippet(self.output_snippet)
             elif linked_snippet.type == "sequence":
                 self.output_snippet = SequenceOutputSnippet(self.desk.window, self.linked_snippet_uuid)
+                self.desk.window.dmx_output.insert_snippet(self.output_snippet)
+            elif linked_snippet.type == "two_d_efx":
+                self.output_snippet = TwoDEfxOutputSnippet(self.desk.window, self.linked_snippet_uuid)
                 self.desk.window.dmx_output.insert_snippet(self.output_snippet)
 
             if self.mode == "flash":  # Disable the button after the mode duration, if in flash mode
