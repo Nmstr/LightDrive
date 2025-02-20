@@ -216,7 +216,7 @@ class WorkspaceFileManager:
                     cue_data = CueData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), keyframes=snippet.get("keyframes", {}))
                     self.window.snippet_manager.cue_manager.cue_create(cue_data=cue_data)
                 case "two_d_efx":
-                    efx_2d_data = TwoDEfxData(snippet["uuid"], snippet["name"], snippet["pattern"], snippet["width"], snippet["height"], snippet["x_offset"], snippet["y_offset"])
+                    efx_2d_data = TwoDEfxData(snippet["uuid"], snippet["name"], snippet["pattern"], snippet["width"], snippet["height"], snippet["x_offset"], snippet["y_offset"], snippet["fixture_mappings"])
                     self.window.snippet_manager.two_d_efx_manager.two_d_efx_create(two_d_efx_data=efx_2d_data)
                 case "rgb_matrix":
                     rgb_matrix_data = RgbMatrixData(snippet["uuid"], snippet["name"])

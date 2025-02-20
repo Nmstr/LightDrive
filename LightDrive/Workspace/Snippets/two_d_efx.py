@@ -1,10 +1,12 @@
 from Functions.ui import clear_field
 from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, \
-    QGraphicsPathItem, QGraphicsEllipseItem, QGraphicsTextItem
+    QGraphicsPathItem, QGraphicsEllipseItem, QGraphicsTextItem, QDialog, QDialogButtonBox, QTreeWidget, QListWidgetItem
 from PySide6.QtGui import QPixmap, QPen, QPainterPath
 from PySide6.QtCore import Qt, QTimer
 from dataclasses import dataclass, field
 import uuid
+import json
+import os
 
 @dataclass
 class TwoDEfxData:
@@ -16,6 +18,59 @@ class TwoDEfxData:
     height: int
     x_offset: int
     y_offset: int
+    fixture_mappings: dict = field(default_factory=dict)
+
+class TwoDEfxAddFixtureDialog(QDialog):
+    def __init__(self, window, fixture_mappings) -> None:
+        self.window = window
+        self.added_fixtures = list(fixture_mappings.keys())
+        self.selected_fixtures = None
+        super().__init__()
+        self.setWindowTitle("LightDrive - Add Fixture to 2D Efx")
+
+        layout = QVBoxLayout()
+        self.fixture_selection_tree = QTreeWidget()
+        self.fixture_selection_tree.setHeaderItem(QTreeWidgetItem(["Name", "Location", "ID", "UUID"]))
+        self.fixture_selection_tree.itemDoubleClicked.connect(self.accept)
+        layout.addWidget(self.fixture_selection_tree)
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+        self.load_fixtures()
+
+    def load_fixtures(self) -> None:
+        """
+        Loads the fixtures and shows them in the fixture_selection_tree
+        :return: None
+        """
+        for fixture in self.window.available_fixtures:
+            if fixture.get("fixture_uuid") in self.added_fixtures:
+                continue  # Don't show fixtures that are already added
+
+            # Load fixture data
+            fixture_dir = os.getenv('XDG_CONFIG_HOME', default=os.path.expanduser('~/.config')) + '/LightDrive/fixtures/'
+            with open(os.path.join(fixture_dir, fixture["id"] + ".json"), 'r') as f:
+                fixture_data = json.load(f)
+
+            # Add the item
+            fixture_item = QTreeWidgetItem()
+            fixture_item.extra_data = fixture
+            fixture_item.setText(0, fixture["name"])
+            fixture_item.setText(1, f"{fixture['universe']}>{fixture['address']}-{fixture['address'] + len(fixture_data["channels"]) - 1}")
+            fixture_item.setText(2, fixture["id"])
+            fixture_item.setText(3, fixture["fixture_uuid"])
+            self.fixture_selection_tree.addTopLevelItem(fixture_item)
+
+    def accept(self) -> None:
+        """
+        Accept the dialog to add the selected fixtures
+        :return:
+        """
+        self.selected_fixtures = self.fixture_selection_tree.selectedItems()
+        super().accept()
 
 class TwoDEfxMovementDisplay(QGraphicsView):
     def __init__(self, window, two_d_efx_snippet: TwoDEfxData) -> None:
@@ -102,7 +157,12 @@ class TwoDEfxManager:
         self.sm = snippet_manager
         self.two_d_efx_movement_display = None
 
-    def two_d_efx_display(self, two_d_efx_uuid: str = None) -> None:
+    def two_d_efx_display(self, two_d_efx_uuid: str) -> None:
+        """
+        Loads the 2D Efx editor
+        :param two_d_efx_uuid: The UUID of the 2d efx to load (if None, uses the current snippet)
+        :return: None
+        """
         layout = clear_field(self.sm.window.ui.two_d_efx_movement_frame, QVBoxLayout, amount_left = 0)
         two_d_efx_snippet = self.sm.available_snippets.get(two_d_efx_uuid)
         self.two_d_efx_movement_display = TwoDEfxMovementDisplay(self.sm.window, two_d_efx_snippet)
@@ -112,6 +172,7 @@ class TwoDEfxManager:
         self.sm.window.ui.two_d_efx_x_offset_spin.setValue(two_d_efx_snippet.x_offset)
         self.sm.window.ui.two_d_efx_y_offset_spin.setValue(two_d_efx_snippet.y_offset)
         self.sm.window.ui.two_d_efx_pattern_combo.setCurrentText(two_d_efx_snippet.pattern)
+        self._two_d_efx_load_fixtures(two_d_efx_uuid)
 
     def two_d_efx_create(self, *, parent: QTreeWidgetItem = None, two_d_efx_data: TwoDEfxData = None) -> None:
         """
@@ -147,6 +208,60 @@ class TwoDEfxManager:
         two_d_efx_entry = self.sm.find_snippet_entry_by_uuid(two_d_efx_uuid)
         two_d_efx_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def _two_d_efx_load_fixtures(self, two_d_efx_uuid: str = None) -> None:
+        """
+        Loads the fixtures that are in a 2D Efx
+        :param two_d_efx_uuid: The UUID of the 2d efx to load the fixtures of (if None, uses the current snippet)
+        :return: None
+        """
+        if not two_d_efx_uuid:
+            two_d_efx_uuid = self.sm.current_snippet.uuid
+        two_d_efx_snippet = self.sm.available_snippets.get(two_d_efx_uuid)
+
+        self.sm.window.ui.two_d_efx_fixture_list.clear()  # Remove current entries
+
+        two_d_efx_fixtures = []
+        for fixture_uuid in two_d_efx_snippet.fixture_mappings:
+            matching_fixture = [item for item in self.sm.window.available_fixtures if item["fixture_uuid"] == fixture_uuid][0]
+            two_d_efx_fixtures.append(matching_fixture)
+        for fixture in two_d_efx_fixtures:  # Add the fixture to the QListWidget
+            fixture_item = QListWidgetItem(fixture["name"])
+            fixture_item.extra_data = fixture
+            self.sm.window.ui.two_d_efx_fixture_list.addItem(fixture_item)
+
+    def two_d_efx_add_fixture(self, two_d_efx_uuid: str = None, fixture_uuid: str = None) -> None:
+        """
+        Adds a fixture to the 2d efx
+        :param two_d_efx_uuid: The UUID of the 2d efx to add the fixture to (if None, uses the current snippet)
+        :param fixture_uuid: The UUID of the fixture to add (if None, prompts the user to select a fixture)
+        :return: None
+        """
+        if not two_d_efx_uuid:
+            two_d_efx_uuid = self.sm.current_snippet.uuid
+        two_d_efx_snippet = self.sm.available_snippets.get(two_d_efx_uuid)
+        if not fixture_uuid:
+            dlg = TwoDEfxAddFixtureDialog(self.sm.window, two_d_efx_snippet.fixture_mappings)
+            if not dlg.exec():
+                return
+            for fixture in dlg.selected_fixtures:
+                two_d_efx_snippet.fixture_mappings[fixture.extra_data["fixture_uuid"]] = {}
+        else :
+            two_d_efx_snippet.fixtures.append(fixture_uuid)
+        self._two_d_efx_load_fixtures()
+
+    def two_d_efx_remove_fixture(self, two_d_efx_uuid: str = None, fixture_uuid: str = None) -> None:
+        """
+        Removes a fixture from the 2d efx
+        :return: None
+        """
+        if not two_d_efx_uuid:
+            two_d_efx_uuid = self.sm.current_snippet.uuid
+        if not fixture_uuid:
+            fixture_uuid = self.sm.window.ui.two_d_efx_fixture_list.selectedItems()[0].extra_data["fixture_uuid"]
+        two_d_efx_uuid = self.sm.available_snippets.get(two_d_efx_uuid)
+        two_d_efx_uuid.fixture_mappings.pop(fixture_uuid)
+        self._two_d_efx_load_fixtures()
 
     def two_d_efx_change_pattern(self, pattern: str, two_d_efx_uuid: str = None) -> None:
         """

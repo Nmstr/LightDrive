@@ -187,8 +187,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>68</width>
+            <height>20</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -720,18 +720,89 @@
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_6">
-                    <item row="7" column="0" colspan="3">
-                     <spacer name="verticalSpacer">
+                    <item row="2" column="0" colspan="3">
+                     <widget class="QLabel" name="two_d_efx_parameter_label">
+                      <property name="text">
+                       <string>Parameters</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0" colspan="2">
+                     <widget class="QLabel" name="two_d_efx_y_offset_label">
+                      <property name="text">
+                       <string>Y Offset:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="10" column="0" colspan="3">
+                     <widget class="QListWidget" name="two_d_efx_fixture_list"/>
+                    </item>
+                    <item row="9" column="0" colspan="3">
+                     <widget class="QFrame" name="two_d_efx_fixture_frame">
+                      <property name="frameShape">
+                       <enum>QFrame::Shape::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Shadow::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_14">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QPushButton" name="two_d_efx_add_fixture_btn">
+                         <property name="text">
+                          <string>Add Fixture</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="two_d_efx_remove_fixture_btn">
+                         <property name="text">
+                          <string>Remove Fixture</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item row="1" column="0" colspan="3">
+                     <widget class="Line" name="two_d_efx_line">
                       <property name="orientation">
-                       <enum>Qt::Orientation::Vertical</enum>
+                       <enum>Qt::Orientation::Horizontal</enum>
                       </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
+                     </widget>
+                    </item>
+                    <item row="3" column="0" colspan="2">
+                     <widget class="QLabel" name="two_d_efx_width_label">
+                      <property name="text">
+                       <string>Width:</string>
                       </property>
-                     </spacer>
+                     </widget>
+                    </item>
+                    <item row="4" column="0" colspan="2">
+                     <widget class="QLabel" name="two_d_efx_height_label">
+                      <property name="text">
+                       <string>Height:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="two_d_efx_pattern_label">
+                      <property name="text">
+                       <string>Pattern</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="2">
+                     <widget class="QSpinBox" name="two_d_efx_width_spin">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="6" column="2">
                      <widget class="QSpinBox" name="two_d_efx_y_offset_spin">
@@ -743,55 +814,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="4" column="0">
-                     <widget class="QLabel" name="two_d_efx_height_label">
-                      <property name="text">
-                       <string>Height:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_height_spin">
-                      <property name="maximum">
-                       <number>1000</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="two_d_efx_pattern_label">
-                      <property name="text">
-                       <string>Pattern</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="5" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_x_offset_spin">
-                      <property name="minimum">
-                       <number>-1000</number>
-                      </property>
-                      <property name="maximum">
-                       <number>1000</number>
-                      </property>
-                      <property name="value">
-                       <number>0</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_width_spin">
-                      <property name="maximum">
-                       <number>1000</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0">
-                     <widget class="QLabel" name="two_d_efx_width_label">
-                      <property name="text">
-                       <string>Width:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="5" column="0">
+                    <item row="5" column="0" colspan="2">
                      <widget class="QLabel" name="two_d_efx_x_offset_label">
                       <property name="text">
                        <string>X Offset:</string>
@@ -827,22 +850,28 @@
                       </item>
                      </widget>
                     </item>
-                    <item row="2" column="0" colspan="3">
-                     <widget class="QLabel" name="two_d_efx_parameter_label">
-                      <property name="text">
-                       <string>Parameters</string>
+                    <item row="5" column="2">
+                     <widget class="QSpinBox" name="two_d_efx_x_offset_spin">
+                      <property name="minimum">
+                       <number>-1000</number>
+                      </property>
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="value">
+                       <number>0</number>
                       </property>
                      </widget>
                     </item>
-                    <item row="6" column="0">
-                     <widget class="QLabel" name="two_d_efx_y_offset_label">
-                      <property name="text">
-                       <string>Y Offset:</string>
+                    <item row="4" column="2">
+                     <widget class="QSpinBox" name="two_d_efx_height_spin">
+                      <property name="maximum">
+                       <number>1000</number>
                       </property>
                      </widget>
                     </item>
-                    <item row="1" column="0" colspan="3">
-                     <widget class="Line" name="two_d_efx_line">
+                    <item row="7" column="0" colspan="3">
+                     <widget class="Line" name="line_2">
                       <property name="orientation">
                        <enum>Qt::Orientation::Horizontal</enum>
                       </property>
