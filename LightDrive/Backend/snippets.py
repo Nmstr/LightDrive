@@ -1,6 +1,6 @@
 from .output import OutputSnippet
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsPathItem, QGraphicsEllipseItem
-from PySide6.QtGui import QPen, QPainterPath
+from PySide6.QtGui import QPen
 from PySide6.QtCore import QTimer, Qt
 
 class SequenceOutputSnippet(OutputSnippet):
