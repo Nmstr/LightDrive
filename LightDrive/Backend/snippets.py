@@ -100,7 +100,11 @@ class TwoDEfxOutputSnippet(OutputSnippet):
             painter_path.lineTo(width + x_off, height + y_off)
         elif self.two_d_efx_snippet.pattern == "Eight":
             painter_path = QPainterPath()
-            # TODO: Implement eight pattern
+            painter_path.moveTo(x_off + width / 2, y_off)
+            painter_path.cubicTo(x_off + width, y_off, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
+            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off + height, x_off + width / 2, y_off + height)
+            painter_path.cubicTo(x_off + width, y_off + height, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
+            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off, x_off + width / 2, y_off)
         if painter_path:
             self.path = QGraphicsPathItem(painter_path)
             self.path.setPen(QPen(Qt.white, 2))
