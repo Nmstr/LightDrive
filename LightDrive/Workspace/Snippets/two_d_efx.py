@@ -1,6 +1,6 @@
 from Functions.ui import clear_field
 from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, \
-    QGraphicsPathItem, QGraphicsEllipseItem
+    QGraphicsPathItem, QGraphicsEllipseItem, QGraphicsTextItem
 from PySide6.QtGui import QPixmap, QPen, QPainterPath
 from PySide6.QtCore import Qt, QTimer
 from dataclasses import dataclass, field
@@ -31,6 +31,13 @@ class TwoDEfxMovementDisplay(QGraphicsView):
         self.scene.addItem(self.horizontal_line)
         self.vertical_line = QGraphicsLineItem(255, 511, 255, 0)
         self.scene.addItem(self.vertical_line)
+
+        self.x_pos_text = QGraphicsTextItem("X: ---")
+        self.x_pos_text.setPos(256, 0)
+        self.scene.addItem(self.x_pos_text)
+        self.y_pos_text = QGraphicsTextItem("Y: ---")
+        self.y_pos_text.setPos(0, 256)
+        self.scene.addItem(self.y_pos_text)
 
         self.path = None
         self.tracer_dot = QGraphicsEllipseItem(0, 0, 20, 20)
@@ -86,6 +93,8 @@ class TwoDEfxMovementDisplay(QGraphicsView):
             length = self.path.path().length()
             point = self.path.path().pointAtPercent((self.angle % length) / length)
             self.tracer_dot.setPos(point.x() - 10, point.y() - 10)  # Adjust by half of the dot's width and height
+            self.x_pos_text.setPlainText(f"X: {round(point.x())}")
+            self.y_pos_text.setPlainText(f"Y: {round(point.y())}")
             self.angle += 1
 
 class TwoDEfxManager:
