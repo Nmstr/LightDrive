@@ -78,7 +78,7 @@ class TwoDEfxFixtureMappingDialog(QDialog):
         super().__init__()
         self.window = window
         self.fixture_uuid = fixture_uuid
-        self.two_d_efx_uuid = two_d_efx_uuid
+        self.two_d_efx_snippet = self.window.snippet_manager.available_snippets.get(two_d_efx_uuid)
         self.result = []
         self.setWindowTitle("LightDrive - Edit Fixture Mapping")
 
@@ -100,6 +100,8 @@ class TwoDEfxFixtureMappingDialog(QDialog):
             combo.addItem("None")
             combo.addItem("X")
             combo.addItem("Y")
+            if channel_number in self.two_d_efx_snippet.fixture_mappings[self.fixture_uuid]:
+                combo.setCurrentText(self.two_d_efx_snippet.fixture_mappings[self.fixture_uuid][channel_number])
             self.combos.append(combo)
             frame_layout.addWidget(combo)
             layout.addWidget(frame)
@@ -393,7 +395,7 @@ class TwoDEfxManager:
             return
         print(dlg.result)
         for channel_number, mapping in enumerate(dlg.result):
-            self.sm.available_snippets[two_d_efx_uuid].fixture_mappings[fixture_uuid][channel_number] = mapping
+            self.sm.available_snippets[two_d_efx_uuid].fixture_mappings[fixture_uuid][str(channel_number)] = mapping
 
     def two_d_efx_toggle_show(self) -> None:
         """
