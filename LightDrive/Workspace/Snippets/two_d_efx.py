@@ -1,3 +1,4 @@
+from Backend.snippets import TwoDEfxOutputSnippet
 from Functions.ui import clear_field
 from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsLineItem, \
     QGraphicsPathItem, QGraphicsEllipseItem, QGraphicsTextItem, QDialog, QDialogButtonBox, QTreeWidget, \
@@ -324,6 +325,8 @@ class TwoDEfxManager:
         self.sm.available_snippets[two_d_efx_uuid].pattern = pattern
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
+        if self.sm.current_display_snippet:
+            self.sm.current_display_snippet.update_path()
 
     def two_d_efx_change_width(self, width: int, two_d_efx_uuid: str = None) -> None:
         """
@@ -337,6 +340,8 @@ class TwoDEfxManager:
         self.sm.available_snippets[two_d_efx_uuid].width = width
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
+        if self.sm.current_display_snippet:
+            self.sm.current_display_snippet.update_path()
 
     def two_d_efx_change_height(self, height: int = None, two_d_efx_uuid: str = None) -> None:
         """
@@ -350,6 +355,8 @@ class TwoDEfxManager:
         self.sm.available_snippets[two_d_efx_uuid].height = height
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
+        if self.sm.current_display_snippet:
+            self.sm.current_display_snippet.update_path()
 
     def two_d_efx_change_x_offset(self,  x_offset: int, two_d_efx_uuid: str = None) -> None:
         """
@@ -363,6 +370,8 @@ class TwoDEfxManager:
         self.sm.available_snippets[two_d_efx_uuid].x_offset = x_offset
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
+        if self.sm.current_display_snippet:
+            self.sm.current_display_snippet.update_path()
 
     def two_d_efx_change_y_offset(self, y_offset: int, two_d_efx_uuid: str = None) -> None:
         """
@@ -376,6 +385,8 @@ class TwoDEfxManager:
         self.sm.available_snippets[two_d_efx_uuid].y_offset = y_offset
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
+        if self.sm.current_display_snippet:
+            self.sm.current_display_snippet.update_path()
 
     def two_d_efx_edit_fixture_mapping_wrapper(self, fixture_entry: QTreeWidgetItem) -> None:
         """
@@ -402,3 +413,11 @@ class TwoDEfxManager:
         Toggles whether the 2d efx is outputted over DMX
         :return: None
         """
+        if self.sm.current_display_snippet is not None:  # Deactivate
+            self.sm.window.dmx_output.remove_snippet(self.sm.current_display_snippet)
+            self.sm.current_display_snippet = None
+
+        if self.sm.window.ui.two_d_efx_show_btn.isChecked():  # Activate
+            self.two_d_efx_movement_display.angle = 0
+            self.sm.current_display_snippet = TwoDEfxOutputSnippet(self.sm.window, self.sm.current_snippet.uuid)
+            self.sm.window.dmx_output.insert_snippet(self.sm.current_display_snippet)
