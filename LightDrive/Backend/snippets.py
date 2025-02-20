@@ -77,34 +77,7 @@ class TwoDEfxOutputSnippet(OutputSnippet):
         """
         if self.path:
             self.scene.removeItem(self.path)
-        painter_path = None
-        width = self.two_d_efx_snippet.width
-        height = self.two_d_efx_snippet.height
-        x_off = self.two_d_efx_snippet.x_offset
-        y_off = self.two_d_efx_snippet.y_offset
-        if self.two_d_efx_snippet.pattern == "Circle":
-            painter_path = QPainterPath()
-            painter_path.addEllipse(x_off, y_off, width, height)
-        elif self.two_d_efx_snippet.pattern == "Square":
-            painter_path = QPainterPath()
-            painter_path.addRect(x_off, y_off, width, height)
-        elif self.two_d_efx_snippet.pattern == "Triangle":
-            painter_path = QPainterPath()
-            painter_path.moveTo(width / 2 + x_off, y_off)
-            painter_path.lineTo(width + x_off, height + y_off)
-            painter_path.lineTo(x_off, height + y_off)
-            painter_path.lineTo(width / 2 + x_off, y_off)
-        elif self.two_d_efx_snippet.pattern == "Line":
-            painter_path = QPainterPath()
-            painter_path.moveTo(x_off, y_off)
-            painter_path.lineTo(width + x_off, height + y_off)
-        elif self.two_d_efx_snippet.pattern == "Eight":
-            painter_path = QPainterPath()
-            painter_path.moveTo(x_off + width / 2, y_off)
-            painter_path.cubicTo(x_off + width, y_off, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
-            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off + height, x_off + width / 2, y_off + height)
-            painter_path.cubicTo(x_off + width, y_off + height, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
-            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off, x_off + width / 2, y_off)
+        painter_path = self.window.snippet_manager.two_d_efx_manager.two_d_efx_calculate_painter_path(self.two_d_efx_snippet.uuid)
         if painter_path:
             self.path = QGraphicsPathItem(painter_path)
             self.path.setPen(QPen(Qt.white, 2))

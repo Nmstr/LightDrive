@@ -163,34 +163,7 @@ class TwoDEfxMovementDisplay(QGraphicsView):
         """
         if self.path:
             self.scene.removeItem(self.path)
-        painter_path = None
-        width = self.two_d_efx_snippet.width
-        height = self.two_d_efx_snippet.height
-        x_off = self.two_d_efx_snippet.x_offset
-        y_off = self.two_d_efx_snippet.y_offset
-        if self.two_d_efx_snippet.pattern == "Circle":
-            painter_path = QPainterPath()
-            painter_path.addEllipse(x_off, y_off, width, height)
-        elif self.two_d_efx_snippet.pattern == "Square":
-            painter_path = QPainterPath()
-            painter_path.addRect(x_off, y_off, width, height)
-        elif self.two_d_efx_snippet.pattern == "Triangle":
-            painter_path = QPainterPath()
-            painter_path.moveTo(width / 2 + x_off, y_off)
-            painter_path.lineTo(width + x_off, height + y_off)
-            painter_path.lineTo(x_off, height + y_off)
-            painter_path.lineTo(width / 2 + x_off, y_off)
-        elif self.two_d_efx_snippet.pattern == "Line":
-            painter_path = QPainterPath()
-            painter_path.moveTo(x_off, y_off)
-            painter_path.lineTo(width + x_off, height + y_off)
-        elif self.two_d_efx_snippet.pattern == "Eight":
-            painter_path = QPainterPath()
-            painter_path.moveTo(x_off + width / 2, y_off)
-            painter_path.cubicTo(x_off + width, y_off, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
-            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off + height, x_off + width / 2, y_off + height)
-            painter_path.cubicTo(x_off + width, y_off + height, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
-            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off, x_off + width / 2, y_off)
+        painter_path = self.window.snippet_manager.two_d_efx_manager.two_d_efx_calculate_painter_path(self.two_d_efx_snippet.uuid)
         if painter_path:
             self.path = QGraphicsPathItem(painter_path)
             self.path.setPen(QPen(Qt.white, 2))
@@ -316,6 +289,33 @@ class TwoDEfxManager:
         two_d_efx_uuid = self.sm.available_snippets.get(two_d_efx_uuid)
         two_d_efx_uuid.fixture_mappings.pop(fixture_uuid)
         self._two_d_efx_load_fixtures()
+
+    def two_d_efx_calculate_painter_path(self, two_d_efx_uuid: str) -> QPainterPath:
+        painter_path = QPainterPath()
+        two_d_efx_snippet = self.sm.available_snippets.get(two_d_efx_uuid)
+        width = two_d_efx_snippet.width
+        height = two_d_efx_snippet.height
+        x_off = two_d_efx_snippet.x_offset
+        y_off = two_d_efx_snippet.y_offset
+        if two_d_efx_snippet.pattern == "Circle":
+            painter_path.addEllipse(x_off, y_off, width, height)
+        elif two_d_efx_snippet.pattern == "Square":
+            painter_path.addRect(x_off, y_off, width, height)
+        elif two_d_efx_snippet.pattern == "Triangle":
+            painter_path.moveTo(width / 2 + x_off, y_off)
+            painter_path.lineTo(width + x_off, height + y_off)
+            painter_path.lineTo(x_off, height + y_off)
+            painter_path.lineTo(width / 2 + x_off, y_off)
+        elif two_d_efx_snippet.pattern == "Line":
+            painter_path.moveTo(x_off, y_off)
+            painter_path.lineTo(width + x_off, height + y_off)
+        elif two_d_efx_snippet.pattern == "Eight":
+            painter_path.moveTo(x_off + width / 2, y_off)
+            painter_path.cubicTo(x_off + width, y_off, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
+            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off + height, x_off + width / 2, y_off + height)
+            painter_path.cubicTo(x_off + width, y_off + height, x_off + width, y_off + height / 2, x_off + width / 2, y_off + height / 2)
+            painter_path.cubicTo(x_off, y_off + height / 2, x_off, y_off, x_off + width / 2, y_off)
+        return painter_path
 
     def two_d_efx_change_pattern(self, pattern: str, two_d_efx_uuid: str = None) -> None:
         """
