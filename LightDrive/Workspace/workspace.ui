@@ -187,7 +187,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>82</width>
+            <width>68</width>
             <height>20</height>
            </rect>
           </property>
@@ -720,10 +720,10 @@
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_6">
-                    <item row="11" column="0" colspan="3">
+                    <item row="12" column="0" colspan="3">
                      <widget class="QListWidget" name="two_d_efx_fixture_list"/>
                     </item>
-                    <item row="5" column="2">
+                    <item row="5" column="1" colspan="2">
                      <widget class="QSpinBox" name="two_d_efx_x_offset_spin">
                       <property name="minimum">
                        <number>-1000</number>
@@ -736,21 +736,28 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="3" column="0" colspan="2">
+                    <item row="3" column="0">
                      <widget class="QLabel" name="two_d_efx_width_label">
                       <property name="text">
                        <string>Width:</string>
                       </property>
                      </widget>
                     </item>
-                    <item row="3" column="2">
+                    <item row="8" column="0">
+                     <widget class="QLabel" name="two_d_efx_duration_label">
+                      <property name="text">
+                       <string>Duration:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1" colspan="2">
                      <widget class="QSpinBox" name="two_d_efx_width_spin">
                       <property name="maximum">
                        <number>1000</number>
                       </property>
                      </widget>
                     </item>
-                    <item row="4" column="0" colspan="2">
+                    <item row="4" column="0">
                      <widget class="QLabel" name="two_d_efx_height_label">
                       <property name="text">
                        <string>Height:</string>
@@ -764,7 +771,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="6" column="2">
+                    <item row="6" column="1" colspan="2">
                      <widget class="QSpinBox" name="two_d_efx_y_offset_spin">
                       <property name="minimum">
                        <number>-1000</number>
@@ -774,14 +781,67 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="6" column="0" colspan="2">
+                    <item row="10" column="0" colspan="3">
+                     <widget class="Line" name="line_2">
+                      <property name="orientation">
+                       <enum>Qt::Orientation::Horizontal</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1" colspan="2">
+                     <widget class="QComboBox" name="two_d_efx_pattern_combo">
+                      <item>
+                       <property name="text">
+                        <string>Circle</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Square</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Triangle</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Line</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Eight</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                    <item row="8" column="1" colspan="2">
+                     <widget class="QSpinBox" name="two_d_efx_duration_spin">
+                      <property name="suffix">
+                       <string>ms</string>
+                      </property>
+                      <property name="maximum">
+                       <number>100000</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0">
                      <widget class="QLabel" name="two_d_efx_y_offset_label">
                       <property name="text">
                        <string>Y Offset:</string>
                       </property>
                      </widget>
                     </item>
-                    <item row="10" column="0" colspan="3">
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="two_d_efx_pattern_label">
+                      <property name="text">
+                       <string>Pattern</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="11" column="0" colspan="3">
                      <widget class="QFrame" name="two_d_efx_fixture_frame">
                       <property name="frameShape">
                        <enum>QFrame::Shape::NoFrame</enum>
@@ -820,78 +880,39 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="5" column="0" colspan="2">
+                    <item row="9" column="0">
+                     <widget class="QLabel" name="two_d_efx_direction_label">
+                      <property name="text">
+                       <string>Direction:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="9" column="1" colspan="2">
+                     <widget class="QComboBox" name="two_d_efx_direction_combo">
+                      <item>
+                       <property name="text">
+                        <string>Forward</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Backward</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                    <item row="5" column="0">
                      <widget class="QLabel" name="two_d_efx_x_offset_label">
                       <property name="text">
                        <string>X Offset:</string>
                       </property>
                      </widget>
                     </item>
-                    <item row="4" column="2">
+                    <item row="4" column="1" colspan="2">
                      <widget class="QSpinBox" name="two_d_efx_height_spin">
                       <property name="maximum">
                        <number>1000</number>
                       </property>
-                     </widget>
-                    </item>
-                    <item row="9" column="0" colspan="3">
-                     <widget class="Line" name="line_2">
-                      <property name="orientation">
-                       <enum>Qt::Orientation::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="8" column="2">
-                     <widget class="QSpinBox" name="two_d_efx_duration_spin">
-                      <property name="suffix">
-                       <string>ms</string>
-                      </property>
-                      <property name="maximum">
-                       <number>100000</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="8" column="0" colspan="2">
-                     <widget class="QLabel" name="two_d_efx_duration_label">
-                      <property name="text">
-                       <string>Duration:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="two_d_efx_pattern_label">
-                      <property name="text">
-                       <string>Pattern</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1" colspan="2">
-                     <widget class="QComboBox" name="two_d_efx_pattern_combo">
-                      <item>
-                       <property name="text">
-                        <string>Circle</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Square</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Triangle</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Line</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Eight</string>
-                       </property>
-                      </item>
                      </widget>
                     </item>
                    </layout>

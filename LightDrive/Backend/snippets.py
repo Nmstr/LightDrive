@@ -86,9 +86,11 @@ class TwoDEfxOutputSnippet(OutputSnippet):
         """
         if self.path:
             length = self.path.path().length()
-            increment = length / (self.two_d_efx_snippet.duration / 8)  # Calculate the increment based on the duration
+            increment = length / (self.two_d_efx_snippet.duration / 8)
+            if self.two_d_efx_snippet.direction == "Backward":
+                increment = -increment
             point = self.path.path().pointAtPercent((self.angle % length) / length)
-            self.tracer_dot.setPos(point.x() - 10, point.y() - 10)  # Adjust by half of the dot's width and height
+            self.tracer_dot.setPos(point.x() - 10, point.y() - 10)
             self.angle += increment
             x_value = min(max(round(point.x() / 2), 0), 255)
             y_value = min(max(round(point.y() / 2), 0), 255)

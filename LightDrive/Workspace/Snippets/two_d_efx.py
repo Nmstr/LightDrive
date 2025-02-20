@@ -22,6 +22,7 @@ class TwoDEfxData:
     y_offset: int
     fixture_mappings: dict = field(default_factory=dict)
     duration: int = field(default=10000)
+    direction: str = field(default="Forward")
 
 class TwoDEfxAddFixtureDialog(QDialog):
     def __init__(self, window, fixture_mappings) -> None:
@@ -174,9 +175,11 @@ class TwoDEfxMovementDisplay(QGraphicsView):
     def update_tracer_dot_position(self) -> None:
         if self.path:
             length = self.path.path().length()
-            increment = length / (self.two_d_efx_snippet.duration / 8)  # Calculate the increment based on the duration
+            increment = length / (self.two_d_efx_snippet.duration / 8)
+            if self.two_d_efx_snippet.direction == "Backward":
+                increment = -increment
             point = self.path.path().pointAtPercent((self.angle % length) / length)
-            self.tracer_dot.setPos(point.x() - 10, point.y() - 10)  # Adjust by half of the dot's width and height
+            self.tracer_dot.setPos(point.x() - 10, point.y() - 10)
             self.x_pos_text.setPlainText(f"X: {round(point.x())}")
             self.y_pos_text.setPlainText(f"Y: {round(point.y())}")
             self.angle += increment
@@ -202,6 +205,7 @@ class TwoDEfxManager:
         self.sm.window.ui.two_d_efx_y_offset_spin.setValue(two_d_efx_snippet.y_offset)
         self.sm.window.ui.two_d_efx_duration_spin.setValue(two_d_efx_snippet.duration)
         self.sm.window.ui.two_d_efx_pattern_combo.setCurrentText(two_d_efx_snippet.pattern)
+        self.sm.window.ui.two_d_efx_direction_combo.setCurrentText(two_d_efx_snippet.direction)
         self._two_d_efx_load_fixtures(two_d_efx_uuid)
 
     def two_d_efx_create(self, *, parent: QTreeWidgetItem = None, two_d_efx_data: TwoDEfxData = None) -> None:
@@ -399,6 +403,15 @@ class TwoDEfxManager:
         if not two_d_efx_uuid:
             two_d_efx_uuid = self.sm.current_snippet.uuid
         self.sm.available_snippets[two_d_efx_uuid].duration = duration
+        if self.two_d_efx_movement_display:
+            self.two_d_efx_movement_display.update_path()
+        if self.sm.current_display_snippet:
+            self.sm.current_display_snippet.update_path()
+
+    def two_d_efx_change_direction(self, direction: str, two_d_efx_uuid: str = None) -> None:
+        if not two_d_efx_uuid:
+            two_d_efx_uuid = self.sm.current_snippet.uuid
+        self.sm.available_snippets[two_d_efx_uuid].direction = direction
         if self.two_d_efx_movement_display:
             self.two_d_efx_movement_display.update_path()
         if self.sm.current_display_snippet:
