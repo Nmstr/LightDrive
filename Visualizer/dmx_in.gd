@@ -5,8 +5,10 @@ var tilt_input := 0.0
 
 @onready var moving_head := $MovingHead
 
+
 func _ready() -> void:
 	pass
+
 
 func _process(delta: float) -> void:
 	moving_head.set_pan(pan_input)
