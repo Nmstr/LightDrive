@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c7yi56sq1vb2j"]
+[gd_scene load_steps=6 format=3 uid="uid://c7yi56sq1vb2j"]
 
-[ext_resource type="Script" path="res://dmx_in.gd" id="1_xwgkw"]
+[ext_resource type="Script" path="res://dmx_manager.gd" id="1_xwgkw"]
 [ext_resource type="PackedScene" uid="uid://yyfc1uqwyxbd" path="res://Fixtures/MovingHead.tscn" id="2_4kvqn"]
+[ext_resource type="Script" path="res://dmx_receiver.gd" id="3_1guij"]
 
 [sub_resource type="Environment" id="Environment_yy887"]
 
@@ -25,3 +26,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.467, 0.5, -1.522)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.884174, 0.467158, 0, -0.467158, 0.884174, 0, 1.68898, 4.09127)
+
+[node name="DmxReceiver" type="Node3D" parent="."]
+script = ExtResource("3_1guij")
