@@ -11,10 +11,9 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	# Move the moving head
 	moving_head.set_pan(dmx_values[0])
 	moving_head.set_tilt(dmx_values[1])
-	#pan_input += 1 * delta * 255 / 2
-	#tilt_input += 1 * delta * 255 / 2
 
 
 func set_dmx_values(new_values: Array) -> void:

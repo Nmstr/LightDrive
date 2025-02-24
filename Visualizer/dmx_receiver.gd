@@ -9,6 +9,7 @@ var time_since_last_attempt := 0.0
 func _ready() -> void:
 	connect_to_server()
 
+
 func _process(delta: float) -> void:
 	client.poll()
 	if client.get_status() == StreamPeerTCP.STATUS_CONNECTED:
@@ -26,6 +27,7 @@ func _process(delta: float) -> void:
 			print("Attempting reconnect")
 			time_since_last_attempt = 0.0
 			connect_to_server()
+
 
 func connect_to_server() -> void:
 	client = StreamPeerTCP.new()  # Create a new instance of StreamPeerTCP

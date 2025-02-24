@@ -8,6 +8,7 @@ extends StaticBody3D
 @onready var pan_pivot := $PanPivot
 @onready var tilt_pivot := $PanPivot/TiltPivot
 
+
 # This expects a value between 0 and 255
 # The value will then be mapped against max_pan_angle
 # In the end it will be offset by min_pan_angle
