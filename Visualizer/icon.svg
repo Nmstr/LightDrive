@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="128"
+   height="128"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="icon.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="6.2421875"
+     inkscape:cx="64"
+     inkscape:cy="63.198999"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <rect
+     width="124"
+     height="124"
+     x="2"
+     y="2"
+     fill="#363d52"
+     stroke="#212532"
+     stroke-width="4"
+     rx="14"
+     id="rect1" />
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-weight:bold;font-size:21.3333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold Italic';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:#000000;stroke-width:1.5;stroke-dasharray:none"
+     x="22.545408"
+     y="78.237312"
+     id="text35"><tspan
+       sodipodi:role="line"
+       id="tspan35"
+       x="22.545408"
+       y="78.237312">Visualizer</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-weight:bold;font-size:21.3333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold Italic';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:#000000;stroke-width:1.5;stroke-dasharray:none"
+     x="5.8280787"
+     y="65.783989"
+     id="text6"><tspan
+       sodipodi:role="line"
+       id="tspan6"
+       x="5.8280787"
+       y="65.783989">LightDrive</tspan></text>
+</svg>

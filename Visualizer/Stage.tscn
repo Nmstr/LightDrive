@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://c7yi56sq1vb2j"]
+
+[ext_resource type="Script" path="res://dmx_in.gd" id="1_xwgkw"]
+[ext_resource type="PackedScene" uid="uid://yyfc1uqwyxbd" path="res://Fixtures/MovingHead.tscn" id="2_4kvqn"]
+
+[sub_resource type="Environment" id="Environment_yy887"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_mkesg"]
+size = Vector2(10, 10)
+
+[node name="Stage" type="Node3D"]
+script = ExtResource("1_xwgkw")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_yy887")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.960948, 0.276728, 0, -0.276728, 0.960948, 0, 2.00532, 2.43721)
+
+[node name="Plane" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_mkesg")
+
+[node name="MovingHead" parent="." instance=ExtResource("2_4kvqn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.467, 0.5, -1.522)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.884174, 0.467158, 0, -0.467158, 0.884174, 0, 1.68898, 4.09127)
