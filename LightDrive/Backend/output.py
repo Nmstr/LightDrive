@@ -243,16 +243,18 @@ class DmxOutput:
         """
         for universe_uuid, universe_data in configuration.items():
             self.create_universe(universe_uuid, universe_data["name"])
-            self.configure_artnet(universe_uuid,
-                                  universe_data["ArtNet"]["active"],
-                                  universe_data["ArtNet"]["target_ip"],
-                                  universe_data["ArtNet"]["universe"],
-                                  universe_data["ArtNet"]["hz"])
-            self.configure_tcp_socket(universe_uuid,
-                                      universe_data["TcpSocket"]["active"],
-                                      universe_data["TcpSocket"]["target_ip"],
-                                      universe_data["TcpSocket"]["port"],
-                                      universe_data["TcpSocket"]["hz"])
+            if universe_data.get("ArtNet"):
+                self.configure_artnet(universe_uuid,
+                        universe_data["ArtNet"].get("active", False),
+                        universe_data["ArtNet"].get("target_ip", "127.0.0.1"),
+                        universe_data["ArtNet"].get("universe", 0),
+                        universe_data["ArtNet"].get("hz", 30))
+            if universe_data.get("TcpSocket"):
+                self.configure_tcp_socket(universe_uuid,
+                        universe_data["TcpSocket"].get("active", False),
+                        universe_data["TcpSocket"].get("target_ip", "127.0.0.01"),
+                        universe_data["TcpSocket"].get("port", 7500),
+                        universe_data["TcpSocket"].get("hz", 30))
             self.window.io_add_universe_entry(universe_uuid, universe_data["name"])
 
     def get_universe_configuration(self, universe_uuid: str) -> dict:
