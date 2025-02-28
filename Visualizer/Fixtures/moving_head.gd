@@ -43,6 +43,11 @@ func set_tilt(tilt_value: int) -> void:
 	tilt_pivot.rotation.z = deg_to_rad(new_tilt_angle + min_tilt_angle)
 
 
+func reset_rotation() -> void:
+	pan_pivot.rotation.y = 0
+	tilt_pivot.rotation.z = 0
+
+
 func on_input_event(_camera, event, _click_position, _click_normal, _shape_idx):
 	var mouse_click = event as InputEventMouseButton
 	if mouse_click and mouse_click.button_index == 1 and mouse_click.pressed:

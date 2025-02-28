@@ -9,3 +9,4 @@ func _on_button_pressed() -> void:
 	else:
 		Globals.mode = Globals.available_modes.EDITOR
 		$ToggleModeButton.text = "Enter Live Mode"
+		get_parent().get_node("MovingHead").reset_rotation()
