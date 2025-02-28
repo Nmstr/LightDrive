@@ -11,7 +11,7 @@ func _ready() -> void:
 		$TwistPivot/PitchPivot/CameraPivotIndicator.hide()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Handle inputs
 	if Input.is_action_just_pressed("move_forward"):
 		camera.translate(Vector3(0, 0, -1))
