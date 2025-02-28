@@ -48,8 +48,15 @@ func on_input_event(_camera, event, _click_position, _click_normal, _shape_idx):
 	if mouse_click and mouse_click.button_index == 1 and mouse_click.pressed:
 		if Globals.mode == Globals.available_modes.EDITOR:
 			if selected:
-				transform_circle.hide()
-				selected = false
+				change_selection_status(false)
 			else:
-				transform_circle.show()
-				selected = true
+				change_selection_status(true)
+
+
+func change_selection_status(stauts: bool) -> void:
+	if stauts:
+		transform_circle.show()
+		selected = true
+	else:
+		transform_circle.hide()
+		selected = false
