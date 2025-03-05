@@ -2,8 +2,6 @@ extends Node
 
 var dmx_values := Array()
 
-@onready var moving_head := $MovingHead
-
 
 func _ready() -> void:
 	dmx_values.resize(512)
