@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://c7yi56sq1vb2j"]
 
-[ext_resource type="Script" path="res://stage.gd" id="1_qgw0x"]
-[ext_resource type="PackedScene" uid="uid://yyfc1uqwyxbd" path="res://Fixtures/moving_head.tscn" id="2_pu41q"]
-[ext_resource type="Script" path="res://dmx_receiver.gd" id="3_bl8kh"]
+[ext_resource type="Script" uid="uid://b1c0vb2dotygw" path="res://stage.gd" id="1_qgw0x"]
+[ext_resource type="Script" uid="uid://bvh5f2m8rgioa" path="res://dmx_receiver.gd" id="3_bl8kh"]
 [ext_resource type="PackedScene" uid="uid://cbftg3nk3t3wh" path="res://hud.tscn" id="5_ma6c1"]
 [ext_resource type="PackedScene" uid="uid://vw3k6es8640q" path="res://custom_camera.tscn" id="5_rxip7"]
+[ext_resource type="PackedScene" uid="uid://xvbd6pxrmv88" path="res://Fixtures/fixture.tscn" id="6_ecp12"]
 
 [sub_resource type="Environment" id="Environment_yy887"]
 
@@ -20,9 +20,6 @@ environment = SubResource("Environment_yy887")
 [node name="Plane" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_mkesg")
 
-[node name="MovingHead" parent="." instance=ExtResource("2_pu41q")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.467, 0.5, -1.522)
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.884174, 0.467158, 0, -0.467158, 0.884174, 0, 1.68898, 4.09127)
 
@@ -32,4 +29,6 @@ script = ExtResource("3_bl8kh")
 [node name="CustomCamera" parent="." instance=ExtResource("5_rxip7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28647, 2.39138)
 
-[node name="Node2D" parent="." instance=ExtResource("5_ma6c1")]
+[node name="Hud" parent="." instance=ExtResource("5_ma6c1")]
+
+[node name="Fixture" parent="." instance=ExtResource("6_ecp12")]

@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3 uid="uid://bo0wyfc3683wn"]
 
-[ext_resource type="Script" path="res://TransformCircle/x_arrow.gd" id="1_r1i08"]
-[ext_resource type="Script" path="res://TransformCircle/z_arrow.gd" id="2_xsfkn"]
-[ext_resource type="Script" path="res://TransformCircle/y_arrow.gd" id="3_g4ac5"]
+[ext_resource type="Script" uid="uid://dyjmcsklyajum" path="res://TransformCircle/x_arrow.gd" id="1_r1i08"]
+[ext_resource type="Script" uid="uid://bwu6jph68byfb" path="res://TransformCircle/z_arrow.gd" id="2_xsfkn"]
+[ext_resource type="Script" uid="uid://delynarw0mix0" path="res://TransformCircle/y_arrow.gd" id="3_g4ac5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_uiors"]
 size = Vector3(2, 0.1, 0.1)
@@ -59,6 +59,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 shape = SubResource("BoxShape3D_tqwv0")
 
 [node name="YStaticBody" type="StaticBody3D" parent="."]
+collision_layer = 2
+collision_mask = 2
 script = ExtResource("3_g4ac5")
 
 [node name="YMeshInstance" type="MeshInstance3D" parent="YStaticBody"]

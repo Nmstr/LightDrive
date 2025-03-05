@@ -13,8 +13,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	# Move the moving head
 	if Globals.mode == Globals.available_modes.LIVE:
-		moving_head.set_pan(dmx_values[0])
-		moving_head.set_tilt(dmx_values[1])
+		get_children()[-1].set_pan(dmx_values[0])
+		get_children()[-1].set_tilt(dmx_values[1])
 
 
 func set_dmx_values(new_values: Array) -> void:

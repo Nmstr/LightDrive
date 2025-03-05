@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://xvbd6pxrmv88"]
+
+[ext_resource type="Script" uid="uid://bsuh32t3s8utw" path="res://Fixtures/fixture.gd" id="1_iwmys"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h0gn5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eskdr"]
+albedo_color = Color(0, 0.581184, 0.86909, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tg7n5"]
+material = SubResource("StandardMaterial3D_eskdr")
+
+[node name="Fixture" type="StaticBody3D"]
+script = ExtResource("1_iwmys")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_h0gn5")
+
+[node name="CollisionIndicator" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transparency = 0.9
+mesh = SubResource("BoxMesh_tg7n5")
