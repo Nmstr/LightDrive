@@ -29,6 +29,7 @@ func _ready() -> void:
 			
 			self.add_icon_item(icon)
 
+
 func _on_add_fixture_button_pressed() -> void:
 	appear()
 
