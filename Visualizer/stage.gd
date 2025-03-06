@@ -1,5 +1,7 @@
 extends Node
 
+var fixture_scene := preload("res://Fixtures/fixture.tscn")
+var fixtures := Array()
 var dmx_values := Array()
 
 
@@ -11,9 +13,16 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	# Move the moving head
 	if Globals.mode == Globals.available_modes.LIVE:
-		get_children()[-1].set_pan(dmx_values[0])
-		get_children()[-1].set_tilt(dmx_values[1])
+		for fixture in fixtures:
+			fixture.set_pan(dmx_values[0])
+			fixture.set_tilt(dmx_values[1])
 
 
 func set_dmx_values(new_values: Array) -> void:
 	dmx_values = new_values
+
+
+func add_fixture() -> void:
+	var fixture := fixture_scene.instantiate()
+	add_child(fixture)
+	fixtures.append(fixture)

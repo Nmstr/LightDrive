@@ -11,6 +11,7 @@ albedo_color = Color(0, 0.581184, 0.86909, 1)
 material = SubResource("StandardMaterial3D_eskdr")
 
 [node name="Fixture" type="StaticBody3D"]
+collision_mask = 0
 script = ExtResource("1_iwmys")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

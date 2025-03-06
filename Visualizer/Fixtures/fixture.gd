@@ -20,15 +20,20 @@ func _ready():
 	transform_circle.hide()
 	input_event.connect(on_input_event)
 	
+	var reader = ZIPReader.new()
+	var err = reader.open("res://Assets/moving_head.ldv")
+	if err != OK:
+		print(err)
+		return
+	var model_file = reader.read_file("model.glb")
+	var json_file = reader.read_file("config.json")
+	reader.close()
+	
 	# Load model
 	var gltf := GLTFDocument.new()
 	var gltf_state := GLTFState.new()
-	var path := "res://Assets/moving_head.glb"
-	var snd_file = FileAccess.open(path, FileAccess.READ)
-	var fileBytes = PackedByteArray()
-	fileBytes = snd_file.get_buffer(snd_file.get_length())
 	
-	gltf.append_from_buffer(fileBytes, "base_path?", gltf_state)
+	gltf.append_from_buffer(model_file, "base_path?", gltf_state)
 	var node = gltf.generate_scene(gltf_state)
 	add_child(node)
 	
@@ -38,9 +43,8 @@ func _ready():
 	tilt_pivot.reparent(pan_pivot)
 
 	# Load json
-	var file = FileAccess.open("res://Assets/moving_head.json", FileAccess.READ)
 	var json = JSON.new()
-	var error = json.parse(file.get_as_text())
+	var error = json.parse(json_file.get_string_from_utf8())
 	if error == OK:
 		var json_data = json.data
 		for light_source in json_data.get("light_sources"):
