@@ -5,11 +5,10 @@ var transform_circle_scene := preload("res://TransformCircle/transform_circle.ts
 var transform_circle := transform_circle_scene.instantiate()
 var pan_pivot
 var tilt_pivot
-
-@export var min_pan_angle := 0.0
-@export var min_tilt_angle := -135.0
-@export var max_pan_angle := 540.0
-@export var max_tilt_angle := 270.0
+var min_pan_angle
+var min_tilt_angle
+var max_pan_angle
+var max_tilt_angle
 
 @onready var collision_indicator := $CollisionIndicator
 
@@ -19,9 +18,11 @@ func _ready():
 	add_child(transform_circle)
 	transform_circle.hide()
 	input_event.connect(on_input_event)
-	
+
+
+func load_fixture_data(fixture_path: String) -> void:
 	var reader = ZIPReader.new()
-	var err = reader.open("res://Assets/moving_head.ldv")
+	var err = reader.open(fixture_path)
 	if err != OK:
 		print(err)
 		return
@@ -40,14 +41,18 @@ func _ready():
 	# Configure pivots
 	pan_pivot = node.get_children()[0].get_node("PanPivot")
 	tilt_pivot = node.get_children()[0].get_node("TiltPivot")
-	tilt_pivot.reparent(pan_pivot)
-
+	call_deferred("_reparent_tilt_pivot")
+	
 	# Load json
 	var json = JSON.new()
 	var error = json.parse(json_file.get_string_from_utf8())
 	if error == OK:
 		var json_data = json.data
 		for light_source in json_data.get("light_sources"):
+			min_pan_angle = light_source.get("min_pan_angle")
+			min_tilt_angle = light_source.get("min_tilt_angle")
+			max_pan_angle = light_source.get("max_pan_angle")
+			max_tilt_angle = light_source.get("max_tilt_angle")
 			var light_cone = MeshInstance3D.new()
 			light_cone.position.x = light_source.get("x_offset")
 			light_cone.position.y = light_source.get("length") / 2 + light_source.get("y_offset")
@@ -68,6 +73,15 @@ func _ready():
 			light_rotation_pivot.rotation.z = deg_to_rad(light_source.get("z_rotation"))
 			light_rotation_pivot.add_child(light_cone)
 			tilt_pivot.add_child(light_rotation_pivot)
+
+
+# The following is here because I can't reparent tilt_pivot under pan_pivot
+# before the physics frame in which both where created has finished.
+# This is because tilt_pivot needs to first be properly added to the scene tree,
+# which I do by waiting for the function that creates it to finish running,
+# and then call this one.
+func _reparent_tilt_pivot() -> void:
+	tilt_pivot.reparent(pan_pivot)
 
 
 func on_input_event(_camera, event, _click_position, _click_normal, _shape_idx):

@@ -14,7 +14,6 @@ func _ready() -> void:
 	dir.list_dir_begin()
 	var reader = ZIPReader.new()
 	for file: String in dir.get_files():
-		print(dir.get_current_dir() + "/" + file)
 		if file.ends_with(".ldv"):
 			var err = reader.open(dir.get_current_dir() + "/" + file)
 			if err != OK:
@@ -27,7 +26,8 @@ func _ready() -> void:
 			image.load_png_from_buffer(thumbnail_file)
 			var icon = ImageTexture.create_from_image(image)
 			
-			self.add_icon_item(icon)
+			var index := self.add_icon_item(icon)
+			self.set_item_metadata(index, dir.get_current_dir() + "/" + file) # Store the path to the fixture as metadata of item
 
 
 func _on_add_fixture_button_pressed() -> void:
@@ -59,10 +59,10 @@ func disappear() -> void:
 		await get_tree().create_timer(0.005).timeout
 
 
-func _on_item_clicked(_index: int, _at_position: Vector2, mouse_button_index: int) -> void:
+func _on_item_clicked(index: int, _at_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index:
 		if Time.get_ticks_msec() - last_click_time < max_ms_double_click:
-			hud_node.get_parent().add_fixture()
+			hud_node.get_parent().add_fixture(get_item_metadata(index))
 			last_click_time = 0 # Reset double click
 		else:
 			last_click_time = Time.get_ticks_msec()
