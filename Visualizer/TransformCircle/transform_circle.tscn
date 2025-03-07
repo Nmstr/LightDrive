@@ -1,8 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://bo0wyfc3683wn"]
+[gd_scene load_steps=25 format=3 uid="uid://bo0wyfc3683wn"]
 
 [ext_resource type="Script" uid="uid://dyjmcsklyajum" path="res://TransformCircle/x_arrow.gd" id="1_r1i08"]
 [ext_resource type="Script" uid="uid://bwu6jph68byfb" path="res://TransformCircle/z_arrow.gd" id="2_xsfkn"]
 [ext_resource type="Script" uid="uid://delynarw0mix0" path="res://TransformCircle/y_arrow.gd" id="3_g4ac5"]
+[ext_resource type="Script" uid="uid://cf642kahl3dvx" path="res://TransformCircle/x_rot.gd" id="4_pbam1"]
+[ext_resource type="Script" uid="uid://chg5wxlljsjvw" path="res://TransformCircle/y_rot.gd" id="5_cl074"]
+[ext_resource type="Script" uid="uid://b7pfqllstebx" path="res://TransformCircle/z_rot.gd" id="6_6jwea"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_uiors"]
 size = Vector3(2, 0.1, 0.1)
@@ -33,6 +36,39 @@ size = Vector3(0.1, 2, 0.1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_s74yb"]
 size = Vector3(0.1, 2, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rascl"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_rascl"]
+material = SubResource("StandardMaterial3D_rascl")
+radius = 0.125
+height = 0.25
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pbam1"]
+radius = 0.125
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jwea"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_6lt3m"]
+material = SubResource("StandardMaterial3D_6jwea")
+radius = 0.125
+height = 0.25
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fvx6g"]
+radius = 0.125
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6lt3m"]
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_fvx6g"]
+material = SubResource("StandardMaterial3D_6lt3m")
+radius = 0.125
+height = 0.25
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_0vlla"]
+radius = 0.25
 
 [node name="TransformCircle" type="Node3D"]
 
@@ -70,3 +106,36 @@ mesh = SubResource("BoxMesh_gowyu")
 [node name="YCollisionShape" type="CollisionShape3D" parent="YStaticBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 shape = SubResource("BoxShape3D_s74yb")
+
+[node name="XRotBody" type="StaticBody3D" parent="."]
+script = ExtResource("4_pbam1")
+
+[node name="XRotMeshInstance" type="MeshInstance3D" parent="XRotBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 0)
+mesh = SubResource("SphereMesh_rascl")
+
+[node name="XRotCollisionShape" type="CollisionShape3D" parent="XRotBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 0)
+shape = SubResource("SphereShape3D_pbam1")
+
+[node name="YRotBody" type="StaticBody3D" parent="."]
+script = ExtResource("5_cl074")
+
+[node name="YRotMeshInstance" type="MeshInstance3D" parent="YRotBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+mesh = SubResource("SphereMesh_6lt3m")
+
+[node name="YRotCollisionShape" type="CollisionShape3D" parent="YRotBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+shape = SubResource("SphereShape3D_fvx6g")
+
+[node name="ZRotBody" type="StaticBody3D" parent="."]
+script = ExtResource("6_6jwea")
+
+[node name="ZRotMeshInstance" type="MeshInstance3D" parent="ZRotBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)
+mesh = SubResource("SphereMesh_fvx6g")
+
+[node name="ZRotCollisionShape" type="CollisionShape3D" parent="ZRotBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)
+shape = SubResource("SphereShape3D_0vlla")
