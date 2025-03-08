@@ -14,7 +14,7 @@ func _process(delta: float) -> void:
 	var fixture := get_parent().get_parent()
 	if abs(drag_distance) > 0.0:
 		fixture.rotation.x += drag_distance * delta
-		fixture.get_parent().get_node("Hud/FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/XRotSpin").value = fixture.rotation.x
+		fixture.get_parent().get_node("Hud/FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/XRotSpin").value = rad_to_deg(fixture.rotation.x)
 		drag_distance = 0.0
 
 
