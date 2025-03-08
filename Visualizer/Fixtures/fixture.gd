@@ -98,9 +98,16 @@ func on_input_event(_camera, event, _click_position, _click_normal, _shape_idx):
 
 func change_selection_status(stauts: bool) -> void:
 	if stauts:
+		if get_parent().selected_fixture:
+			get_parent().selected_fixture.change_selection_status(false)
+		get_parent().selected_fixture = self
+		get_parent().get_node("Hud").hide_menu()
+		get_parent().get_node("Hud").get_node("FixturePropertyEditor").appear()
+		get_parent().get_node("Hud").get_node("FixturePropertyEditor").show_fixture(self)
 		transform_circle.show()
 		selected = true
 	else:
+		get_parent().get_node("Hud").get_node("FixturePropertyEditor").disappear()
 		transform_circle.hide()
 		selected = false
 
