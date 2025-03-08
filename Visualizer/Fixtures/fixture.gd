@@ -1,8 +1,6 @@
 extends StaticBody3D
 
 var selected := false
-var transform_circle_scene := preload("res://TransformCircle/transform_circle.tscn")
-var transform_circle := transform_circle_scene.instantiate()
 var pan_pivot
 var tilt_pivot
 var min_pan_angle
@@ -12,11 +10,11 @@ var max_tilt_angle
 var path
 
 @onready var collision_indicator := $CollisionIndicator
+@onready var transform_circle := $TransformCircle
 
 
 func _ready():
 	# Setup collision
-	add_child(transform_circle)
 	transform_circle.hide()
 	input_event.connect(on_input_event)
 
