@@ -100,6 +100,7 @@ func change_selection_status(stauts: bool) -> void:
 	if stauts:
 		get_parent().get_node("Hud").hide_menu()
 		get_parent().get_node("Hud").get_node("FixturePropertyEditor").appear()
+		get_parent().get_node("Hud").get_node("FixturePropertyEditor").show_fixture(self)
 		transform_circle.show()
 		selected = true
 	else:
