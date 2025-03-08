@@ -75,10 +75,12 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.lds; LightDrive Stage Files")
+use_native_dialog = true
 
 [node name="SaveFileDialog" type="FileDialog" parent="FileMenu"]
 access = 2
 filters = PackedStringArray("*.lds; LightDrive Stage Files")
+use_native_dialog = true
 
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
