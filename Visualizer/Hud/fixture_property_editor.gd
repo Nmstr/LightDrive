@@ -14,9 +14,9 @@ func show_fixture(fixture: Node3D) -> void:
 	x_pos_spin.value = fixture.position.x
 	y_pos_spin.value = fixture.position.y
 	z_pos_spin.value = fixture.position.z
-	x_rot_spin.value = fixture.rotation.x
-	y_rot_spin.value = fixture.rotation.y
-	z_rot_spin.value = fixture.rotation.z
+	x_rot_spin.value = rad_to_deg(fixture.rotation.x)
+	y_rot_spin.value = rad_to_deg(fixture.rotation.y)
+	z_rot_spin.value = rad_to_deg(fixture.rotation.z)
 
 
 func appear() -> void:
@@ -38,3 +38,27 @@ func disappear() -> void:
 		position.x += 17
 		await get_tree().create_timer(0.005).timeout
 	position.x = 1200
+
+
+func _on_x_pos_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.position.x = value
+
+
+func _on_y_pos_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.position.y = value
+
+
+func _on_z_pos_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.position.z = value
+
+
+func _on_x_rot_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.rotation.x = deg_to_rad(value)
+
+
+func _on_y_rot_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.rotation.y = deg_to_rad(value)
+
+
+func _on_z_rot_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.rotation.z = deg_to_rad(value)
