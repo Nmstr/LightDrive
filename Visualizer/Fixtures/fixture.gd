@@ -23,13 +23,13 @@ func _ready():
 
 func load_fixture_data(fixture_path: String) -> void:
 	path = fixture_path
-	var reader = ZIPReader.new()
-	var err = reader.open(path)
+	var reader := ZIPReader.new()
+	var err := reader.open(path)
 	if err != OK:
 		print(err)
 		return
-	var model_file = reader.read_file("model.glb")
-	var json_file = reader.read_file("config.json")
+	var model_file := reader.read_file("model.glb")
+	var json_file := reader.read_file("config.json")
 	reader.close()
 	
 	# Load model
@@ -37,7 +37,7 @@ func load_fixture_data(fixture_path: String) -> void:
 	var gltf_state := GLTFState.new()
 	
 	gltf.append_from_buffer(model_file, "base_path?", gltf_state)
-	var node = gltf.generate_scene(gltf_state)
+	var node := gltf.generate_scene(gltf_state)
 	add_child(node)
 	
 	# Configure pivots
@@ -46,8 +46,8 @@ func load_fixture_data(fixture_path: String) -> void:
 	call_deferred("_reparent_tilt_pivot")
 	
 	# Load json
-	var json = JSON.new()
-	var error = json.parse(json_file.get_string_from_utf8())
+	var json := JSON.new()
+	var error := json.parse(json_file.get_string_from_utf8())
 	if error == OK:
 		var json_data = json.data
 		for light_source in json_data.get("light_sources"):
@@ -55,21 +55,21 @@ func load_fixture_data(fixture_path: String) -> void:
 			min_tilt_angle = light_source.get("min_tilt_angle")
 			max_pan_angle = light_source.get("max_pan_angle")
 			max_tilt_angle = light_source.get("max_tilt_angle")
-			var light_cone = MeshInstance3D.new()
+			var light_cone := MeshInstance3D.new()
 			light_cone.position.x = light_source.get("x_offset")
 			light_cone.position.y = light_source.get("length") / 2 + light_source.get("y_offset")
 			light_cone.position.z = light_source.get("z_offset")
-			var light_cone_shape = CylinderMesh.new()
+			var light_cone_shape := CylinderMesh.new()
 			light_cone_shape.height = light_source.get("length")
 			light_cone_shape.bottom_radius = 0.0
 			light_cone_shape.top_radius = light_source.get("length") * tan(deg_to_rad(light_source.get("angle")))
 			light_cone.set_mesh(light_cone_shape)
-			var light_cone_material = StandardMaterial3D.new()
+			var light_cone_material := StandardMaterial3D.new()
 			light_cone_material.transparency = 1
 			light_cone_material.blend_mode = 1
 			light_cone_material.shading_mode = 0
 			light_cone.set_surface_override_material(0, light_cone_material)
-			var light_rotation_pivot = Node3D.new()
+			var light_rotation_pivot := Node3D.new()
 			light_rotation_pivot.rotation.x = deg_to_rad(light_source.get("x_rotation"))
 			light_rotation_pivot.rotation.y = deg_to_rad(light_source.get("y_rotation"))
 			light_rotation_pivot.rotation.z = deg_to_rad(light_source.get("z_rotation"))
@@ -87,7 +87,7 @@ func _reparent_tilt_pivot() -> void:
 
 
 func on_input_event(_camera, event, _click_position, _click_normal, _shape_idx):
-	var mouse_click = event as InputEventMouseButton
+	var mouse_click := event as InputEventMouseButton
 	if mouse_click and mouse_click.button_index == 1 and mouse_click.pressed:
 		if Globals.mode == Globals.available_modes.EDITOR:
 			if selected:

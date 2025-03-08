@@ -15,11 +15,11 @@ func _ready() -> void:
 	var reader = ZIPReader.new()
 	for file: String in dir.get_files():
 		if file.ends_with(".ldv"):
-			var err = reader.open(dir.get_current_dir() + "/" + file)
+			var err := reader.open(dir.get_current_dir() + "/" + file)
 			if err != OK:
 				print(err)
 				return
-			var thumbnail_file = reader.read_file("thumbnail.png")
+			var thumbnail_file := reader.read_file("thumbnail.png")
 			reader.close()
 			
 			var image = Image.new()

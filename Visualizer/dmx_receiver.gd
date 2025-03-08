@@ -6,6 +6,7 @@ var client := StreamPeerTCP.new()
 var reconnect_delay := 1.0  # Time in seconds to wait before attempting to reconnect
 var time_since_last_attempt := 0.0
 
+
 func _ready() -> void:
 	connect_to_server()
 

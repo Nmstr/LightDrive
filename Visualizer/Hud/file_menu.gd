@@ -3,10 +3,6 @@ extends VBoxContainer
 var dialog_selected_file := ""
 
 
-func _ready() -> void:
-	pass
-
-
 func _on_file_button_pressed() -> void:
 	get_parent().show_menu("FileMenu")
 
@@ -25,7 +21,7 @@ func _on_save_file_dialog_file_selected(path: String) -> void:
 
 func _save_file(path: String) -> void:
 	# Collect the save data
-	var save_data = []
+	var save_data := []
 	for fixture in get_tree().get_nodes_in_group("Persist"):
 		save_data.append({
 			"fixture_path": fixture.path,
@@ -38,7 +34,7 @@ func _save_file(path: String) -> void:
 		})
 	
 	# Create the save file
-	var save_file = FileAccess.open(path, FileAccess.WRITE)
+	var save_file := FileAccess.open(path, FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(save_data))
 
 
@@ -62,8 +58,8 @@ func _load_file(path: String) -> void:
 	get_parent().get_parent().fixtures = []
 	
 	# Load the save file
-	var save_file = FileAccess.open(path, FileAccess.READ)
-	var json = JSON.new()
+	var save_file := FileAccess.open(path, FileAccess.READ)
+	var json := JSON.new()
 	json.parse(save_file.get_as_text())
 	for fixture in json.data:
 		get_parent().get_parent().add_fixture(fixture.fixture_path,

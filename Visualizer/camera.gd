@@ -6,6 +6,7 @@ extends Node3D
 @onready var pitch_pivot := $TwistPivot/PitchPivot
 @onready var camera := $TwistPivot/PitchPivot/Camera3D
 
+
 func _ready() -> void:
 	if not camera_pivot_indicator_visibility:
 		$TwistPivot/PitchPivot/CameraPivotIndicator.hide()
