@@ -331,6 +331,8 @@ initial_position = 2
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/XRotSpin" to="FixturePropertyEditor" method="_on_x_rot_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/YRotSpin" to="FixturePropertyEditor" method="_on_y_rot_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/ZRotSpin" to="FixturePropertyEditor" method="_on_z_rot_spin_value_changed"]
+[connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/UniverseHBox/UniverseSpin" to="FixturePropertyEditor" method="_on_universe_spin_value_changed"]
+[connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/ChannelHBox/ChannelSpin" to="FixturePropertyEditor" method="_on_channel_spin_value_changed"]
 [connection signal="pressed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton" to="FixturePropertyEditor" method="_on_remove_fixture_button_pressed"]
 [connection signal="confirmed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton/RemoveFixtureDialog" to="FixturePropertyEditor" method="_on_remove_fixture_dialog_confirmed"]
 [connection signal="pressed" from="UniverseMenu/CloseUniverseMenu" to="UniverseMenu" method="_on_close_universe_menu_pressed"]

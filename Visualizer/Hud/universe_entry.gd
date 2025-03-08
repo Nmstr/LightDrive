@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 			data = JSON.parse_string(data)
 			if data == null:
 				return
-			get_parent().get_parent().get_parent().get_parent().get_parent().set_dmx_values(data)
+			get_parent().get_parent().get_parent().get_parent().get_parent().set_dmx_values(self, data)
 	elif client.get_status() == StreamPeerTCP.STATUS_CONNECTING:
 		pass
 	else:

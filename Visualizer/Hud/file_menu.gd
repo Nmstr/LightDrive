@@ -20,20 +20,30 @@ func _on_save_file_dialog_file_selected(path: String) -> void:
 
 
 func _save_file(path: String) -> void:
-	# Collect the save data
-	var save_data := []
+	# Collect the fixture data
+	var fixture_data := []
 	for fixture in get_tree().get_nodes_in_group("Persist"):
-		save_data.append({
+		fixture_data.append({
 			"fixture_path": fixture.path,
 			"x_pos": fixture.position.x,
 			"y_pos": fixture.position.y,
 			"z_pos": fixture.position.z,
 			"x_rot": fixture.rotation.x,
 			"y_rot": fixture.rotation.y,
-			"z_rot": fixture.rotation.z
+			"z_rot": fixture.rotation.z,
+			"universe": fixture.universe,
+			"channel": fixture.channel
 		})
+	# Collect the universe data
+	var universe_data := []
+	for universe in get_parent().get_parent().universes:
+		universe_data.append(universe.get_port())
 	
 	# Create the save file
+	var save_data := {
+		"fixture_data": fixture_data,
+		"universe_data": universe_data
+	}
 	var save_file := FileAccess.open(path, FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(save_data))
 
@@ -56,17 +66,24 @@ func _load_file(path: String) -> void:
 	for i in save_nodes:
 		i.queue_free()
 	get_parent().get_parent().fixtures = []
+	for universe in get_parent().get_parent().universes:
+		universe.queue_free()
+	get_parent().get_parent().universes = []
 	
 	# Load the save file
 	var save_file := FileAccess.open(path, FileAccess.READ)
 	var json := JSON.new()
 	json.parse(save_file.get_as_text())
-	for fixture in json.data:
+	for fixture in json.data["fixture_data"]:
 		get_parent().get_parent().add_fixture(fixture.fixture_path,
 				fixture.x_pos,
 				fixture.y_pos,
 				fixture.z_pos,
 				fixture.x_rot,
 				fixture.y_rot,
-				fixture.z_rot
+				fixture.z_rot,
+				fixture.universe,
+				fixture.channel
 		)
+	for universe in json.data["universe_data"]:
+		get_parent().get_node("UniverseMenu").create_universe(universe)

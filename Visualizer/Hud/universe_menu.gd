@@ -12,10 +12,6 @@ func _on_close_universe_menu_pressed() -> void:
 
 
 func _on_add_universe_button_pressed() -> void:
-	var universe_entry := universe_entry_scene.instantiate()
-	$UniverseScroll/UniverseVBox.add_child(universe_entry)
-	get_parent().get_parent().universes.append(universe_entry)
-	
 	# Check if port 7500 is free and if so use it
 	var used_7500 := false
 	for universe in get_parent().get_parent().universes:
@@ -23,7 +19,15 @@ func _on_add_universe_button_pressed() -> void:
 			used_7500 = true
 			break
 	if not used_7500:
-		universe_entry.set_port(7500)
+		create_universe(7500)
+	else:
+		create_universe(0)
+	
+func create_universe(port: int) -> void:
+	var universe_entry := universe_entry_scene.instantiate()
+	$UniverseScroll/UniverseVBox.add_child(universe_entry)
+	get_parent().get_parent().universes.append(universe_entry)
+	universe_entry.set_port(port)
 
 
 func _on_remove_universe_button_pressed() -> void:
