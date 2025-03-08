@@ -12,8 +12,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var fixture := get_parent().get_parent()
-	fixture.move_and_collide(Vector3(0, 0, drag_distance * delta))
-	drag_distance = 0.0
+	if abs(drag_distance) > 0.0:
+		fixture.move_and_collide(Vector3(0, 0, drag_distance * delta))
+		fixture.get_parent().get_node("Hud/FixturePropertyEditor/Background/FixturePropertyVBox/PositionHBox/ZPosSpin").value = fixture.position.z
+		drag_distance = 0.0
 
 
 func on_input_event(_camera, event, _click_position, _click_normal, _shape_idx) -> void:
