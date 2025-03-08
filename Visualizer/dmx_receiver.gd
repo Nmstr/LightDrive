@@ -12,6 +12,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	return
 	client.poll()
 	if client.get_status() == StreamPeerTCP.STATUS_CONNECTED:
 		if client.get_available_bytes() > 0:

@@ -2,28 +2,46 @@
 
 [ext_resource type="Script" uid="uid://cnxa8il1qvrhq" path="res://Hud/universe_entry.gd" id="1_s2gne"]
 
-[node name="UniverseEntry" type="VBoxContainer"]
+[node name="UniverseEntry" type="HBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -1002.0
+offset_right = -952.0
 offset_bottom = -578.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s2gne")
 
-[node name="UniverseLabel" type="Label" parent="."]
+[node name="InfoSide" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="UniverseLabel" type="Label" parent="InfoSide"]
 layout_mode = 2
 text = "Universe n"
 
-[node name="PortHBox" type="HBoxContainer" parent="."]
+[node name="PortHBox" type="HBoxContainer" parent="InfoSide"]
 layout_mode = 2
 
-[node name="PortLabel" type="Label" parent="PortHBox"]
+[node name="PortLabel" type="Label" parent="InfoSide/PortHBox"]
 layout_mode = 2
 text = "Port:"
 
-[node name="PortSpin" type="SpinBox" parent="PortHBox"]
+[node name="PortSpin" type="SpinBox" parent="InfoSide/PortHBox"]
 layout_mode = 2
 tooltip_text = "Port `0` disables the input."
 max_value = 65535.0
+
+[node name="UniverseStatus" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(65, 0)
+layout_mode = 2
+tooltip_text = "White: None
+Red: Error
+Orange: Loading
+Green: Ok
+Blue: Out of sync"
+
+[node name="UpdateStatusTimer" type="Timer" parent="UniverseStatus"]
+wait_time = 3.0
+autostart = true
+
+[connection signal="timeout" from="UniverseStatus/UpdateStatusTimer" to="." method="_on_update_status_timer_timeout"]

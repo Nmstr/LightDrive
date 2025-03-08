@@ -34,4 +34,6 @@ func _on_remove_universe_button_pressed() -> void:
 
 
 func _on_apply_universes_button_pressed() -> void:
-	pass
+	print("Apply")
+	for universe in get_parent().get_parent().universes:
+		universe.restart_listening()

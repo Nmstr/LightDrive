@@ -309,6 +309,10 @@ offset_right = 175.0
 offset_bottom = 431.0
 text = "Apply"
 
+[node name="AcceptDialog" type="AcceptDialog" parent="UniverseMenu/ApplyUniversesButton"]
+title = "Universe Configuration Error"
+initial_position = 2
+
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/FileButton" to="FileMenu" method="_on_file_button_pressed"]
