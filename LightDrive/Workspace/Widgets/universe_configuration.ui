@@ -76,6 +76,20 @@
         </layout>
        </widget>
       </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="enable_tcp_socket_checkbox">
+        <property name="text">
+         <string>Enable TCP Socket (Visualizer)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="Line" name="artnet_line">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="universe_number_label">
         <property name="maximumSize">
@@ -89,18 +103,78 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="enable_artnet_checkbox">
+        <property name="text">
+         <string>Enable Artnet</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
        <widget class="Line" name="line">
         <property name="orientation">
          <enum>Qt::Orientation::Vertical</enum>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QCheckBox" name="enable_artnet_checkbox">
-        <property name="text">
-         <string>Enable Artnet</string>
+      <item row="4" column="1">
+       <widget class="QFrame" name="tcp_socket_frame">
+        <property name="frameShape">
+         <enum>QFrame::Shape::StyledPanel</enum>
         </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="3" column="0">
+          <widget class="QLabel" name="tcp_socket_hz_label">
+           <property name="text">
+            <string>Hz:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
+          <widget class="QSpinBox" name="tcp_socket_port_spin">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>7500</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="tcp_socket_port_label">
+           <property name="text">
+            <string>Port:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="2">
+          <widget class="QSpinBox" name="tcp_socket_hz_spin">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="value">
+            <number>30</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="tcp_socket_target_ip_edit">
+           <property name="text">
+            <string>127.0.0.1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="tcp_socket_ip_label">
+           <property name="text">
+            <string>Target IP:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -173,6 +247,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>enable_artnet_checkbox</tabstop>
+  <tabstop>target_ip_edit</tabstop>
+  <tabstop>universe_spin</tabstop>
+  <tabstop>hz_spin</tabstop>
+  <tabstop>enable_tcp_socket_checkbox</tabstop>
+  <tabstop>tcp_socket_target_ip_edit</tabstop>
+  <tabstop>tcp_socket_port_spin</tabstop>
+  <tabstop>tcp_socket_hz_spin</tabstop>
+  <tabstop>apply_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

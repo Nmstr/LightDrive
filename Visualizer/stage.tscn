@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3 uid="uid://c7yi56sq1vb2j"]
+
+[ext_resource type="Script" uid="uid://b1c0vb2dotygw" path="res://stage.gd" id="1_qgw0x"]
+[ext_resource type="Script" uid="uid://bvh5f2m8rgioa" path="res://dmx_receiver.gd" id="3_bl8kh"]
+[ext_resource type="PackedScene" uid="uid://cbftg3nk3t3wh" path="res://Hud/hud.tscn" id="5_ma6c1"]
+[ext_resource type="PackedScene" uid="uid://vw3k6es8640q" path="res://custom_camera.tscn" id="5_rxip7"]
+
+[sub_resource type="Environment" id="Environment_yy887"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_mkesg"]
+size = Vector2(10, 10)
+
+[node name="Stage" type="Node3D"]
+script = ExtResource("1_qgw0x")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_yy887")
+
+[node name="Plane" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_mkesg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.884174, 0.467158, 0, -0.467158, 0.884174, 0, 1.68898, 4.09127)
+
+[node name="DmxReceiver" type="Node3D" parent="."]
+script = ExtResource("3_bl8kh")
+
+[node name="CustomCamera" parent="." instance=ExtResource("5_rxip7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28647, 2.39138)
+
+[node name="Hud" parent="." instance=ExtResource("5_ma6c1")]

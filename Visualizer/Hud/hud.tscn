@@ -1,0 +1,95 @@
+[gd_scene load_steps=4 format=3 uid="uid://cbftg3nk3t3wh"]
+
+[ext_resource type="Script" uid="uid://c550680u615rk" path="res://Hud/hud.gd" id="1_xedcd"]
+[ext_resource type="Script" uid="uid://xieuajoeo4fy" path="res://Hud/add_fixture_menu.gd" id="2_ngqfk"]
+[ext_resource type="Script" uid="uid://dss7ecw2u71a4" path="res://Hud/file_menu.gd" id="3_jop16"]
+
+[node name="Hud" type="Node2D"]
+script = ExtResource("1_xedcd")
+
+[node name="ToggleModeButton" type="Button" parent="."]
+offset_left = 1003.0
+offset_top = 13.0
+offset_right = 1136.0
+offset_bottom = 68.0
+text = "Enter Live Mode
+"
+
+[node name="LeftSideBar" type="Node2D" parent="."]
+
+[node name="AddFixtureButton" type="Button" parent="LeftSideBar"]
+offset_left = 50.0
+offset_top = 140.0
+offset_right = 150.0
+offset_bottom = 200.0
+text = "Add Fixture
+"
+
+[node name="FileButton" type="Button" parent="LeftSideBar"]
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 110.0
+text = "File"
+
+[node name="AddFixtureMenu" type="Node2D" parent="."]
+position = Vector2(-250, 0)
+
+[node name="FixtureMenuList" type="ItemList" parent="AddFixtureMenu"]
+offset_top = 30.0
+offset_right = 200.0
+offset_bottom = 548.0
+fixed_icon_size = Vector2i(128, 128)
+script = ExtResource("2_ngqfk")
+
+[node name="CloseFixtureMenu" type="Button" parent="AddFixtureMenu"]
+offset_top = 568.0
+offset_right = 200.0
+offset_bottom = 628.0
+text = "Close
+"
+
+[node name="FileMenu" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(200, 0)
+offset_left = -500.0
+offset_top = 30.0
+offset_right = -300.0
+offset_bottom = 618.0
+script = ExtResource("3_jop16")
+
+[node name="SaveFileButton" type="Button" parent="FileMenu"]
+layout_mode = 2
+text = "Save"
+
+[node name="LoadFileButton" type="Button" parent="FileMenu"]
+layout_mode = 2
+text = "Load"
+
+[node name="CloseFileMenuButton" type="Button" parent="FileMenu"]
+layout_mode = 2
+text = "Close"
+
+[node name="LoadFileDialog" type="FileDialog" parent="FileMenu"]
+title = "Open a File"
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.lds; LightDrive Stage Files")
+use_native_dialog = true
+
+[node name="SaveFileDialog" type="FileDialog" parent="FileMenu"]
+access = 2
+filters = PackedStringArray("*.lds; LightDrive Stage Files")
+use_native_dialog = true
+
+[connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
+[connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
+[connection signal="pressed" from="LeftSideBar/FileButton" to="FileMenu" method="_on_file_button_pressed"]
+[connection signal="item_clicked" from="AddFixtureMenu/FixtureMenuList" to="AddFixtureMenu/FixtureMenuList" method="_on_item_clicked"]
+[connection signal="pressed" from="AddFixtureMenu/CloseFixtureMenu" to="AddFixtureMenu/FixtureMenuList" method="_on_close_fixture_menu_pressed"]
+[connection signal="pressed" from="FileMenu/SaveFileButton" to="FileMenu" method="_on_save_file_button_pressed"]
+[connection signal="button_up" from="FileMenu/LoadFileButton" to="FileMenu" method="_on_load_file_button_button_up"]
+[connection signal="pressed" from="FileMenu/LoadFileButton" to="FileMenu" method="_on_load_file_button_pressed"]
+[connection signal="pressed" from="FileMenu/CloseFileMenuButton" to="FileMenu" method="_on_close_file_menu_button_pressed"]
+[connection signal="file_selected" from="FileMenu/LoadFileDialog" to="FileMenu" method="_on_load_file_dialog_file_selected"]
+[connection signal="file_selected" from="FileMenu/SaveFileDialog" to="FileMenu" method="_on_save_file_dialog_file_selected"]
