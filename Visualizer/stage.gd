@@ -22,8 +22,20 @@ func set_dmx_values(new_values: Array) -> void:
 	dmx_values = new_values
 
 
-func add_fixture(fixture_path: String) -> void:
+func add_fixture(fixture_path: String,
+				x_pos: float = 0.0,
+				y_pos: float = 0.0,
+				z_pos: float = 0.0,
+				x_rot: float = 0.0,
+				y_rot: float = 0.0,
+				z_rot: float = 0.0) -> void:
 	var fixture := fixture_scene.instantiate()
 	fixture.load_fixture_data(fixture_path)
+	fixture.position.x = x_pos
+	fixture.position.y = y_pos
+	fixture.position.z = z_pos
+	fixture.rotation.x = x_rot
+	fixture.rotation.y = y_rot
+	fixture.rotation.z = z_rot
 	add_child(fixture)
 	fixtures.append(fixture)

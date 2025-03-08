@@ -9,6 +9,7 @@ var min_pan_angle
 var min_tilt_angle
 var max_pan_angle
 var max_tilt_angle
+var path
 
 @onready var collision_indicator := $CollisionIndicator
 
@@ -21,8 +22,9 @@ func _ready():
 
 
 func load_fixture_data(fixture_path: String) -> void:
+	path = fixture_path
 	var reader = ZIPReader.new()
-	var err = reader.open(fixture_path)
+	var err = reader.open(path)
 	if err != OK:
 		print(err)
 		return

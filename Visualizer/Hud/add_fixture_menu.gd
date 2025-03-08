@@ -31,11 +31,11 @@ func _ready() -> void:
 
 
 func _on_add_fixture_button_pressed() -> void:
-	appear()
+	hud_node.show_menu("AddFixtureMenu")
 
 
-func _on_focus_exited() -> void:
-	disappear()
+func _on_close_fixture_menu_pressed() -> void:
+	hud_node.hide_menu()
 
 
 func appear() -> void:

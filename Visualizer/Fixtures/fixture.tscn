@@ -10,7 +10,7 @@ albedo_color = Color(0, 0.581184, 0.86909, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_tg7n5"]
 material = SubResource("StandardMaterial3D_eskdr")
 
-[node name="Fixture" type="StaticBody3D"]
+[node name="Fixture" type="StaticBody3D" groups=["Persist"]]
 collision_mask = 0
 script = ExtResource("1_iwmys")
 
