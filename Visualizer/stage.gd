@@ -2,6 +2,7 @@ extends Node
 
 var fixture_scene := preload("res://Fixtures/fixture.tscn")
 var fixtures := Array()
+var universes := Array()
 var dmx_values := Array()
 var selected_fixture: Node3D
 
