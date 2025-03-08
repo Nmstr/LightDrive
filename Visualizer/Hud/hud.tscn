@@ -1,17 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://cbftg3nk3t3wh"]
+[gd_scene load_steps=5 format=3 uid="uid://cbftg3nk3t3wh"]
 
 [ext_resource type="Script" uid="uid://c550680u615rk" path="res://Hud/hud.gd" id="1_xedcd"]
 [ext_resource type="Script" uid="uid://xieuajoeo4fy" path="res://Hud/add_fixture_menu.gd" id="2_ngqfk"]
 [ext_resource type="Script" uid="uid://dss7ecw2u71a4" path="res://Hud/file_menu.gd" id="3_jop16"]
+[ext_resource type="Script" uid="uid://chwjojajomumw" path="res://Hud/fixture_property_editor.gd" id="4_l1kve"]
 
 [node name="Hud" type="Node2D"]
 script = ExtResource("1_xedcd")
 
 [node name="ToggleModeButton" type="Button" parent="."]
-offset_left = 1003.0
-offset_top = 13.0
-offset_right = 1136.0
-offset_bottom = 68.0
+offset_left = 922.0
+offset_top = 30.0
+offset_right = 1122.0
+offset_bottom = 90.0
 text = "Enter Live Mode
 "
 
@@ -81,6 +82,158 @@ use_native_dialog = true
 access = 2
 filters = PackedStringArray("*.lds; LightDrive Stage Files")
 use_native_dialog = true
+
+[node name="FixturePropertyEditor" type="ScrollContainer" parent="."]
+offset_left = 1200.0
+offset_top = 120.0
+offset_right = 1600.0
+offset_bottom = 618.0
+script = ExtResource("4_l1kve")
+
+[node name="ColorRect" type="ColorRect" parent="FixturePropertyEditor"]
+custom_minimum_size = Vector2(400, 498)
+layout_mode = 2
+color = Color(0.184314, 0.184314, 0.184314, 0.705882)
+
+[node name="FixturePropertyVBox" type="VBoxContainer" parent="FixturePropertyEditor/ColorRect"]
+layout_mode = 2
+offset_left = 2.0
+offset_right = 398.0
+offset_bottom = 252.0
+size_flags_horizontal = 3
+
+[node name="TransformLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+text = "Transform"
+horizontal_alignment = 1
+
+[node name="PositionLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+text = "Position"
+
+[node name="PositionHBox" type="HBoxContainer" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+
+[node name="XPosLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/PositionHBox"]
+layout_mode = 2
+text = "X"
+
+[node name="XPosSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/PositionHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+suffix = "m"
+custom_arrow_step = 1.0
+
+[node name="YPosLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/PositionHBox"]
+layout_mode = 2
+text = "Y"
+
+[node name="YPosSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/PositionHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+suffix = "m"
+custom_arrow_step = 1.0
+
+[node name="ZPosLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/PositionHBox"]
+layout_mode = 2
+text = "Z"
+
+[node name="ZPosSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/PositionHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+suffix = "m"
+custom_arrow_step = 1.0
+
+[node name="RotationLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+text = "Rotation"
+
+[node name="RotationHBox" type="HBoxContainer" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+
+[node name="XRotLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/RotationHBox"]
+layout_mode = 2
+text = "X"
+
+[node name="XRotSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/RotationHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+suffix = "m"
+custom_arrow_step = 1.0
+
+[node name="YRotLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/RotationHBox"]
+layout_mode = 2
+text = "Y"
+
+[node name="YRotSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/RotationHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+suffix = "m"
+custom_arrow_step = 1.0
+
+[node name="ZRotLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/RotationHBox"]
+layout_mode = 2
+text = "Z"
+
+[node name="ZRotSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/RotationHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+suffix = "m"
+custom_arrow_step = 1.0
+
+[node name="TransformSeperator" type="HSeparator" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+
+[node name="DmxLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+text = "DMX"
+horizontal_alignment = 1
+
+[node name="UniverseHBox" type="HBoxContainer" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+
+[node name="UniverseLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/UniverseHBox"]
+layout_mode = 2
+text = "Universe:                                                 "
+
+[node name="UniverseSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/UniverseHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 32767.0
+value = 1.0
+
+[node name="ChannelHBox" type="HBoxContainer" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox"]
+layout_mode = 2
+
+[node name="ChannelLabel" type="Label" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/ChannelHBox"]
+layout_mode = 2
+text = "Channel:                                                  "
+
+[node name="ChannelSpin" type="SpinBox" parent="FixturePropertyEditor/ColorRect/FixturePropertyVBox/ChannelHBox"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 255.0
+value = 1.0
 
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
