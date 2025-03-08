@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://xvbd6pxrmv88"]
+[gd_scene load_steps=6 format=3 uid="uid://xvbd6pxrmv88"]
 
 [ext_resource type="Script" uid="uid://bsuh32t3s8utw" path="res://Fixtures/fixture.gd" id="1_iwmys"]
+[ext_resource type="PackedScene" uid="uid://bo0wyfc3683wn" path="res://TransformCircle/transform_circle.tscn" id="2_yei4e"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h0gn5"]
 
@@ -22,3 +23,5 @@ shape = SubResource("BoxShape3D_h0gn5")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 transparency = 0.9
 mesh = SubResource("BoxMesh_tg7n5")
+
+[node name="TransformCircle" parent="." instance=ExtResource("2_yei4e")]
