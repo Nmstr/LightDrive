@@ -62,3 +62,13 @@ func _on_y_rot_spin_value_changed(value: float) -> void:
 
 func _on_z_rot_spin_value_changed(value: float) -> void:
 	get_parent().get_parent().selected_fixture.rotation.z = deg_to_rad(value)
+
+
+func _on_remove_fixture_button_pressed() -> void:
+	$Background/FixturePropertyVBox/RemoveFixtureButton/RemoveFixtureDialog.show()
+
+
+func _on_remove_fixture_dialog_confirmed() -> void:
+	var index = get_parent().get_parent().fixtures.find(get_parent().get_parent().selected_fixture)
+	get_parent().get_parent().fixtures.pop_at(index)
+	get_parent().get_parent().selected_fixture.queue_free()

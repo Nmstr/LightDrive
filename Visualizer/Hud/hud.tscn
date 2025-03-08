@@ -235,6 +235,23 @@ min_value = 1.0
 max_value = 255.0
 value = 1.0
 
+[node name="HSeparator" type="HSeparator" parent="FixturePropertyEditor/Background/FixturePropertyVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="FixturePropertyEditor/Background/FixturePropertyVBox"]
+layout_mode = 2
+text = "Other"
+horizontal_alignment = 1
+
+[node name="RemoveFixtureButton" type="Button" parent="FixturePropertyEditor/Background/FixturePropertyVBox"]
+layout_mode = 2
+text = "Remove Fixture"
+
+[node name="RemoveFixtureDialog" type="ConfirmationDialog" parent="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton"]
+title = "Confirm fixture removal"
+initial_position = 2
+dialog_text = "Are you sure you want to remove this fixture? This can not be reversed."
+
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/FileButton" to="FileMenu" method="_on_file_button_pressed"]
@@ -252,3 +269,5 @@ value = 1.0
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/XRotSpin" to="FixturePropertyEditor" method="_on_x_rot_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/YRotSpin" to="FixturePropertyEditor" method="_on_y_rot_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/ZRotSpin" to="FixturePropertyEditor" method="_on_z_rot_spin_value_changed"]
+[connection signal="pressed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton" to="FixturePropertyEditor" method="_on_remove_fixture_button_pressed"]
+[connection signal="confirmed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton/RemoveFixtureDialog" to="FixturePropertyEditor" method="_on_remove_fixture_dialog_confirmed"]
