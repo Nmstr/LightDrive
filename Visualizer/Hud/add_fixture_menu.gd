@@ -14,7 +14,7 @@ func _ready() -> void:
 	dir.list_dir_begin()
 	var reader = ZIPReader.new()
 	for file: String in dir.get_files():
-		if file.ends_with(".ldv"):
+		if file.ends_with(".ldvf"):
 			var err := reader.open(dir.get_current_dir() + "/" + file)
 			if err != OK:
 				print(err)

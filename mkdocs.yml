@@ -30,3 +30,14 @@ extra:
 nav:
   - Home: 'index.md'
   - Contribute: 'contributing.md'
+  - Documentation:
+      - LightDrive: 'lightdrive.md'
+      - Visualizer: 'visualizer.md'
+      - Other:
+          - "File Formats":
+            - Overview: 'other/file_formats.md'
+            - "Workspace Files (.ldw)": 'other/workspace_file.md'
+            - "Fixture Files (.json)": 'other/fixture_file.md'
+            - "Visualizer Stage Files (.lds)": 'other/stage_file.md'
+            - "Visualizer Fixture Files (.ldvf)": 'other/visualizer_fixture_file.md'
+            - "Visualizer Stage Model Files (.ldvm)": 'other/visualizer_stage_model_file.md'
