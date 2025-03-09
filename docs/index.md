@@ -32,7 +32,7 @@ large number of lights.
 
 <div class="row">
     <div class="column">
-        <img src="assets/fixtures_moving_head_image.png" alt="Image of 5 moving heads" style="height: 600px">
+        <img src="assets/fixtures_moving_head_image.jpg" alt="Image of 5 moving heads" style="height: 600px">
     </div>
     <div class="column">
         <ul style="margin-left: -100px">
@@ -52,13 +52,13 @@ large number of lights.
         </ul>
     </div>
     <div class="column">
-        <img src="assets/lighting_console.png" alt="Image of a lighting console" style="height: 600px">
+        <img src="assets/lighting_console.jpg" alt="Image of a lighting console" style="height: 600px">
     </div>
 </div>
 
 <div class="row">
     <div class="column">
-        <img src="assets/laser.png" alt="Image of laser beams from 6 distinct positions" style="height: 600px; width: 400px">
+        <img src="assets/laser.jpg" alt="Image of laser beams from 6 distinct positions" style="height: 600px; width: 400px">
     </div>
     <div class="column">
         <ul style="margin-left: -100px">
