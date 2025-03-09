@@ -1,22 +1,17 @@
 [gd_scene load_steps=6 format=3 uid="uid://c7yi56sq1vb2j"]
 
 [ext_resource type="Script" uid="uid://b1c0vb2dotygw" path="res://stage.gd" id="1_qgw0x"]
+[ext_resource type="PackedScene" uid="uid://bqskldg7nou4b" path="res://StageModel/stage_model.tscn" id="4_gx6sy"]
 [ext_resource type="PackedScene" uid="uid://cbftg3nk3t3wh" path="res://Hud/hud.tscn" id="5_ma6c1"]
 [ext_resource type="PackedScene" uid="uid://vw3k6es8640q" path="res://custom_camera.tscn" id="5_rxip7"]
 
 [sub_resource type="Environment" id="Environment_yy887"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_mkesg"]
-size = Vector2(10, 10)
 
 [node name="Stage" type="Node3D"]
 script = ExtResource("1_qgw0x")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_yy887")
-
-[node name="Plane" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_mkesg")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.884174, 0.467158, 0, -0.467158, 0.884174, 0, 1.68898, 4.09127)
@@ -25,3 +20,5 @@ transform = Transform3D(1, 0, 0, 0, 0.884174, 0.467158, 0, -0.467158, 0.884174, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28647, 2.39138)
 
 [node name="Hud" parent="." instance=ExtResource("5_ma6c1")]
+
+[node name="StageModel" parent="." instance=ExtResource("4_gx6sy")]
