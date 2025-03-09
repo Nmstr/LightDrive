@@ -39,10 +39,16 @@ func _save_file(path: String) -> void:
 	for universe in get_parent().get_parent().universes:
 		universe_data.append(universe.get_port())
 	
+	# Collect stage data
+	var stage_data = {
+		"stage_path": get_parent().get_parent().get_node("StageModel").path
+	}
+	
 	# Create the save file
 	var save_data := {
 		"fixture_data": fixture_data,
-		"universe_data": universe_data
+		"universe_data": universe_data,
+		"stage_data": stage_data
 	}
 	var save_file := FileAccess.open(path, FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(save_data))
@@ -74,6 +80,7 @@ func _load_file(path: String) -> void:
 	var save_file := FileAccess.open(path, FileAccess.READ)
 	var json := JSON.new()
 	json.parse(save_file.get_as_text())
+	# Load the fixtures
 	for fixture in json.data["fixture_data"]:
 		get_parent().get_parent().add_fixture(fixture.fixture_path,
 				fixture.x_pos,
@@ -85,5 +92,12 @@ func _load_file(path: String) -> void:
 				fixture.universe,
 				fixture.channel
 		)
+	
+	# Load the universes
 	for universe in json.data["universe_data"]:
 		get_parent().get_node("UniverseMenu").create_universe(universe)
+	
+	# Load the stage model
+	get_parent().get_parent().get_node("StageModel").unload_stage_model()
+	get_parent().get_parent().get_node("StageModel").load_stage_model(json.data["stage_data"].get("stage_path"))
+	
