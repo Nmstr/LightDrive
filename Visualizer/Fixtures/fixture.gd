@@ -50,11 +50,11 @@ func load_fixture_data(fixture_path: String) -> void:
 	var error := json.parse(json_file.get_string_from_utf8())
 	if error == OK:
 		var json_data = json.data
+		min_pan_angle = json_data.get("min_pan_angle")
+		min_tilt_angle = json_data.get("min_tilt_angle")
+		max_pan_angle = json_data.get("max_pan_angle")
+		max_tilt_angle = json_data.get("max_tilt_angle")
 		for light_source in json_data.get("light_sources"):
-			min_pan_angle = light_source.get("min_pan_angle")
-			min_tilt_angle = light_source.get("min_tilt_angle")
-			max_pan_angle = light_source.get("max_pan_angle")
-			max_tilt_angle = light_source.get("max_tilt_angle")
 			var light_cone := MeshInstance3D.new()
 			light_cone.position.x = light_source.get("x_offset")
 			light_cone.position.y = light_source.get("length") / 2 + light_source.get("y_offset")

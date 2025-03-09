@@ -17,16 +17,22 @@ fixture_name.ldvf
 
 ### config.json
 
-This file includes the configuration of the fixture. The `light_sources` array contains all light sources
-of the fixture. Each light source is an object with the following properties: `x_offset`, `y_offset`,
-`z_offset`, `angle`, `length`, `x_rotation`, `y_rotation`, `z_rotation`, `min_pan_angle`,
-`min_tilt_angle`, `max_pan_angle` and `max_tilt_angle`. Each light source will be added to the fixture
-in the visualizer. For example a fixture with one light source will have one light beam in the visualizer,
-while a fixture with two light sources will have two separate light beams.
+This file includes the configuration of the fixture. The `min_pan_angle` and `max_pan_angle` properties
+control the minimum and maximum pan angle of the fixture. The `min_tilt_angle` and `max_tilt_angle`
+properties control the minimum and maximum tilt angle of the fixture. The `light_sources` array contains
+all light sources  of the fixture. Each light source is an object with the following properties:
+`x_offset`, `y_offset`, `z_offset`, `angle`, `length`, `x_rotation`, `y_rotation` and `z_rotation`.
+Each light source will be  added to the fixture in the visualizer. For example a fixture with one light
+source will have one  light beam in the visualizer, while a fixture with two light sources will have
+two separate light beams.
 
 An example `config.json` file:
 ```
 {
+  "min_pan_angle": 0.0,
+  "min_tilt_angle": -135.0,
+  "max_pan_angle": 540.0,
+  "max_tilt_angle": 270.0,
   "light_sources": [
     {
       "x_offset": 0.0,
@@ -36,11 +42,7 @@ An example `config.json` file:
       "length": 10.0,
       "x_rotation": 0.0,
       "y_rotation": 0.0,
-      "z_rotation": 0.0,
-      "min_pan_angle": 0.0,
-      "min_tilt_angle": -135.0,
-      "max_pan_angle": 540.0,
-      "max_tilt_angle": 270.0
+      "z_rotation": 0.0
     }
   ]
 }
