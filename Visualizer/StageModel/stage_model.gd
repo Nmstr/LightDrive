@@ -2,6 +2,9 @@ extends Node3D
 
 var path := ""
 
+func _ready() -> void:
+	load_stage_model("res://Assets/empty_stage.ldm")
+
 
 func load_stage_model(stage_path: String) -> void:
 	path = stage_path
