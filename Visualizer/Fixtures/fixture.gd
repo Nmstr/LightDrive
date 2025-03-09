@@ -8,6 +8,8 @@ var min_tilt_angle
 var max_pan_angle
 var max_tilt_angle
 var path
+var universe
+var channel
 
 @onready var collision_indicator := $CollisionIndicator
 @onready var transform_circle := $TransformCircle
@@ -109,6 +111,15 @@ func change_selection_status(stauts: bool) -> void:
 		transform_circle.hide()
 		selected = false
 
+
+func _physics_process(delta: float) -> void:
+	if Globals.mode == Globals.available_modes.LIVE:
+		var dmx_values = get_parent().dmx_values.get(int(universe))
+		if not dmx_values:
+			reset()
+			return
+		set_pan(dmx_values[0 + channel - 1])
+		set_tilt(dmx_values[1 + channel - 1])
 
 # This expects a value between 0 and 255
 # The value will then be mapped against max_pan_angle

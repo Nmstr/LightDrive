@@ -8,6 +8,8 @@ var is_shown := false
 @onready var x_rot_spin := $Background/FixturePropertyVBox/RotationHBox/XRotSpin
 @onready var y_rot_spin := $Background/FixturePropertyVBox/RotationHBox/YRotSpin
 @onready var z_rot_spin := $Background/FixturePropertyVBox/RotationHBox/ZRotSpin
+@onready var universe_spin := $Background/FixturePropertyVBox/UniverseHBox/UniverseSpin
+@onready var channel_spin := $Background/FixturePropertyVBox/ChannelHBox/ChannelSpin
 
 
 func show_fixture(fixture: Node3D) -> void:
@@ -17,6 +19,8 @@ func show_fixture(fixture: Node3D) -> void:
 	x_rot_spin.value = rad_to_deg(fixture.rotation.x)
 	y_rot_spin.value = rad_to_deg(fixture.rotation.y)
 	z_rot_spin.value = rad_to_deg(fixture.rotation.z)
+	universe_spin.value = fixture.universe
+	channel_spin.value = fixture.channel
 
 
 func appear() -> void:
@@ -66,6 +70,14 @@ func _on_z_rot_spin_value_changed(value: float) -> void:
 
 func _on_remove_fixture_button_pressed() -> void:
 	$Background/FixturePropertyVBox/RemoveFixtureButton/RemoveFixtureDialog.show()
+
+
+func _on_universe_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.universe = value
+
+
+func _on_channel_spin_value_changed(value: float) -> void:
+	get_parent().get_parent().selected_fixture.channel = value
 
 
 func _on_remove_fixture_dialog_confirmed() -> void:

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbftg3nk3t3wh"]
+[gd_scene load_steps=6 format=3 uid="uid://cbftg3nk3t3wh"]
 
 [ext_resource type="Script" uid="uid://c550680u615rk" path="res://Hud/hud.gd" id="1_xedcd"]
 [ext_resource type="Script" uid="uid://xieuajoeo4fy" path="res://Hud/add_fixture_menu.gd" id="2_ngqfk"]
 [ext_resource type="Script" uid="uid://dss7ecw2u71a4" path="res://Hud/file_menu.gd" id="3_jop16"]
 [ext_resource type="Script" uid="uid://chwjojajomumw" path="res://Hud/fixture_property_editor.gd" id="4_l1kve"]
+[ext_resource type="Script" uid="uid://bhuewk143246c" path="res://Hud/universe_menu.gd" id="5_gbmnv"]
 
 [node name="Hud" type="Node2D"]
 script = ExtResource("1_xedcd")
@@ -32,6 +33,14 @@ offset_top = 50.0
 offset_right = 150.0
 offset_bottom = 110.0
 text = "File"
+
+[node name="UniversesButton" type="Button" parent="LeftSideBar"]
+offset_left = 50.0
+offset_top = 230.0
+offset_right = 150.0
+offset_bottom = 290.0
+text = "Universes
+"
 
 [node name="AddFixtureMenu" type="Node2D" parent="."]
 position = Vector2(-250, 0)
@@ -252,9 +261,62 @@ title = "Confirm fixture removal"
 initial_position = 2
 dialog_text = "Are you sure you want to remove this fixture? This can not be reversed."
 
+[node name="UniverseMenu" type="Panel" parent="."]
+offset_left = -750.0
+offset_top = 30.0
+offset_right = -550.0
+offset_bottom = 610.0
+script = ExtResource("5_gbmnv")
+
+[node name="CloseUniverseMenu" type="Button" parent="UniverseMenu"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 520.0
+offset_right = 175.0
+offset_bottom = 580.0
+text = "Close"
+
+[node name="UniverseScroll" type="ScrollContainer" parent="UniverseMenu"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 390.0
+
+[node name="UniverseVBox" type="VBoxContainer" parent="UniverseMenu/UniverseScroll"]
+layout_mode = 2
+
+[node name="AddUniverseButton" type="Button" parent="UniverseMenu"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 440.0
+offset_right = 175.0
+offset_bottom = 471.0
+text = "Add Universe"
+
+[node name="RemoveUniverseButton" type="Button" parent="UniverseMenu"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 480.0
+offset_right = 175.0
+offset_bottom = 511.0
+tooltip_text = "Removes the last universe"
+text = "Remove Universe"
+
+[node name="ApplyUniversesButton" type="Button" parent="UniverseMenu"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 400.0
+offset_right = 175.0
+offset_bottom = 431.0
+text = "Apply"
+
+[node name="AcceptDialog" type="AcceptDialog" parent="UniverseMenu/ApplyUniversesButton"]
+title = "Universe Configuration Error"
+initial_position = 2
+
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/FileButton" to="FileMenu" method="_on_file_button_pressed"]
+[connection signal="pressed" from="LeftSideBar/UniversesButton" to="UniverseMenu" method="_on_universes_button_pressed"]
 [connection signal="item_clicked" from="AddFixtureMenu/FixtureMenuList" to="AddFixtureMenu/FixtureMenuList" method="_on_item_clicked"]
 [connection signal="pressed" from="AddFixtureMenu/CloseFixtureMenu" to="AddFixtureMenu/FixtureMenuList" method="_on_close_fixture_menu_pressed"]
 [connection signal="pressed" from="FileMenu/SaveFileButton" to="FileMenu" method="_on_save_file_button_pressed"]
@@ -269,5 +331,11 @@ dialog_text = "Are you sure you want to remove this fixture? This can not be rev
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/XRotSpin" to="FixturePropertyEditor" method="_on_x_rot_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/YRotSpin" to="FixturePropertyEditor" method="_on_y_rot_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RotationHBox/ZRotSpin" to="FixturePropertyEditor" method="_on_z_rot_spin_value_changed"]
+[connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/UniverseHBox/UniverseSpin" to="FixturePropertyEditor" method="_on_universe_spin_value_changed"]
+[connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/ChannelHBox/ChannelSpin" to="FixturePropertyEditor" method="_on_channel_spin_value_changed"]
 [connection signal="pressed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton" to="FixturePropertyEditor" method="_on_remove_fixture_button_pressed"]
 [connection signal="confirmed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton/RemoveFixtureDialog" to="FixturePropertyEditor" method="_on_remove_fixture_dialog_confirmed"]
+[connection signal="pressed" from="UniverseMenu/CloseUniverseMenu" to="UniverseMenu" method="_on_close_universe_menu_pressed"]
+[connection signal="pressed" from="UniverseMenu/AddUniverseButton" to="UniverseMenu" method="_on_add_universe_button_pressed"]
+[connection signal="pressed" from="UniverseMenu/RemoveUniverseButton" to="UniverseMenu" method="_on_remove_universe_button_pressed"]
+[connection signal="pressed" from="UniverseMenu/ApplyUniversesButton" to="UniverseMenu" method="_on_apply_universes_button_pressed"]

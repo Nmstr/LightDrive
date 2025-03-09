@@ -38,27 +38,6 @@ func _on_close_fixture_menu_pressed() -> void:
 	hud_node.hide_menu()
 
 
-func appear() -> void:
-	if is_shown:
-		return # Already "appeared"
-	is_shown = true
-	for i in range(25):
-		hud_node.get_node("LeftSideBar").position.x -= 10
-		hud_node.get_node("AddFixtureMenu").position.x += 10
-		await get_tree().create_timer(0.005).timeout
-	hud_node.get_node("AddFixtureMenu").get_node("FixtureMenuList").grab_focus()
-
-
-func disappear() -> void:
-	if not is_shown:
-		return # Already "disappeared"
-	is_shown = false
-	for i in range(25):
-		hud_node.get_node("LeftSideBar").position.x += 10
-		hud_node.get_node("AddFixtureMenu").position.x -= 10
-		await get_tree().create_timer(0.005).timeout
-
-
 func _on_item_clicked(index: int, _at_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index:
 		if Time.get_ticks_msec() - last_click_time < max_ms_double_click:
