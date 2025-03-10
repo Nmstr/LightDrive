@@ -19,12 +19,32 @@ fixture_name.ldvf
 
 This file includes the configuration of the fixture. The `min_pan_angle` and `max_pan_angle` properties
 control the minimum and maximum pan angle of the fixture. The `min_tilt_angle` and `max_tilt_angle`
-properties control the minimum and maximum tilt angle of the fixture. The `light_sources` array contains
-all light sources  of the fixture. Each light source is an object with the following properties:
-`x_offset`, `y_offset`, `z_offset`, `angle`, `length`, `x_rotation`, `y_rotation` and `z_rotation`.
-Each light source will be  added to the fixture in the visualizer. For example a fixture with one light
-source will have one  light beam in the visualizer, while a fixture with two light sources will have
-two separate light beams.
+properties control the minimum and maximum tilt angle of the fixture.
+
+The `light_sources` array contains all light sources  of the fixture. Each light source is an object
+with the following properties: `x_offset`, `y_offset`, `z_offset`, `angle`, `length`, `x_rotation`,
+`y_rotation`, `z_rotation` and `mode`. Each light source will be added to the fixture in the
+visualizer separately.
+
+The `channels` object contains all channels of the fixture. The key is the channel number and the value
+is an object specifying the type of the channel and some type specific options. The type can be one of
+the following:
+
+- pan
+
+Pans the fixture by rotating the PanPivot. The pan angle is controlled by the value of the channel.
+
+- tilt
+
+Tilts the fixture by rotating the TiltPivot. The tilt angle is controlled by the value of the channel.
+
+- rgb
+
+Controls the RGB color of one or multiple light sources. It has a `color` property which specifies the
+color to change. Possible colors are `red`, `green` and `blue`. It then sets the intensity of the
+color to the value of the channel. The `light_sources` array specifies which light sources to control
+with this channel. The array contains the indices of the light sources in the `light_sources` array of
+the fixture. These light_sources must have their mode set to `rgb`, otherwise they will be ignored.
 
 An example `config.json` file:
 ```
@@ -42,9 +62,17 @@ An example `config.json` file:
       "length": 10.0,
       "x_rotation": 0.0,
       "y_rotation": 0.0,
-      "z_rotation": 0.0
+      "z_rotation": 0.0,
+      "mode": "rgb"
     }
-  ]
+  ],
+  "channels": {
+    "1": {"type": "pan"},
+    "2": {"type": "tilt"},
+    "3": {"type": "rgb", "color": "red", "light_sources": [0]},
+    "4": {"type": "rgb", "color": "green", "light_sources": [0]},
+    "5": {"type": "rgb", "color": "blue", "light_sources": [0]}
+  }
 }
 ```
 

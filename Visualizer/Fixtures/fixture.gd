@@ -3,13 +3,16 @@ extends StaticBody3D
 var selected := false
 var pan_pivot
 var tilt_pivot
-var min_pan_angle
-var min_tilt_angle
-var max_pan_angle
-var max_tilt_angle
-var path
-var universe
-var channel
+var min_pan_angle := 0
+var min_tilt_angle := 0
+var max_pan_angle := 0
+var max_tilt_angle := 0
+var path := ""
+var universe := 0
+var channel := 0
+var num_channels := 0
+var full_channel_configuration := {}
+var light_cone_materials := []
 
 @onready var collision_indicator := $CollisionIndicator
 @onready var transform_circle := $TransformCircle
@@ -50,10 +53,13 @@ func load_fixture_data(fixture_path: String) -> void:
 	var error := json.parse(json_file.get_string_from_utf8())
 	if error == OK:
 		var json_data = json.data
+		# Configure fixture properties
 		min_pan_angle = json_data.get("min_pan_angle")
 		min_tilt_angle = json_data.get("min_tilt_angle")
 		max_pan_angle = json_data.get("max_pan_angle")
 		max_tilt_angle = json_data.get("max_tilt_angle")
+		
+		# Configure light sources
 		for light_source in json_data.get("light_sources"):
 			var light_cone := MeshInstance3D.new()
 			light_cone.position.x = light_source.get("x_offset")
@@ -68,13 +74,18 @@ func load_fixture_data(fixture_path: String) -> void:
 			light_cone_material.transparency = 1
 			light_cone_material.blend_mode = 1
 			light_cone_material.shading_mode = 0
-			light_cone.set_surface_override_material(0, light_cone_material)
+			light_cone.mesh.surface_set_material(0, light_cone_material)
+			light_cone_materials.append(light_cone_material)
 			var light_rotation_pivot := Node3D.new()
 			light_rotation_pivot.rotation.x = deg_to_rad(light_source.get("x_rotation"))
 			light_rotation_pivot.rotation.y = deg_to_rad(light_source.get("y_rotation"))
 			light_rotation_pivot.rotation.z = deg_to_rad(light_source.get("z_rotation"))
 			light_rotation_pivot.add_child(light_cone)
 			tilt_pivot.add_child(light_rotation_pivot)
+			
+		# Configure dmx channels
+		num_channels = json_data.get("channels").size()
+		full_channel_configuration = json_data.get("channels")
 
 
 # The following is here because I can't reparent tilt_pivot under pan_pivot
@@ -118,8 +129,32 @@ func _physics_process(delta: float) -> void:
 		if not dmx_values:
 			reset()
 			return
-		set_pan(dmx_values[0 + channel - 1])
-		set_tilt(dmx_values[1 + channel - 1])
+		for i in range(num_channels):
+			handle_dmx(i + 1, dmx_values[i + channel - 1])
+
+
+func handle_dmx(channel, value) -> void:
+	var channel_config := {}
+	for i in full_channel_configuration:
+		if int(i) == channel:
+			channel_config = full_channel_configuration[i]
+	
+	if channel_config.type == "pan":
+		set_pan(value)
+	elif channel_config.type == "tilt":
+		set_tilt(value)
+	elif channel_config.type == "rgb":
+		for light_source in channel_config.light_sources:
+			var cur_albedo = light_cone_materials[light_source].get_albedo()
+			var new_albedo
+			if channel_config.color == "red":
+				new_albedo = Color8(value, cur_albedo[1] * 255, cur_albedo[2] * 255)
+			elif channel_config.color == "green":
+				new_albedo = Color8(cur_albedo[0] * 255, value, cur_albedo[2] * 255)
+			elif channel_config.color == "blue":
+				new_albedo = Color8(cur_albedo[0] * 255, cur_albedo[1] * 255, value)
+			light_cone_materials[light_source].set_albedo(new_albedo)
+
 
 # This expects a value between 0 and 255
 # The value will then be mapped against max_pan_angle
