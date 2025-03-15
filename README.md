@@ -48,6 +48,20 @@ large number of lights.
   - ✅ Save
   - ✅ Open
 - 🚧 Visualizer
+  - 🚧 Fixtures
+    - ✅ Fixture Placement / Rotation
+    - 🚧 Lights Sources
+      - ✅ RGB Colors
+      - ❌ Gobo Colors
+    - ✅ Up to 2 Pivots
+    - ❌ Gobos
+    - ❌ Loading of custom fixtures during runtime
+    - ❌ Lasers
+  - 🚧 Stages
+    - ✅ Loading of stages
+    - ❌ Loading of custom stages during runtime
+  - ✅ Dmx Input
+  - ✅ Save / Load
 - ❌ Project Website (needs full rework)
 
 Feature requests are welcome! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for more information.
