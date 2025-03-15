@@ -6,10 +6,11 @@ from Workspace.Dialogs.add_fixture_dialog import AddFixtureDialog
 from Workspace.Widgets.value_slider import ValueSlider
 from Workspace.Widgets.io_universe_entry import UniverseEntry
 from Workspace.Widgets.control_desk import ControlDesk
+from Workspace.Widgets.snippet_tree_widget import SnippetTreeWidget
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QTreeWidgetItem, QSplitter, QMessageBox, \
     QListWidgetItem, QInputDialog
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence
+from PySide6.QtGui import QCloseEvent, QPixmap, QAction, QShortcut, QKeySequence, QFont
 from PySide6.QtCore import QFile, QSize, Qt
 import configparser
 import uuid
@@ -362,9 +363,15 @@ class Workspace(QMainWindow):
         """
         # Replace the ui.snippet_lower frame with a splitter
         splitter = QSplitter(Qt.Horizontal)
-        splitter.addWidget(self.ui.snippet_selector_tree)
+        splitter.addWidget(self.ui.snippet_selector_tree_frame)
         splitter.addWidget(self.ui.snippet_editor)
         self.ui.snippet_lower.layout().addWidget(splitter)
+
+        self.ui.snippet_selector_tree = SnippetTreeWidget(self)
+        self.ui.snippet_selector_tree.setHeaderHidden(True)
+        self.ui.snippet_selector_tree.setIconSize(QSize(32, 32))
+        self.ui.snippet_selector_tree.setFont(QFont("Noto Sans", 20))
+        self.ui.snippet_selector_tree_frame.layout().addWidget(self.ui.snippet_selector_tree)
 
         self.ui.snippet_selector_tree.itemActivated.connect(self.snippet_manager.show_editor)
 

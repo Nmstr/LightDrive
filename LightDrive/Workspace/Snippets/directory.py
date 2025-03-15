@@ -27,6 +27,7 @@ class DirectoryManager:
             dir_uuid = str(uuid.uuid4())
             directory_data = DirectoryData(dir_uuid, "New Directory")
         dir_entry.uuid = directory_data.uuid
+        dir_entry.setData(0, Qt.UserRole, "directory")
         self.sm.available_snippets[directory_data.uuid] = directory_data
 
         dir_entry.setText(0, self.sm.available_snippets[directory_data.uuid].name)
