@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="lightdrive.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.5605469"
+     inkscape:cx="256"
+     inkscape:cy="256"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 256 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="512 : 256 : 1"
+       inkscape:persp3d-origin="256 : 170.66667 : 1"
+       id="perspective29" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:none;stroke-width:75;stroke-dasharray:none;stroke:#000000;stroke-opacity:1;paint-order:normal"
+       id="path1"
+       cx="256"
+       cy="256"
+       r="200" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:53.3333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#000000;stroke-width:75;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       x="67.284103"
+       y="225.56195"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         x="67.284103"
+         y="225.56195" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:53.3333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#000000;stroke-width:75;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       x="119.18899"
+       y="253.7572"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         x="119.18899"
+         y="253.7572" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:53.3333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke:none;stroke-width:75;stroke-dasharray:none;stroke-opacity:1;paint-order:normal;fill-opacity:1"
+       x="180.06508"
+       y="262.08762"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         x="180.06508"
+         y="262.08762" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:85.3333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold Italic';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       x="47.146751"
+       y="278.22931"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         x="47.146751"
+         y="278.22931"
+         style="font-size:85.3333px">LightDrive</tspan></text>
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="path34"
+       inkscape:flatsided="true"
+       sodipodi:sides="3"
+       sodipodi:cx="25.63204"
+       sodipodi:cy="387.6846"
+       sodipodi:r1="121.70834"
+       sodipodi:r2="60.854168"
+       sodipodi:arg1="-0.22837738"
+       sodipodi:arg2="0.81882017"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 144.18023,360.13016 -9.7792064,504.12757 -57.504904,298.79608 Z"
+       inkscape:transform-center-x="-26.436802"
+       inkscape:transform-center-y="4.8785255"
+       transform="matrix(1.4931307,0,0,0.35410125,94.856776,254.71316)" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="path35"
+       inkscape:flatsided="true"
+       sodipodi:sides="3"
+       sodipodi:cx="273.62204"
+       sodipodi:cy="74.973717"
+       sodipodi:r1="95.0159"
+       sodipodi:r2="47.50795"
+       sodipodi:arg1="1.360174"
+       sodipodi:arg2="2.4073716"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 293.48687,167.88986 183.22188,45.719095 344.15736,11.312195 Z"
+       inkscape:transform-center-x="21.96618"
+       inkscape:transform-center-y="-3.671865"
+       transform="matrix(1.9622237,-0.22725116,0.05330726,0.45120276,-185.47575,154.04809)" />
+  </g>
+</svg>
