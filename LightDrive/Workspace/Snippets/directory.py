@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QTreeWidgetItem, QDialog, QVBoxLayout, QTreeWidget, QDialogButtonBox, QMessageBox, \
-    QListWidget, QListWidgetItem
+    QListWidget, QListWidgetItem, QAbstractItemView
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
@@ -18,6 +18,7 @@ class DirectoryAddChildrenDialog(QDialog):
         layout = QVBoxLayout()
         self.snippet_tree = QTreeWidget()
         self.snippet_tree.setHeaderHidden(True)
+        self.snippet_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.load_snippets()
         layout.addWidget(self.snippet_tree)
 
@@ -56,6 +57,7 @@ class DirectoryRemoveChildrenDialog(QDialog):
 
         layout = QVBoxLayout()
         self.snippet_list = QListWidget()
+        self.snippet_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.load_snippets()
         layout.addWidget(self.snippet_list)
 
