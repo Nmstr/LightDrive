@@ -204,29 +204,47 @@ class WorkspaceFileManager:
                              provided_uuid = fixture["fixture_uuid"])
 
         # Add the snippets
-        for snippet in snippets:
+        def _add_snippet(snippet) -> None:
+            """
+            Adds a snippet to the workspace
+            :param snippet: The snippet to add
+            :return: None
+            """
+            # Return snippet if parent is not found and is not root
+            parent = self.window.snippet_manager.find_snippet_entry_by_uuid(snippet["directory"])
+            if snippet.get("directory") != "root":
+                if not parent:
+                    return snippet
+
+            # Create the snippet
             match snippet["type"]:
                 case "scene":
-                    scene_data = SceneData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), fixture_configs=snippet.get("fixture_configs", {}))
-                    self.window.snippet_manager.scene_manager.scene_create(scene_data=scene_data)
+                    scene_data = SceneData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), fixture_configs=snippet.get("fixture_configs", {}), directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.scene_manager.scene_create(parent=parent, scene_data=scene_data)
                 case "sequence":
-                    sequence_data = SequenceData(snippet["uuid"], snippet["name"], scenes=snippet.get("scenes", {}))
-                    self.window.snippet_manager.sequence_manager.sequence_create(sequence_data=sequence_data)
+                    sequence_data = SequenceData(snippet["uuid"], snippet["name"], scenes=snippet.get("scenes", {}), directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.sequence_manager.sequence_create(parent=parent, sequence_data=sequence_data)
                 case "cue":
-                    cue_data = CueData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), keyframes=snippet.get("keyframes", {}))
-                    self.window.snippet_manager.cue_manager.cue_create(cue_data=cue_data)
+                    cue_data = CueData(snippet["uuid"], snippet["name"], fixtures=snippet.get("fixtures", []), keyframes=snippet.get("keyframes", {}), directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.cue_manager.cue_create(parent=parent, cue_data=cue_data)
                 case "two_d_efx":
-                    efx_2d_data = TwoDEfxData(snippet["uuid"], snippet["name"], snippet.get("pattern", "Circle"), snippet.get("width", 512), snippet.get("height", 512), snippet.get("x_offset", 0), snippet.get("y_offset", 0), snippet.get("fixture_mappings", {}), snippet.get("duration", 5000), snippet.get("direction", "Forward"))
-                    self.window.snippet_manager.two_d_efx_manager.two_d_efx_create(two_d_efx_data=efx_2d_data)
+                    efx_2d_data = TwoDEfxData(snippet["uuid"], snippet["name"], snippet.get("pattern", "Circle"), snippet.get("width", 512), snippet.get("height", 512), snippet.get("x_offset", 0), snippet.get("y_offset", 0), snippet.get("fixture_mappings", {}), snippet.get("duration", 5000), snippet.get("direction", "Forward"), directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.two_d_efx_manager.two_d_efx_create(parent=parent, two_d_efx_data=efx_2d_data)
                 case "rgb_matrix":
-                    rgb_matrix_data = RgbMatrixData(snippet["uuid"], snippet["name"])
-                    self.window.snippet_manager.rgb_matrix_manager.rgb_matrix_create(rgb_matrix_data=rgb_matrix_data)
+                    rgb_matrix_data = RgbMatrixData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.rgb_matrix_manager.rgb_matrix_create(parent=parent, rgb_matrix_data=rgb_matrix_data)
                 case "script":
-                    script_data = ScriptData(snippet["uuid"], snippet["name"])
-                    self.window.snippet_manager.script_manager.script_create(script_data=script_data)
+                    script_data = ScriptData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.script_manager.script_create(parent=parent, script_data=script_data)
                 case "directory":
-                    directory_data = DirectoryData(snippet["uuid"], snippet["name"])
-                    self.window.snippet_manager.directory_manager.dir_create(directory_data=directory_data)
+                    directory_data = DirectoryData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.directory_manager.dir_create(parent=parent, directory_data=directory_data)
+
+        while snippets:
+            for snippet in snippets:
+                if _add_snippet(snippet):
+                    continue
+                snippets.remove(snippet)
 
         # Load the desk configuration
         self.window.control_desk_view.load_desk_configuration(desk_configuration)

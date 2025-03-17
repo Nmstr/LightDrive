@@ -8,6 +8,7 @@ class ScriptData:
     uuid: str
     name: str
     type: str = field(default="script", init=False)
+    directory: str = field(default="root")
 
 class ScriptManager:
     def __init__(self, snippet_manager) -> None:

@@ -433,6 +433,8 @@ class Workspace(QMainWindow):
         self.ui.two_d_efx_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.directory_manager.dir_rename)
+        self.ui.directory_add_children_btn.clicked.connect(self.snippet_manager.directory_manager.dir_add_children)
+        self.ui.directory_remove_children_btn.clicked.connect(self.snippet_manager.directory_manager.dir_remove_children)
 
     def setup_control_desk_page(self) -> None:
         """

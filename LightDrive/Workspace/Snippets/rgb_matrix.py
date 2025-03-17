@@ -8,6 +8,7 @@ class RgbMatrixData:
     uuid: str
     name: str
     type: str = field(default="rgb_matrix", init=False)
+    directory: str = field(default="root")
 
 class RgbMatrixManager:
     def __init__(self, snippet_manager) -> None:

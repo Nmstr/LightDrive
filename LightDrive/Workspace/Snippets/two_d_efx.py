@@ -23,6 +23,7 @@ class TwoDEfxData:
     fixture_mappings: dict = field(default_factory=dict)
     duration: int = field(default=10000)
     direction: str = field(default="Forward")
+    directory: str = field(default="root")
 
 class TwoDEfxAddFixtureDialog(QDialog):
     def __init__(self, window, fixture_mappings) -> None:

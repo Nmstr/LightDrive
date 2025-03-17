@@ -187,7 +187,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>68</width>
+            <width>82</width>
             <height>20</height>
            </rect>
           </property>
@@ -442,17 +442,7 @@
             </widget>
             <widget class="QWidget" name="directory_page">
              <layout class="QGridLayout" name="gridLayout">
-              <item row="0" column="0">
-               <widget class="QLabel" name="directory_name_label">
-                <property name="text">
-                 <string>Directory Name:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="directory_name_edit"/>
-              </item>
-              <item row="1" column="0" colspan="2">
+              <item row="2" column="0" colspan="2">
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
                  <enum>Qt::Orientation::Vertical</enum>
@@ -464,6 +454,61 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="directory_name_edit"/>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="directory_name_label">
+                <property name="text">
+                 <string>Directory Name:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QFrame" name="directory_controls_frame">
+                <property name="frameShape">
+                 <enum>QFrame::Shape::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Shadow::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_15">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="directory_add_children_btn">
+                   <property name="text">
+                    <string>Add Children</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="directory_remove_children_btn">
+                   <property name="text">
+                    <string>Remove Children</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_11">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
               </item>
              </layout>
             </widget>
