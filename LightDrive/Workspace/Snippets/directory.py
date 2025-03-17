@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QTreeWidgetItem, QDialog, QVBoxLayout, QTreeWidget, QDialogButtonBox, QMessageBox
+from PySide6.QtWidgets import QTreeWidgetItem, QDialog, QVBoxLayout, QTreeWidget, QDialogButtonBox, QMessageBox, \
+    QListWidget, QListWidgetItem
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
@@ -11,7 +12,7 @@ class DirectoryAddChildrenDialog(QDialog):
         :param window: The main window
         """
         super().__init__()
-        self.setWindowTitle("LightDrive - Add Children to Directory")
+        self.setWindowTitle("LightDrive - Add Children To Directory")
         self.window = window
 
         layout = QVBoxLayout()
@@ -41,6 +42,43 @@ class DirectoryAddChildrenDialog(QDialog):
 
         root = self.window.ui.snippet_selector_tree.invisibleRootItem()
         add_items(root, self.snippet_tree)
+
+class DirectoryRemoveChildrenDialog(QDialog):
+    def __init__(self, window, dir_entry: QTreeWidgetItem) -> None:
+        """
+        Create a dialog for selecting children of directory
+        :param window: The main window
+        """
+        super().__init__()
+        self.setWindowTitle("LightDrive - Remove Children From Directory")
+        self.window = window
+        self.dir_entry = dir_entry
+
+        layout = QVBoxLayout()
+        self.snippet_list = QListWidget()
+        self.load_snippets()
+        layout.addWidget(self.snippet_list)
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+    def load_snippets(self) -> None:
+        """
+        Loads the snippets and shows them in the snippet_list
+        :return: None
+        """
+        def add_items(source_item, target_parent):
+            for i in range(source_item.childCount()):
+                child = source_item.child(i)
+                new_item = QListWidgetItem(target_parent)
+                new_item.setText(child.text(0))
+                new_item.snippet_uuid = child.uuid
+                add_items(child, new_item)
+
+        add_items(self.dir_entry, self.snippet_list)
 
 @dataclass
 class DirectoryData:
@@ -116,3 +154,21 @@ class DirectoryManager:
                     self.sm.window.ui.snippet_selector_tree.takeTopLevelItem(self.sm.window.ui.snippet_selector_tree.indexOfTopLevelItem(snippet_entry))
                 dir_entry.addChild(snippet_entry)
                 self.sm.available_snippets[item.snippet_uuid].directory = dir_uuid
+
+    def dir_remove_children(self, dir_uuid: str = None) -> None:
+        """
+        Removes snippets from the given directory
+        :param dir_uuid: The uuid of the directory to remove a child from (if None, uses the currently selected snippets uuid)
+        :return: None
+        """
+        if not dir_uuid:
+            dir_uuid = self.sm.current_snippet.uuid
+        dir_entry = self.sm.find_snippet_entry_by_uuid(dir_uuid)
+        dlg = DirectoryRemoveChildrenDialog(self.sm.window, dir_entry)
+        if dlg.exec():
+            selected_items = dlg.snippet_list.selectedItems()
+            for item in selected_items:
+                snippet_entry = self.sm.find_snippet_entry_by_uuid(item.snippet_uuid)
+                snippet_entry.parent().removeChild(snippet_entry)
+                self.sm.window.ui.snippet_selector_tree.addTopLevelItem(snippet_entry)
+                self.sm.available_snippets[item.snippet_uuid].directory = "root"
