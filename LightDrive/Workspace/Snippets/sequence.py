@@ -11,6 +11,7 @@ class SequenceData:
     name: str
     type: str = field(default="sequence", init=False)
     scenes: list[dict]  # [{"scene_uuid": "---", "entry_uuid": "---", "duration": 500}, ...]
+    directory: str = field(default="root")
 
 class SequenceAddSceneDialog(QDialog):
     def __init__(self, window) -> None:

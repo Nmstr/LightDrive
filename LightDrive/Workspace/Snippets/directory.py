@@ -9,7 +9,7 @@ class DirectoryData:
     uuid: str
     name: str
     type: str = field(default="directory", init=False)
-    snippets: list[str] = field(default_factory=list)
+    directory: str = field(default="root")
 
 class DirectoryManager:
     def __init__(self, snippet_manager) -> None:
@@ -51,13 +51,3 @@ class DirectoryManager:
         dir_entry = self.sm.find_snippet_entry_by_uuid(dir_uuid)
         dir_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
-
-    def dir_add_snippet(self, dir_uuid: str, snippet_uuid: str) -> None:
-        """
-        Adds a snippet to a directory
-        :param dir_uuid: The uuid of the directory to add the snippet to
-        :param snippet_uuid: The uuid of the snippet to add to the directory
-        :return: None
-        """
-        dir_snippet = self.sm.available_snippets.get(dir_uuid)
-        dir_snippet.snippets.append(snippet_uuid)

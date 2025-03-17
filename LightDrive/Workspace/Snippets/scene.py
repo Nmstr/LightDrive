@@ -18,6 +18,7 @@ class SceneData:
     type: str = field(default="scene", init=False)
     fixtures: list
     fixture_configs: dict
+    directory: str = field(default="root")
 
 class SceneFixtureConfigScreen(QWidget):
     def __init__(self, parent=None, fixture_data=None, snippet_manager=None):

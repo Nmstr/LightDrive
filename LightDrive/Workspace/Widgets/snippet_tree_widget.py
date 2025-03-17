@@ -12,6 +12,6 @@ class SnippetTreeWidget(QTreeWidget):
         if target_item and target_item.data(0, Qt.UserRole) == "directory":
             super().dropEvent(event)
             dragged_item = event.source().selectedItems()[0]
-            self.window.snippet_manager.directory_manager.dir_add_snippet(target_item.uuid, dragged_item.uuid)
+            self.window.snippet_manager.available_snippets[dragged_item.uuid].directory = target_item.uuid
         else:
             event.ignore()

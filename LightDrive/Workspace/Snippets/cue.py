@@ -15,6 +15,7 @@ class CueData:
     type: str = field(default="cue", init=False)
     fixtures: list
     keyframes: dict
+    directory: str = field(default="root")
 
 class CueManager:
     def __init__(self, snippet_manager) -> None:
