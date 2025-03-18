@@ -474,7 +474,12 @@ class Workspace(QMainWindow):
         super().closeEvent(event)
 
 if __name__ == "__main__":
-    current_workspace_file = None
+    try:  # Try to get the workspace file from the first command line argument
+        current_workspace_file = sys.argv[1]
+        if not os.path.isfile(current_workspace_file):
+            raise FileNotFoundError("The provided workspace file does not exist.")
+    except IndexError:  # If no workspace file was provided, set it to None
+        current_workspace_file = None
     EXIT_CODE_REBOOT = -123987123
     exit_code = EXIT_CODE_REBOOT  # Execute at least once
     while exit_code == EXIT_CODE_REBOOT:
