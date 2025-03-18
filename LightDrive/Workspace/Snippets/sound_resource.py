@@ -3,6 +3,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
 from tinytag import TinyTag
+import PySoundSphere
 import tempfile
 import shutil
 import uuid
@@ -19,6 +20,7 @@ class SoundResourceManager:
     def __init__(self, snippet_manager) -> None:
         self.sm = snippet_manager
         self.sr_tmp_dir = tempfile.mkdtemp()
+        self.audio_player = PySoundSphere.AudioPlayer("sounddevice", sounddevice_blocksize=1024)
 
     def sound_resource_display(self, sound_resource_uuid: str) -> None:
         """
@@ -79,6 +81,15 @@ class SoundResourceManager:
         sound_resource_entry = self.sm.find_snippet_entry_by_uuid(sound_resource_uuid)
         sound_resource_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def sound_resource_play_song(self, play: bool, sound_resource_uuid: str = None) -> None:
+        if not sound_resource_uuid:
+            sound_resource_uuid = self.sm.current_snippet.uuid
+        if play:
+            self.audio_player.load(os.path.join(self.sr_tmp_dir, sound_resource_uuid))
+            self.audio_player.play()
+        else:
+            self.audio_player.stop()
 
     def sound_resource_load_song(self, sound_resource_uuid: str = None) -> None:
         if not sound_resource_uuid:

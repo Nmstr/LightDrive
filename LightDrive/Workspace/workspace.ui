@@ -1255,73 +1255,83 @@
                  <property name="rightMargin">
                   <number>0</number>
                  </property>
-                 <item row="2" column="1">
+                 <item row="2" column="2">
                   <widget class="QLabel" name="sound_resource_title_edit_label">
                    <property name="text">
                     <string>Unknown</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="0">
-                  <widget class="QPushButton" name="sound_resource_load_song_btn">
-                   <property name="text">
-                    <string>Load Song</string>
+                 <item row="1" column="1" colspan="2">
+                  <widget class="Line" name="line_3">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="1">
+                 <item row="3" column="2">
                   <widget class="QLabel" name="sound_resource_duration_edit_label">
                    <property name="text">
                     <string>0s</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="0">
+                 <item row="5" column="1">
                   <widget class="QLabel" name="sound_resource_samplerate_label">
                    <property name="text">
                     <string>Sample rate:</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="1">
+                 <item row="5" column="2">
                   <widget class="QLabel" name="sound_resource_samplerate_edit_label">
                    <property name="text">
                     <string>0 Hz</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="0">
+                 <item row="4" column="1">
                   <widget class="QLabel" name="sound_resource_bitrate_label">
                    <property name="text">
                     <string>Bitrate:</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
+                 <item row="2" column="1">
                   <widget class="QLabel" name="sound_resource_title_label">
                    <property name="text">
                     <string>Title:</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1">
+                 <item row="4" column="2">
                   <widget class="QLabel" name="sound_resource_bitrate_edit_label">
                    <property name="text">
                     <string>0 kBits/s</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="0">
+                 <item row="3" column="1">
                   <widget class="QLabel" name="sound_resource_duration_label">
                    <property name="text">
                     <string>Duration:</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="Line" name="line_3">
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
+                 <item row="0" column="2">
+                  <widget class="QPushButton" name="sound_resource_load_song_btn">
+                   <property name="text">
+                    <string>Load Song</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="sound_resource_play_song_btn">
+                   <property name="text">
+                    <string>Play Song</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>

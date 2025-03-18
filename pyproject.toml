@@ -18,7 +18,8 @@ classifiers = [
 dependencies = [
     "PySide6",
     "stupidArtnet",
-    "tinytag"
+    "tinytag",
+    "PySoundSphere[sounddevice-backend]"
 ]
 [project.urls]
 Source = "https://github.com/Nmstr/LightDrive"

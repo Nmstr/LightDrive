@@ -440,6 +440,7 @@ class Workspace(QMainWindow):
         self.ui.directory_remove_children_btn.clicked.connect(self.snippet_manager.directory_manager.dir_remove_children)
 
         self.ui.sound_resource_name_edit.editingFinished.connect(self.snippet_manager.sound_resource_manager.sound_resource_rename)
+        self.ui.sound_resource_play_song_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_play_song)
         self.ui.sound_resource_load_song_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_load_song)
 
     def setup_control_desk_page(self) -> None:
