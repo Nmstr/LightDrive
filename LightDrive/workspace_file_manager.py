@@ -5,6 +5,7 @@ from Workspace.Snippets.rgb_matrix import RgbMatrixData
 from Workspace.Snippets.script import ScriptData
 from Workspace.Snippets.two_d_efx import TwoDEfxData
 from Workspace.Snippets.directory import DirectoryData
+from Workspace.Snippets.sound_resource import SoundResourceData
 from PySide6.QtWidgets import QFileDialog
 from dataclasses import asdict
 import tempfile
@@ -239,6 +240,9 @@ class WorkspaceFileManager:
                 case "directory":
                     directory_data = DirectoryData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
                     self.window.snippet_manager.directory_manager.dir_create(parent=parent, directory_data=directory_data)
+                case "sound_resource":
+                    sound_resource_data = SoundResourceData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
+                    self.window.snippet_manager.sound_resource_manager.sound_resource_create(parent=parent, sound_resource_data=sound_resource_data)
 
         while snippets:
             for snippet in snippets:

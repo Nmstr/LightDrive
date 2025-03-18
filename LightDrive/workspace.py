@@ -382,6 +382,8 @@ class Workspace(QMainWindow):
         self.ui.script_btn.setIcon(QPixmap("Assets/Icons/script.svg"))
         self.ui.directory_btn.clicked.connect(self.snippet_manager.directory_manager.dir_create)
         self.ui.directory_btn.setIcon(QPixmap("Assets/Icons/directory.svg"))
+        self.ui.sound_resource_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_create)
+        self.ui.sound_resource_btn.setIcon(QPixmap("Assets/Icons/sound_resource.svg"))
 
         self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_manager.scene_add_fixture)
         self.ui.scene_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
@@ -435,6 +437,8 @@ class Workspace(QMainWindow):
         self.ui.directory_name_edit.editingFinished.connect(self.snippet_manager.directory_manager.dir_rename)
         self.ui.directory_add_children_btn.clicked.connect(self.snippet_manager.directory_manager.dir_add_children)
         self.ui.directory_remove_children_btn.clicked.connect(self.snippet_manager.directory_manager.dir_remove_children)
+
+        self.ui.sound_resource_name_edit.editingFinished.connect(self.snippet_manager.sound_resource_manager.sound_resource_rename)
 
     def setup_control_desk_page(self) -> None:
         """

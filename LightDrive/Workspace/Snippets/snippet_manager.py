@@ -5,6 +5,7 @@ from Workspace.Snippets.rgb_matrix import RgbMatrixManager
 from Workspace.Snippets.script import ScriptManager
 from Workspace.Snippets.two_d_efx import TwoDEfxManager
 from Workspace.Snippets.directory import DirectoryManager
+from Workspace.Snippets.sound_resource import SoundResourceManager
 from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtCore import Qt
 
@@ -26,6 +27,7 @@ class SnippetManager:
         self.script_manager = ScriptManager(self)
         self.two_d_efx_manager = TwoDEfxManager(self)
         self.directory_manager = DirectoryManager(self)
+        self.sound_resource_manager = SoundResourceManager(self)
 
     def add_item(self, item: QTreeWidgetItem, parent: QTreeWidgetItem = None) -> None:
         """
@@ -73,6 +75,10 @@ class SnippetManager:
                 self.window.ui.snippet_editor.setCurrentIndex(4)
             case "script":
                 self.window.ui.snippet_editor.setCurrentIndex(5)
+            case "sound_resource":
+                self.window.ui.snippet_editor.setCurrentIndex(8)
+                self.window.ui.sound_resource_name_edit.setText(self.current_snippet.name)
+                self.sound_resource_manager.sound_resource_display(self.current_snippet.uuid)
 
     def find_snippet_entry_by_uuid(self, snippet_uuid: str) -> QTreeWidgetItem | None:
         """
