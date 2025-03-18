@@ -14,7 +14,7 @@ import shutil
 import json
 import os
 
-def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, list, list]:
+def read_workspace_file(workspace_file_path: str, sr_tmp_dir: str) -> tuple[dict, dict, list, list]:
     """
     Reads a workspace file and returns its contents.
     :param workspace_file_path: The path to the workspace file
@@ -51,6 +51,9 @@ def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, list, lis
     else:
         desk_configuration = []
 
+    if os.path.exists(os.path.join(tmp_dir, 'sound_resources')):
+        shutil.copytree(os.path.join(tmp_dir, 'sound_resources'), sr_tmp_dir, dirs_exist_ok=True)
+
     if os.path.exists(tmp_dir):
         shutil.rmtree(tmp_dir)
 
@@ -59,7 +62,8 @@ def read_workspace_file(workspace_file_path: str) -> tuple[dict, dict, list, lis
 def write_workspace_file(workspace_file_path: str, fixtures: list,
                          dmx_output_configuration: dict,
                          snippet_configuration: list,
-                         desk_configuration: list) -> None:
+                         desk_configuration: list,
+                         sound_resource_tmp_dir: str) -> None:
     """
     Creates a workspace file
     :param workspace_file_path: The path to the workspace file
@@ -92,6 +96,11 @@ def write_workspace_file(workspace_file_path: str, fixtures: list,
     with tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False) as desk_file:
         desk_file.write(json.dumps(desk_configuration, indent=4).encode())
 
+    # Create temp dir for the sound resources and copy them into it
+    sound_resource_dir = os.path.join(tmp_dir, "sound_resources")
+    os.makedirs(sound_resource_dir)
+    shutil.copytree(sound_resource_tmp_dir, sound_resource_dir, dirs_exist_ok=True)
+
     # Add the files to the archive
     with tarfile.open(workspace_file_path, "w") as archive:
         archive.add(fixtures_file.name, "fixtures.json")
@@ -101,6 +110,7 @@ def write_workspace_file(workspace_file_path: str, fixtures: list,
         for snippet_file, snippet in snippet_files.items():
             file_name = os.path.join("snippets", f"{snippet['name'].lower().replace(' ', '_')}-{snippet['uuid']}.json")
             archive.add(snippet_file, file_name)
+        archive.add(sound_resource_dir, "sound_resources")
 
     if os.path.exists(tmp_dir):
         shutil.rmtree(tmp_dir)
@@ -154,7 +164,8 @@ class WorkspaceFileManager:
                                  fixtures=self.window.available_fixtures,
                                  dmx_output_configuration=self.window.dmx_output.get_configuration(),
                                  snippet_configuration=snippet_configuration,
-                                 desk_configuration=self.window.control_desk_view.get_desk_configuration())
+                                 desk_configuration=self.window.control_desk_view.get_desk_configuration(),
+                                 sound_resource_tmp_dir=self.window.snippet_manager.sound_resource_manager.sr_tmp_dir)
 
     def get_snippet_configuration(self) -> list:
         """
@@ -185,7 +196,7 @@ class WorkspaceFileManager:
         :param workspace_file_path: The path to the workspace file
         :return: None
         """
-        fixtures, dmx_output_configuration, snippets, desk_configuration = read_workspace_file(workspace_file_path)
+        fixtures, dmx_output_configuration, snippets, desk_configuration = read_workspace_file(workspace_file_path, self.window.snippet_manager.sound_resource_manager.sr_tmp_dir)
         # Configure the dmx output
         self.window.dmx_output.write_output_configuration(dmx_output_configuration)
 
