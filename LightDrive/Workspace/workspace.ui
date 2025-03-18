@@ -371,6 +371,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="show_btn">
+            <property name="text">
+             <string>Show</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_5">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
@@ -1337,6 +1344,33 @@
                  </item>
                 </layout>
                </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="show_page">
+             <layout class="QGridLayout" name="gridLayout_9">
+              <item row="0" column="0">
+               <widget class="QLabel" name="show_name_label">
+                <property name="text">
+                 <string>Name:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="show_name_edit"/>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>811</width>
+                  <height>818</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
