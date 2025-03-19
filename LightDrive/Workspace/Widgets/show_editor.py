@@ -114,12 +114,16 @@ class WaveformItem(QGraphicsItem):
         return QRectF(0, 0, self.width, self.height)
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
+        visible_rect = self.show_editor.mapToScene(self.show_editor.viewport().rect()).boundingRect()
+        visible_start = max(0, int(visible_rect.left()))
+        visible_end = min(int(self.width), int(visible_rect.right()))
+
         color = QColor(33, 58, 211)
         pen = QPen(color, 1)
         painter.setPen(pen)
         mid_y = self.height / 2
         step = len(self.waveform) / self.width
-        for x in range(int(self.width)):
+        for x in range(visible_start, visible_end):
             start_idx = int(x * step)
             end_idx = int((x + 1) * step)
             segment = self.waveform[start_idx:end_idx]
