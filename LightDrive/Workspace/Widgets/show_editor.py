@@ -306,6 +306,14 @@ class ShowEditor(QGraphicsView):
         self.is_playing = False
         self.player.stop()
 
+    def set_volume(self, volume: int) -> None:
+        """
+        Set the volume of the show
+        :param volume: The volume
+        :return: None
+        """
+        self.player.volume = volume / 100
+
     def update_virtual_frame(self) -> None:
         """
         Updates to the next virtual frame in the timeline while playback. Triggered by the play timer.

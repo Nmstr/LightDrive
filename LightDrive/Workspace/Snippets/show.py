@@ -125,6 +125,14 @@ class ShowManager:
         """
         self.show_editor.stop()
 
+    def show_set_volume(self, volume: int) -> None:
+        """
+        Sets the volume of the current show
+        :param volume: The volume to set
+        :return: None
+        """
+        self.show_editor.set_volume(volume)
+
     def show_load_song(self, show_uuid: str = None, sound_resource_uuid: str = None) -> None:
         """
         Adds a sound resource to the show

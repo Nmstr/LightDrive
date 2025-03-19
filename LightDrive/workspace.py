@@ -446,6 +446,7 @@ class Workspace(QMainWindow):
         self.ui.sound_resource_load_song_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_load_song)
 
         self.ui.show_name_edit.editingFinished.connect(self.snippet_manager.show_manager.show_rename)
+        self.ui.show_volume_spin.valueChanged.connect(self.snippet_manager.show_manager.show_set_volume)
         self.ui.show_play_btn.clicked.connect(self.snippet_manager.show_manager.show_play)
         self.ui.show_play_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
         self.ui.show_pause_btn.clicked.connect(self.snippet_manager.show_manager.show_pause)

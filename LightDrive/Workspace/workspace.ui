@@ -1430,6 +1430,22 @@
                   </spacer>
                  </item>
                  <item>
+                  <widget class="QSpinBox" name="show_volume_spin">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="prefix">
+                    <string>Volume: </string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QPushButton" name="show_load_song_btn">
                    <property name="text">
                     <string>Load Song</string>
