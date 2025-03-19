@@ -184,9 +184,15 @@ class ShowEditor(QGraphicsView):
         self.start_frame = 0
         self.is_playing = False
 
+        if not sound_resource_uuid:
+            return  # No sound resource set
+        self.audio_path = str(os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
+
         self.player = PySoundSphere.AudioPlayer("pygame")
         self.load_player()
         self.player.volume = 0.1
+
+        self.y, self.sr = librosa.load(self.audio_path)
 
         self.waveform_item = None
         self.load_waveform()
@@ -197,33 +203,18 @@ class ShowEditor(QGraphicsView):
         self.load_markers()
 
     def load_player(self):
-        sound_resource_uuid = self.show_snippet.sound_resource_uuid
-        if not sound_resource_uuid:
-            return  # No sound resource set
-        file_path = os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid)
-        self.player.load(file_path)
+        self.player.load(self.audio_path)
 
     def load_waveform(self):
-        sound_resource_uuid = self.show_snippet.sound_resource_uuid
-        if not sound_resource_uuid:
-            return  # No sound resource set
-        file_path = os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid)
-
         if self.waveform_item:  # Remove old waveform
             self.scene.removeItem(self.waveform_item)
         self.waveform_item = None
 
-        waveform, sample_rate = librosa.load(file_path, sr=None)
-        self.waveform_item = WaveformItem(waveform, sample_rate, width=self.track_length, height=100, show_editor=self)
+        self.waveform_item = WaveformItem(self.y, self.sr, width=self.track_length, height=100, show_editor=self)
         self.waveform_item.setY(50)
         self.scene.addItem(self.waveform_item)
 
     def load_markers(self):
-        sound_resource_uuid = self.show_snippet.sound_resource_uuid
-        if not sound_resource_uuid:
-            return  # No sound resource set
-        file_path = os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid)
-
         if not self.vary_beat_markers:  # Remove old vary beat markers
             self.scene.removeItem(self.vary_beat_markers)
         self.vary_beat_markers = None
@@ -234,24 +225,22 @@ class ShowEditor(QGraphicsView):
             self.scene.removeItem(self.beat_markers)
         self.beat_markers = None
 
-        y, sr = librosa.load(file_path)
-
         vary_beat_color = Qt.yellow
-        tempo_dynamic = librosa.feature.tempo(y=y, sr=sr, aggregate=None, std_bpm=4)
-        _, vary_beat_frames = librosa.beat.beat_track(y=y, sr=sr, bpm=tempo_dynamic)
-        vary_beat_times = librosa.frames_to_time(vary_beat_frames, sr=sr)
+        tempo_dynamic = librosa.feature.tempo(y=self.y, sr=self.sr, aggregate=None, std_bpm=4)
+        _, vary_beat_frames = librosa.beat.beat_track(y=self.y, sr=self.sr, bpm=tempo_dynamic)
+        vary_beat_times = librosa.frames_to_time(vary_beat_frames, sr=self.sr)
         self.vary_beat_markers = Markers(self, vary_beat_times, vary_beat_color, 0, 16)
         self.scene.addItem(self.vary_beat_markers)
 
         onset_color = Qt.red
-        onset_frames = librosa.onset.onset_detect(y=y, sr=sr)
-        onset_times = librosa.frames_to_time(onset_frames, sr=sr)
+        onset_frames = librosa.onset.onset_detect(y=self.y, sr=self.sr)
+        onset_times = librosa.frames_to_time(onset_frames, sr=self.sr)
         self.onset_markers = Markers(self, onset_times, onset_color, 17, 32)
         self.scene.addItem(self.onset_markers)
 
         beat_color = Qt.green
-        _, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
-        beat_times = librosa.frames_to_time(beat_frames, sr=sr)
+        _, beat_frames = librosa.beat.beat_track(y=self.y, sr=self.sr)
+        beat_times = librosa.frames_to_time(beat_frames, sr=self.sr)
         self.beat_markers = Markers(self, beat_times, beat_color, 33, 50)
         self.scene.addItem(self.beat_markers)
 
