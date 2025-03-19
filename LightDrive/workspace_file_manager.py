@@ -256,7 +256,7 @@ class WorkspaceFileManager:
                     sound_resource_data = SoundResourceData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
                     self.window.snippet_manager.sound_resource_manager.sound_resource_create(parent=parent, sound_resource_data=sound_resource_data)
                 case "show":
-                    show_data = ShowData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
+                    show_data = ShowData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"), sound_resource_uuid=snippet.get("sound_resource_uuid", None))
                     self.window.snippet_manager.show_manager.show_create(parent=parent, show_data=show_data)
 
         while snippets:

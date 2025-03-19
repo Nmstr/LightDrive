@@ -1,10 +1,43 @@
 from Workspace.Widgets.show_editor import ShowEditor
 from Functions.ui import clear_field
-from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout
+from PySide6.QtWidgets import QTreeWidgetItem, QListWidget, QListWidgetItem, QVBoxLayout, QDialog, QDialogButtonBox
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
 import uuid
+
+class AddSoundResourceDialog(QDialog):
+    def __init__(self, window) -> None:
+        """
+        Create a dialog for selecting a sound resource
+        :param window: The main window
+        """
+        super().__init__()
+        self.setWindowTitle("LightDrive - Select Sound Resource For Show")
+        self.window = window
+
+        layout = QVBoxLayout()
+        self.sound_resource_list = QListWidget()
+        self.load_sound_resources()
+        layout.addWidget(self.sound_resource_list)
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+    def load_sound_resources(self) -> None:
+        """
+        Loads the sound resources and shows them in sound_resource_list
+        :return: None
+        """
+        for snippet in self.window.snippet_manager.available_snippets.values():
+            if snippet.type == "sound_resource":
+                item = QListWidgetItem(self.sound_resource_list)
+                item.setText(snippet.name)
+                item.snippet_uuid = snippet.uuid
+                self.sound_resource_list.addItem(item)
 
 @dataclass
 class ShowData:
@@ -12,6 +45,7 @@ class ShowData:
     name: str
     type: str = field(default="show", init=False)
     directory: str = field(default="root")
+    sound_resource_uuid: str = field(default=None)
 
 class ShowManager:
     def __init__(self, snippet_manager) -> None:
@@ -69,3 +103,42 @@ class ShowManager:
         show_entry = self.sm.find_snippet_entry_by_uuid(show_uuid)
         show_entry.setText(0, new_name)
         self.sm.window.ui.snippet_selector_tree.sortItems(0, Qt.AscendingOrder)
+
+    def show_play(self) -> None:
+        """
+        Plays the current show
+        :return: None
+        """
+        self.show_editor.play()
+
+    def show_pause(self) -> None:
+        """
+        Pauses the current show
+        :return: None
+        """
+        self.show_editor.pause()
+
+    def show_stop(self) -> None:
+        """
+        Stops the current show
+        :return: None
+        """
+        self.show_editor.stop()
+
+    def show_load_song(self, show_uuid: str = None, sound_resource_uuid: str = None) -> None:
+        """
+        Adds a sound resource to the show
+        :param show_uuid: The uuid of the show to add the sound resource to (default: current show)
+        :param sound_resource_uuid: The uuid of the sound resource to add (default: dialog selection)
+        :return:
+        """
+        if not show_uuid:
+            show_uuid = self.sm.current_snippet.uuid
+        if not sound_resource_uuid:
+            dlg = AddSoundResourceDialog(self.sm.window)
+            if dlg.exec():
+                sound_resource_uuid = dlg.sound_resource_list.selectedItems()[0].snippet_uuid
+        show_snippet = self.sm.available_snippets.get(show_uuid)
+        show_snippet.sound_resource_uuid = sound_resource_uuid
+        self.show_editor.load_player()
+        self.show_editor.load_waveform()
