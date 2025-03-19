@@ -134,7 +134,7 @@ class WaveformItem(QGraphicsItem):
     def update_width(self) -> None:
         self.width = self.show_editor.track_length * self.show_editor.zoom
 
-class Markers(QGraphicsItemGroup):
+class Markers(QGraphicsItem):
     def __init__(self, show_editor, marker_times: np.ndarray, color, start_y: int, end_y: int) -> None:
         super().__init__()
         self.show_editor = show_editor
@@ -142,26 +142,21 @@ class Markers(QGraphicsItemGroup):
         self.color = color
         self.start_y = start_y + 100
         self.end_y = end_y + 100
-        self.markers = []
+        self.width = self.show_editor.track_length
+        self.height = 100
 
-        self.update_markers()
+    def boundingRect(self) -> QRectF:  # noqa: N802
+        return QRectF(0, 0, self.width, self.height)
 
-    def update_markers(self) -> None:
-        """
-        Update the markers
-        :return:
-        """
-        for marker in self.markers:
-            self.removeFromGroup(marker)
-            self.scene().removeItem(marker)
-        self.markers = []
-
+    def paint(self, painter: QPainter, option, widget=None) -> None:
+        pen = QPen(self.color, 1)
+        painter.setPen(pen)
         for marker_time in self.marker_times:
             x_pos = self.show_editor.virtual_frame_from_x_pos(marker_time * 100)
-            marker = QGraphicsLineItem(x_pos, self.start_y, x_pos, self.end_y)
-            marker.setPen(QPen(self.color, 1))
-            self.markers.append(marker)
-            self.addToGroup(marker)
+            painter.drawLine(x_pos, self.start_y, x_pos, self.end_y)
+
+    def update_width(self) -> None:
+        self.width = self.show_editor.track_length * self.show_editor.zoom
 
 class ShowEditor(QGraphicsView):
     def __init__(self, window: QMainWindow, show_snippet) -> None:
@@ -391,9 +386,9 @@ class ShowEditor(QGraphicsView):
             self.timing_tick_bar.update_ticks()
             self.track.update_width()
             self.waveform_item.update_width()
-            self.vary_beat_markers.update_markers()
-            self.onset_markers.update_markers()
-            self.beat_markers.update_markers()
+            self.vary_beat_markers.update_width()
+            self.onset_markers.update_width()
+            self.beat_markers.update_width()
         else:
             super().wheelEvent(event)
 
