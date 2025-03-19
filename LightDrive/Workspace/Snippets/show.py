@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QTreeWidgetItem
+from Workspace.Widgets.show_editor import ShowEditor
+from Functions.ui import clear_field
+from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
@@ -21,7 +23,17 @@ class ShowManager:
         :param show_uuid: The uuid of the show to display
         :return: None
         """
-        print(show_uuid)
+        self._load_show_editor(show_uuid)
+
+    def _load_show_editor(self, show_uuid: str) -> None:
+        """
+        Loads the show editor of the current show to ui.show_editor_frame
+        :return: None
+        """
+        layout = clear_field(self.sm.window.ui.show_editor_frame, QVBoxLayout, amount_left = 0)
+        show_snippet = self.sm.available_snippets.get(show_uuid)
+        self.show_editor = ShowEditor(self.sm.window, show_snippet)
+        layout.addWidget(self.show_editor)
 
     def show_create(self, *, parent: QTreeWidgetItem = None, show_data: ShowData = None) -> None:
         """
