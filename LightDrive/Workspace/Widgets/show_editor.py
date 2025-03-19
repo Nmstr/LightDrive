@@ -1,12 +1,27 @@
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsItemGroup, \
     QGraphicsPolygonItem, QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
 from PySide6.QtGui import QPen, QPolygonF, QWheelEvent, QPainter, QColor
-from PySide6.QtCore import Qt, QPointF, QRectF, QTimer, QElapsedTimer
+from PySide6.QtCore import Qt, QPointF, QRectF, QTimer, QElapsedTimer, QThread, Signal, QObject
 from tinytag import TinyTag
 import numpy as np
 import PySoundSphere
 import librosa
 import os
+
+class AudioLoaderWorker(QObject):
+    finished = Signal(np.ndarray, int)
+    error = Signal(str)
+
+    def __init__(self, audio_path):
+        super().__init__()
+        self.audio_path = audio_path
+
+    def run(self):
+        try:
+            y, sr = librosa.load(self.audio_path)
+            self.finished.emit(y, sr)
+        except Exception as e:
+            self.error.emit(str(e))
 
 class TimingTickBar(QGraphicsItemGroup):
     def __init__(self, show_editor) -> None:
@@ -184,28 +199,67 @@ class ShowEditor(QGraphicsView):
         self.start_frame = 0
         self.is_playing = False
 
-        if not sound_resource_uuid:
-            return  # No sound resource set
-        self.audio_path = str(os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
-
         self.player = PySoundSphere.AudioPlayer("pygame")
         self.load_player()
         self.player.volume = 0.1
 
-        self.y, self.sr = librosa.load(self.audio_path)
-
         self.waveform_item = None
-        self.load_waveform()
-
         self.vary_beat_markers = None
         self.onset_markers = None
         self.beat_markers = None
+
+        self.y = None
+        self.sr = None
+        self.load_audio_background()
+
+    def load_audio_background(self) -> None:
+        """
+        Creates a thread to load the audio in the background and then loads the waveform and markers
+        :return: None
+        """
+        sound_resource_uuid = self.show_snippet.sound_resource_uuid
+        if not sound_resource_uuid:
+            return  # No sound resource set
+        file_path = str(os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
+        # Load the audio in a separate thread
+        self.thread = QThread()
+        self.worker = AudioLoaderWorker(file_path)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.on_audio_loaded)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.thread.start()
+
+    def on_audio_loaded(self, y: np.ndarray, sr: int) -> None:
+        """
+        Load the waveform and markers
+        :param y: The audio data
+        :param sr: The sample rate
+        :return: None
+        """
+        self.y = y
+        self.sr = sr
+        self.load_waveform()
         self.load_markers()
 
-    def load_player(self):
-        self.player.load(self.audio_path)
+    def load_player(self) -> None:
+        """
+        Load the player with the sound resource
+        :return: None
+        """
+        sound_resource_uuid = self.show_snippet.sound_resource_uuid
+        if not sound_resource_uuid:
+            return  # No sound resource set
+        file_path = str(os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
+        self.player.load(file_path)
 
-    def load_waveform(self):
+    def load_waveform(self) -> None:
+        """
+        Load the waveform
+        :return: None
+        """
         if self.waveform_item:  # Remove old waveform
             self.scene.removeItem(self.waveform_item)
         self.waveform_item = None
@@ -214,7 +268,11 @@ class ShowEditor(QGraphicsView):
         self.waveform_item.setY(50)
         self.scene.addItem(self.waveform_item)
 
-    def load_markers(self):
+    def load_markers(self) -> None:
+        """
+        Load the markers
+        :return: None
+        """
         if not self.vary_beat_markers:  # Remove old vary beat markers
             self.scene.removeItem(self.vary_beat_markers)
         self.vary_beat_markers = None

@@ -149,5 +149,4 @@ class ShowManager:
         show_snippet = self.sm.available_snippets.get(show_uuid)
         show_snippet.sound_resource_uuid = sound_resource_uuid
         self.show_editor.load_player()
-        self.show_editor.load_waveform()
-        self.show_editor.load_markers()
+        self.show_editor.load_audio_background()
