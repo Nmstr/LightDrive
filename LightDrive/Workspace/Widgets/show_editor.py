@@ -115,6 +115,35 @@ class WaveformItem(QGraphicsItem):
     def update_width(self) -> None:
         self.width = self.show_editor.track_length * self.show_editor.zoom
 
+class Markers(QGraphicsItemGroup):
+    def __init__(self, show_editor, marker_times: np.ndarray, color, start_y: int, end_y: int) -> None:
+        super().__init__()
+        self.show_editor = show_editor
+        self.marker_times = marker_times
+        self.color = color
+        self.start_y = start_y + 100
+        self.end_y = end_y + 100
+        self.markers = []
+
+        self.update_markers()
+
+    def update_markers(self) -> None:
+        """
+        Update the markers
+        :return:
+        """
+        for marker in self.markers:
+            self.removeFromGroup(marker)
+            self.scene().removeItem(marker)
+        self.markers = []
+
+        for marker_time in self.marker_times:
+            x_pos = self.show_editor.virtual_frame_from_x_pos(marker_time * 100)
+            marker = QGraphicsLineItem(x_pos, self.start_y, x_pos, self.end_y)
+            marker.setPen(QPen(self.color, 1))
+            self.markers.append(marker)
+            self.addToGroup(marker)
+
 class ShowEditor(QGraphicsView):
     def __init__(self, window: QMainWindow, show_snippet) -> None:
         """
@@ -157,10 +186,15 @@ class ShowEditor(QGraphicsView):
 
         self.player = PySoundSphere.AudioPlayer("pygame")
         self.load_player()
-        self.player.volume = 0.15
+        self.player.volume = 0.1
 
         self.waveform_item = None
         self.load_waveform()
+
+        self.vary_beat_markers = None
+        self.onset_markers = None
+        self.beat_markers = None
+        self.load_markers()
 
     def load_player(self):
         sound_resource_uuid = self.show_snippet.sound_resource_uuid
@@ -183,6 +217,43 @@ class ShowEditor(QGraphicsView):
         self.waveform_item = WaveformItem(waveform, sample_rate, width=self.track_length, height=100, show_editor=self)
         self.waveform_item.setY(50)
         self.scene.addItem(self.waveform_item)
+
+    def load_markers(self):
+        sound_resource_uuid = self.show_snippet.sound_resource_uuid
+        if not sound_resource_uuid:
+            return  # No sound resource set
+        file_path = os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid)
+
+        if not self.vary_beat_markers:  # Remove old vary beat markers
+            self.scene.removeItem(self.vary_beat_markers)
+        self.vary_beat_markers = None
+        if not self.onset_markers:  # Remove old onset markers
+            self.scene.removeItem(self.onset_markers)
+        self.onset_markers = None
+        if self.beat_markers:  # Remove old beat markers
+            self.scene.removeItem(self.beat_markers)
+        self.beat_markers = None
+
+        y, sr = librosa.load(file_path)
+
+        vary_beat_color = Qt.yellow
+        tempo_dynamic = librosa.feature.tempo(y=y, sr=sr, aggregate=None, std_bpm=4)
+        _, vary_beat_frames = librosa.beat.beat_track(y=y, sr=sr, bpm=tempo_dynamic)
+        vary_beat_times = librosa.frames_to_time(vary_beat_frames, sr=sr)
+        self.vary_beat_markers = Markers(self, vary_beat_times, vary_beat_color, 0, 16)
+        self.scene.addItem(self.vary_beat_markers)
+
+        onset_color = Qt.red
+        onset_frames = librosa.onset.onset_detect(y=y, sr=sr)
+        onset_times = librosa.frames_to_time(onset_frames, sr=sr)
+        self.onset_markers = Markers(self, onset_times, onset_color, 17, 32)
+        self.scene.addItem(self.onset_markers)
+
+        beat_color = Qt.green
+        _, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+        beat_times = librosa.frames_to_time(beat_frames, sr=sr)
+        self.beat_markers = Markers(self, beat_times, beat_color, 33, 50)
+        self.scene.addItem(self.beat_markers)
 
     def showEvent(self, event):  # noqa: N802
         """
@@ -261,6 +332,9 @@ class ShowEditor(QGraphicsView):
             self.timing_tick_bar.update_ticks()
             self.track.update_width()
             self.waveform_item.update_width()
+            self.vary_beat_markers.update_markers()
+            self.onset_markers.update_markers()
+            self.beat_markers.update_markers()
         else:
             super().wheelEvent(event)
 
