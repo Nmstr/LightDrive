@@ -1,9 +1,9 @@
 from Workspace.Widgets.ShowEditor.show_editor_general import TimingTickBar, Playhead
 from Workspace.Widgets.ShowEditor.show_editor_snippets import SnippetTrack, SnippetItem
-from Workspace.Widgets.ShowEditor.show_editor_audio import AudioTrack, WaveformItem, Markers, AudioLoaderWorker
+from Workspace.Widgets.ShowEditor.show_editor_audio import AudioTrack, WaveformItem, Markers
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QWheelEvent
-from PySide6.QtCore import Qt, QTimer, QElapsedTimer, QThread
+from PySide6.QtCore import Qt, QTimer, QElapsedTimer
 from tinytag import TinyTag
 import numpy as np
 import PySoundSphere
@@ -77,27 +77,17 @@ class ShowEditor(QGraphicsView):
 
         self.y = None
         self.sr = None
-        self.load_audio_background()
 
-    def load_audio_background(self) -> None:
+    def load_player(self) -> None:
         """
-        Creates a thread to load the audio in the background and then loads the waveform and markers
+        Load the player with the sound resource
         :return: None
         """
         sound_resource_uuid = self.show_snippet.sound_resource_uuid
         if not sound_resource_uuid:
             return  # No sound resource set
         file_path = str(os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
-        # Load the audio in a separate thread
-        self.thread = QThread()
-        self.worker = AudioLoaderWorker(file_path)
-        self.worker.moveToThread(self.thread)
-        self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.on_audio_loaded)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        self.thread.start()
+        self.player.load(file_path)
 
     def on_audio_loaded(self, y: np.ndarray, sr: int) -> None:
         """
@@ -110,17 +100,6 @@ class ShowEditor(QGraphicsView):
         self.sr = sr
         self.load_waveform()
         self.load_markers()
-
-    def load_player(self) -> None:
-        """
-        Load the player with the sound resource
-        :return: None
-        """
-        sound_resource_uuid = self.show_snippet.sound_resource_uuid
-        if not sound_resource_uuid:
-            return  # No sound resource set
-        file_path = str(os.path.join(self.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
-        self.player.load(file_path)
 
     def load_waveform(self) -> None:
         """
@@ -181,22 +160,6 @@ class ShowEditor(QGraphicsView):
         self.horizontalScrollBar().setValue(0)
         self.verticalScrollBar().setValue(0)
 
-    def virtual_frame_from_x_pos(self, x_pos: int) -> int:
-        """
-        Converts the x position to a virtual frame
-        :param x_pos: The x position
-        :return: The virtual frame
-        """
-        return int(x_pos * self.zoom)
-
-    def x_pos_from_virtual_frame(self, virtual_frame: int) -> int:
-        """
-        Converts the virtual frame to an x position
-        :param virtual_frame:
-        :return:
-        """
-        return int(virtual_frame / self.zoom)
-
     def play(self):
         """
         Play the show
@@ -236,15 +199,6 @@ class ShowEditor(QGraphicsView):
         """
         self.player.volume = volume / 100
 
-    def update_virtual_frame(self) -> None:
-        """
-        Updates to the next virtual frame in the timeline while playback. Triggered by the play timer.
-        :return: None
-        """
-        elapsed_time = self.play_elapsed_timer.elapsed() / 10
-        virtual_frames = elapsed_time + self.start_frame
-        self.playhead.setX(virtual_frames * self.zoom)
-
     def add_snippet(self, snippet_uuid: str, snippet_item_uuid: str = None, track: int = 1, frame: int = 0, length: int = 250) -> None:
         if not snippet_item_uuid:
             snippet_item_uuid = str(uuid.uuid4())
@@ -257,6 +211,31 @@ class ShowEditor(QGraphicsView):
                     "frame": snippet_item.frame,
                     "length": snippet_item.length
                 }
+
+    def virtual_frame_from_x_pos(self, x_pos: int) -> int:
+        """
+        Converts the x position to a virtual frame
+        :param x_pos: The x position
+        :return: The virtual frame
+        """
+        return int(x_pos * self.zoom)
+
+    def x_pos_from_virtual_frame(self, virtual_frame: int) -> int:
+        """
+        Converts the virtual frame to an x position
+        :param virtual_frame:
+        :return:
+        """
+        return int(virtual_frame / self.zoom)
+
+    def update_virtual_frame(self) -> None:
+        """
+        Updates to the next virtual frame in the timeline while playback. Triggered by the play timer.
+        :return: None
+        """
+        elapsed_time = self.play_elapsed_timer.elapsed() / 10
+        virtual_frames = elapsed_time + self.start_frame
+        self.playhead.setX(virtual_frames * self.zoom)
 
     def wheelEvent(self, event: QWheelEvent) -> None:  # noqa: N802
         """

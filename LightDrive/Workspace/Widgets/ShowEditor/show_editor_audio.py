@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import QGraphicsRectItem, QGraphicsItem
 from PySide6.QtGui import QPen, QPainter, QColor
-from PySide6.QtCore import Qt, QRectF, Signal, QObject
+from PySide6.QtCore import Qt, QRectF, Signal, QObject, QThread
 import numpy as np
 import librosa
+import os
 
 class AudioLoaderWorker(QObject):
     finished = Signal(np.ndarray, int)
@@ -33,8 +34,30 @@ class AudioTrack(QGraphicsRectItem):
         self.setBrush(Qt.lightGray)
         self.setOpacity(0.25)
 
+        self.load_audio_background()
+
     def update_width(self) -> None:
         self.setRect(0, 0, self.show_editor.track_length * self.show_editor.zoom, 100)
+
+    def load_audio_background(self) -> None:
+        """
+        Creates a thread to load the audio in the background and then loads the waveform and markers
+        :return: None
+        """
+        sound_resource_uuid = self.show_editor.show_snippet.sound_resource_uuid
+        if not sound_resource_uuid:
+            return  # No sound resource set
+        file_path = str(os.path.join(self.show_editor.window.snippet_manager.sound_resource_manager.sr_tmp_dir, sound_resource_uuid))
+        # Load the audio in a separate thread
+        self.thread = QThread()
+        self.worker = AudioLoaderWorker(file_path)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.show_editor.on_audio_loaded)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.thread.start()
 
 class WaveformItem(QGraphicsItem):
     def __init__(self, waveform: np.ndarray, sample_rate: int, width: int, height: int, show_editor) -> None:
