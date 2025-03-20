@@ -1,0 +1,60 @@
+from PySide6.QtWidgets import QGraphicsRectItem, QGraphicsItemGroup, QGraphicsTextItem, QGraphicsItem
+from PySide6.QtCore import Qt
+
+class SnippetTrack(QGraphicsRectItem):
+    def __init__(self, show_editor) -> None:
+        super().__init__()
+        self.show_editor = show_editor
+
+        # Create the track
+        self.setRect(0, 0, self.show_editor.track_length, 100)
+        self.setBrush(Qt.lightGray)
+        self.setOpacity(0.3)
+
+    def update_width(self) -> None:
+        self.setRect(0, 0, self.show_editor.track_length * self.show_editor.zoom, 100)
+
+class SnippetItem(QGraphicsItemGroup):
+    def __init__(self, show_editor, snippet_item_uuid: str, snippet_uuid: str, length: int = 250, frame: int = 0, track: int = 0) -> None:
+        super().__init__()
+        self.uuid = snippet_item_uuid
+        self.show_editor = show_editor
+        self.snippet_uuid = snippet_uuid
+        self.length = length
+        self.frame = frame
+        self.track = track
+
+        width = self.show_editor.virtual_frame_from_x_pos(self.length)
+        self.body = QGraphicsRectItem(0, 0, width, 100)
+        self.body.setBrush(Qt.green)
+        self.body.setOpacity(0.25)
+        self.addToGroup(self.body)
+
+        snippet_name = self.show_editor.window.snippet_manager.available_snippets[snippet_uuid].name
+        self.label = QGraphicsTextItem(snippet_name)
+        self.label.setPos(0, 0)
+        self.addToGroup(self.label)
+
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
+
+        x_pos = self.show_editor.x_pos_from_virtual_frame(self.frame)
+        y_pos = self.track * 100 + 50
+        self.setPos(x_pos, y_pos)
+
+    def itemChange(self, change, value):  # noqa: N802
+        if change == QGraphicsItem.ItemPositionChange:
+            # Keep in the middle of the tracks
+            track_number = round((value.y() - 50) / 100)
+            value.setY(track_number * 100 + 50)
+            if value.y() < 150: # Upper bounds
+                value.setY(150)
+            if value.x() < 0: # Left bounds
+                value.setX(0)
+            self.frame = self.show_editor.virtual_frame_from_x_pos(value.x())
+            if self.show_editor.show_snippet.added_snippets.get(self.uuid):
+                self.show_editor.show_snippet.added_snippets[self.uuid]["track"] = track_number
+                self.show_editor.show_snippet.added_snippets[self.uuid]["frame"] = self.frame
+
+        return super().itemChange(change, value)

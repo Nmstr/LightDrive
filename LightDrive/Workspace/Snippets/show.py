@@ -1,4 +1,4 @@
-from Workspace.Widgets.show_editor import ShowEditor
+from Workspace.Widgets.ShowEditor.show_editor import ShowEditor
 from Functions.ui import clear_field
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QListWidget, QListWidgetItem, QVBoxLayout, QDialog, \
     QDialogButtonBox, QAbstractItemView, QMessageBox
