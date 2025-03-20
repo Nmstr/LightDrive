@@ -71,9 +71,12 @@ class ShowAddSnippetsDialog(QDialog):
         def add_items(source_item, target_parent):
             for i in range(source_item.childCount()):
                 child = source_item.child(i)
-                if self.window.snippet_manager.available_snippets[child.uuid].type == "show": continue
-                if self.window.snippet_manager.available_snippets[child.uuid].type == "sound_resource": continue
-                if self.window.snippet_manager.available_snippets[child.uuid].type == "script": continue
+                if self.window.snippet_manager.available_snippets[child.uuid].type == "show":
+                    continue
+                if self.window.snippet_manager.available_snippets[child.uuid].type == "sound_resource":
+                    continue
+                if self.window.snippet_manager.available_snippets[child.uuid].type == "script":
+                    continue
                 new_item = QTreeWidgetItem(target_parent)
                 new_item.setText(0, child.text(0))
                 new_item.snippet_uuid = child.uuid
