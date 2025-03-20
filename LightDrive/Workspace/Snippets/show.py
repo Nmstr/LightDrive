@@ -1,6 +1,7 @@
 from Workspace.Widgets.show_editor import ShowEditor
 from Functions.ui import clear_field
-from PySide6.QtWidgets import QTreeWidgetItem, QListWidget, QListWidgetItem, QVBoxLayout, QDialog, QDialogButtonBox
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QListWidget, QListWidgetItem, QVBoxLayout, QDialog, \
+    QDialogButtonBox, QAbstractItemView, QMessageBox
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 from dataclasses import dataclass, field
@@ -39,6 +40,48 @@ class AddSoundResourceDialog(QDialog):
                 item.snippet_uuid = snippet.uuid
                 self.sound_resource_list.addItem(item)
 
+class ShowAddSnippetsDialog(QDialog):
+    def __init__(self, window) -> None:
+        """
+        Create a dialog for adding snippets to a show
+        :param window: The main window
+        """
+        super().__init__()
+        self.setWindowTitle("LightDrive - Add Snippet To Show")
+        self.window = window
+
+        layout = QVBoxLayout()
+        self.snippet_tree = QTreeWidget()
+        self.snippet_tree.setHeaderHidden(True)
+        self.snippet_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.load_snippets()
+        layout.addWidget(self.snippet_tree)
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+    def load_snippets(self) -> None:
+        """
+        Loads the snippets and shows them in the snippet_tree
+        :return: None
+        """
+        def add_items(source_item, target_parent):
+            for i in range(source_item.childCount()):
+                child = source_item.child(i)
+                if self.window.snippet_manager.available_snippets[child.uuid].type == "show": continue
+                if self.window.snippet_manager.available_snippets[child.uuid].type == "sound_resource": continue
+                if self.window.snippet_manager.available_snippets[child.uuid].type == "script": continue
+                new_item = QTreeWidgetItem(target_parent)
+                new_item.setText(0, child.text(0))
+                new_item.snippet_uuid = child.uuid
+                add_items(child, new_item)
+
+        root = self.window.ui.snippet_selector_tree.invisibleRootItem()
+        add_items(root, self.snippet_tree)
+
 @dataclass
 class ShowData:
     uuid: str
@@ -46,6 +89,7 @@ class ShowData:
     type: str = field(default="show", init=False)
     directory: str = field(default="root")
     sound_resource_uuid: str = field(default=None)
+    added_snippets: dict = field(default_factory=dict)
 
 class ShowManager:
     def __init__(self, snippet_manager) -> None:
@@ -132,6 +176,34 @@ class ShowManager:
         :return: None
         """
         self.show_editor.set_volume(volume)
+
+    def show_add_snippets(self, snippet_uuids: list = None) -> None:
+        """
+        Adds a snippet to the current show
+        :param snippet_uuids: The uuids of the snippets to add (default: dialog selection)
+        :return: None
+        """
+        if not snippet_uuids:  # If no snippets are provided, show the dialog
+            dlg = ShowAddSnippetsDialog(self.sm.window)
+            if dlg.exec():
+                snippets = dlg.snippet_tree.selectedItems()
+                snippet_uuids = [snippet.snippet_uuid for snippet in snippets]
+
+        for snippet_uuid in snippet_uuids:  # Check each snippet
+            snippet = self.sm.available_snippets.get(snippet_uuid)
+            if snippet.type == "show":
+                snippet_uuids.remove(snippet.uuid)
+            elif snippet.type == "sound_resource":
+                snippet_uuids.remove(snippet.uuid)
+            elif snippet.type == "script":
+                snippet_uuids.remove(snippet.uuid)
+            elif snippet.type == "directory":
+                err_msg = QMessageBox(QMessageBox.Critical, "LightDrive - Error", "Cant add directory to show", QMessageBox.Ok)
+                err_msg.exec()
+                snippet_uuids.remove(snippet.uuid)
+
+        for snippet_uuid in snippet_uuids:
+            self.show_editor.add_snippet(snippet_uuid)
 
     def show_load_song(self, show_uuid: str = None, sound_resource_uuid: str = None) -> None:
         """

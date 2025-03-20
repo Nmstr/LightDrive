@@ -6,6 +6,7 @@ from tinytag import TinyTag
 import numpy as np
 import PySoundSphere
 import librosa
+import uuid
 import os
 
 class AudioLoaderWorker(QObject):
@@ -158,6 +159,64 @@ class Markers(QGraphicsItem):
     def update_width(self) -> None:
         self.width = self.show_editor.track_length * self.show_editor.zoom
 
+class SnippetTrack(QGraphicsRectItem):
+    def __init__(self, show_editor) -> None:
+        super().__init__()
+        self.show_editor = show_editor
+
+        # Create the track
+        self.setRect(0, 0, self.show_editor.track_length, 100)
+        self.setBrush(Qt.lightGray)
+        self.setOpacity(0.3)
+
+    def update_width(self) -> None:
+        self.setRect(0, 0, self.show_editor.track_length * self.show_editor.zoom, 100)
+
+class SnippetItem(QGraphicsItemGroup):
+    def __init__(self, show_editor, snippet_item_uuid: str, snippet_uuid: str, length: int = 250, frame: int = 0, track: int = 0) -> None:
+        super().__init__()
+        self.uuid = snippet_item_uuid
+        self.show_editor = show_editor
+        self.snippet_uuid = snippet_uuid
+        self.length = length
+        self.frame = frame
+        self.track = track
+
+        width = self.show_editor.virtual_frame_from_x_pos(self.length)
+        self.body = QGraphicsRectItem(0, 0, width, 100)
+        self.body.setBrush(Qt.green)
+        self.body.setOpacity(0.25)
+        self.addToGroup(self.body)
+
+        snippet_name = self.show_editor.window.snippet_manager.available_snippets[snippet_uuid].name
+        self.label = QGraphicsTextItem(snippet_name)
+        self.label.setPos(0, 0)
+        self.addToGroup(self.label)
+
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
+
+        x_pos = self.show_editor.x_pos_from_virtual_frame(self.frame)
+        y_pos = self.track * 100 + 50
+        self.setPos(x_pos, y_pos)
+
+    def itemChange(self, change, value):  # noqa: N802
+        if change == QGraphicsItem.ItemPositionChange:
+            # Keep in the middle of the tracks
+            track_number = round((value.y() - 50) / 100)
+            value.setY(track_number * 100 + 50)
+            if value.y() < 150: # Upper bounds
+                value.setY(150)
+            if value.x() < 0: # Left bounds
+                value.setX(0)
+            self.frame = self.show_editor.virtual_frame_from_x_pos(value.x())
+            if self.show_editor.show_snippet.added_snippets.get(self.uuid):
+                self.show_editor.show_snippet.added_snippets[self.uuid]["track"] = track_number
+                self.show_editor.show_snippet.added_snippets[self.uuid]["frame"] = self.frame
+
+        return super().itemChange(change, value)
+
 class ShowEditor(QGraphicsView):
     def __init__(self, window: QMainWindow, show_snippet) -> None:
         """
@@ -180,17 +239,32 @@ class ShowEditor(QGraphicsView):
             self.track_length = 2500
 
         self.scene = QGraphicsScene(window)
-        self.setSceneRect(0, 0, self.track_length, self.window.ui.show_editor_frame.height())
+        self.setSceneRect(0, 0, self.track_length, 1200)
         self.setScene(self.scene)
 
         self.timing_tick_bar = TimingTickBar(self)
         self.scene.addItem(self.timing_tick_bar)
-        self.track = AudioTrack(self)
-        self.track.setY(50)
-        self.scene.addItem(self.track)
+        self.audiotrack = AudioTrack(self)
+        self.audiotrack.setY(50)
+        self.scene.addItem(self.audiotrack)
         self.playhead = Playhead()
         self.playhead.setY(50)
         self.scene.addItem(self.playhead)
+
+        self.snippets_tracks = []
+        for i in range(10):
+            snippet_track = SnippetTrack(self)
+            snippet_track.setY((i + 1) * 100 + 50)
+            self.scene.addItem(snippet_track)
+            self.snippets_tracks.append(snippet_track)
+
+        self.snippet_items = []
+        for snippet_item_uuid, snippet_item_data in self.show_snippet.added_snippets.items():
+            self.add_snippet(snippet_item_data["snippet_uuid"],
+                             snippet_item_uuid,
+                             snippet_item_data.get("track", 1),
+                             snippet_item_data.get("frame", 0),
+                             snippet_item_data.get("length", 250))
 
         self.play_timer = QTimer()
         self.play_elapsed_timer = QElapsedTimer()
@@ -321,6 +395,14 @@ class ShowEditor(QGraphicsView):
         """
         return int(x_pos * self.zoom)
 
+    def x_pos_from_virtual_frame(self, virtual_frame: int) -> int:
+        """
+        Converts the virtual frame to an x position
+        :param virtual_frame:
+        :return:
+        """
+        return int(virtual_frame / self.zoom)
+
     def play(self):
         """
         Play the show
@@ -369,6 +451,19 @@ class ShowEditor(QGraphicsView):
         virtual_frames = elapsed_time + self.start_frame
         self.playhead.setX(virtual_frames * self.zoom)
 
+    def add_snippet(self, snippet_uuid: str, snippet_item_uuid: str = None, track: int = 1, frame: int = 0, length: int = 250) -> None:
+        if not snippet_item_uuid:
+            snippet_item_uuid = str(uuid.uuid4())
+        snippet_item = SnippetItem(self, snippet_item_uuid, snippet_uuid, track=track, frame=frame, length=length)
+        self.scene.addItem(snippet_item)
+        self.snippet_items.append(snippet_item)
+        self.show_snippet.added_snippets[snippet_item_uuid] = {
+                    "snippet_uuid": snippet_uuid,
+                    "track": snippet_item.track,
+                    "frame": snippet_item.frame,
+                    "length": snippet_item.length
+                }
+
     def wheelEvent(self, event: QWheelEvent) -> None:  # noqa: N802
         """
         Zoom in or out
@@ -384,11 +479,13 @@ class ShowEditor(QGraphicsView):
                 self.zoom -= 0.1
             self.setSceneRect(0, 0, self.track_length * self.zoom, self.window.ui.show_editor_frame.height())
             self.timing_tick_bar.update_ticks()
-            self.track.update_width()
+            self.audiotrack.update_width()
             self.waveform_item.update_width()
             self.vary_beat_markers.update_width()
             self.onset_markers.update_width()
             self.beat_markers.update_width()
+            for track in self.snippets_tracks:
+                track.update_width()
         else:
             super().wheelEvent(event)
 
