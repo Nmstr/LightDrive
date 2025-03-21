@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QGraphicsRectItem, QGraphicsItemGroup, QGraphicsTextItem, QGraphicsItem
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 
 class SnippetTrack(QGraphicsRectItem):
     def __init__(self, show_editor) -> None:
@@ -23,6 +23,7 @@ class SnippetItem(QGraphicsItemGroup):
         self.length = length
         self.frame = frame
         self.track = track
+        self._disable_frame_updates = False
 
         width = self.show_editor.virtual_frame_from_x_pos(self.length)
         self.body = QGraphicsRectItem(0, 0, width, 100)
@@ -52,9 +53,22 @@ class SnippetItem(QGraphicsItemGroup):
                 value.setY(150)
             if value.x() < 0: # Left bounds
                 value.setX(0)
-            self.frame = self.show_editor.virtual_frame_from_x_pos(value.x())
-            if self.show_editor.show_snippet.added_snippets.get(self.uuid):
-                self.show_editor.show_snippet.added_snippets[self.uuid]["track"] = track_number
-                self.show_editor.show_snippet.added_snippets[self.uuid]["frame"] = self.frame
+            if not self._disable_frame_updates:
+                self.frame = self.show_editor.x_pos_from_virtual_frame(value.x())
+                if self.show_editor.show_snippet.added_snippets.get(self.uuid):
+                    self.show_editor.show_snippet.added_snippets[self.uuid]["track"] = track_number
+                    self.show_editor.show_snippet.added_snippets[self.uuid]["frame"] = self.frame
 
         return super().itemChange(change, value)
+
+    def update_width_position(self) -> None:
+        width = self.show_editor.virtual_frame_from_x_pos(self.length)
+        self.body.setRect(0, 0, width, 100)
+
+        x_pos = self.show_editor.virtual_frame_from_x_pos(self.frame)
+        self._disable_frame_updates = True
+        self.setX(x_pos)
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # This feels hacky, but it works
+        self.timer.timeout.connect(lambda: setattr(self, '_disable_frame_updates', False))
+        self.timer.start()

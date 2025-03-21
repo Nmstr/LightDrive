@@ -259,6 +259,8 @@ class ShowEditor(QGraphicsView):
             self.beat_markers.update_width()
             for track in self.snippets_tracks:
                 track.update_width()
+            for snippet in self.snippet_items:
+                snippet.update_width_position()
         else:
             super().wheelEvent(event)
 
