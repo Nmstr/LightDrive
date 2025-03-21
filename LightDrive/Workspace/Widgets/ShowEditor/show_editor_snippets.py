@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QGraphicsRectItem, QGraphicsItemGroup, QGraphicsTextItem, QGraphicsItem
+from PySide6.QtWidgets import QGraphicsRectItem, QGraphicsItemGroup, QGraphicsTextItem, QGraphicsItem, QMenu, \
+    QInputDialog
 from PySide6.QtCore import Qt, QTimer
 
 class SnippetTrack(QGraphicsRectItem):
@@ -43,6 +44,36 @@ class SnippetItem(QGraphicsItemGroup):
         x_pos = self.show_editor.x_pos_from_virtual_frame(self.frame)
         y_pos = self.track * 100 + 50
         self.setPos(x_pos, y_pos)
+
+        self.context_menu = QMenu()
+        change_length_action = self.context_menu.addAction("Change Length")
+        change_length_action.triggered.connect(self.change_length)
+
+    def contextMenuEvent(self, event) -> None:  # noqa: N802
+        """
+        Show the context menu
+        :param event: The context menu event
+        """
+        self.context_menu.exec(event.screenPos())
+
+    def change_length(self, new_length: int = None) -> None:
+        """
+        Change the length of the snippet
+        :param new_length: The new length of the snippet
+        :return: None
+        """
+        if not new_length:
+            dlg = QInputDialog()
+            dlg.setInputMode(QInputDialog.IntInput)
+            dlg.setIntMinimum(1)
+            dlg.setIntMaximum(32767)
+            dlg.setIntValue(self.length)
+            if not dlg.exec():
+                return
+            new_length = dlg.intValue()
+        self.length = new_length
+        self.update_width_position()
+        self.show_editor.show_snippet.added_snippets[self.uuid]["length"] = new_length
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
