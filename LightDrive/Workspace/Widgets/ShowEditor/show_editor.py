@@ -1,3 +1,4 @@
+from Backend.snippets import ShowOutputSnippet
 from Workspace.Widgets.ShowEditor.show_editor_general import TimingTickBar, Playhead
 from Workspace.Widgets.ShowEditor.show_editor_snippets import SnippetTrack, SnippetItem
 from Workspace.Widgets.ShowEditor.show_editor_audio import AudioTrack, WaveformItem, Markers
@@ -23,6 +24,8 @@ class ShowEditor(QGraphicsView):
         self.show_snippet = show_snippet
         self.zoom = 1.0
         self.is_clicked = False
+        self.output_snippet = ShowOutputSnippet(window, show_snippet.uuid)
+        self.output_snippet.pause()
 
         sound_resource_uuid = show_snippet.sound_resource_uuid
         if sound_resource_uuid:
@@ -171,6 +174,7 @@ class ShowEditor(QGraphicsView):
         self.is_playing = True
         self.player.play()
         self.player.position = self.virtual_frame_from_x_pos(int(self.playhead.x())) / 100
+        self.output_snippet.unpause()
 
     def pause(self):
         """
@@ -180,6 +184,7 @@ class ShowEditor(QGraphicsView):
         self.play_timer.stop()
         self.is_playing = False
         self.player.pause()
+        self.output_snippet.pause()
 
     def stop(self):
         """
@@ -190,6 +195,8 @@ class ShowEditor(QGraphicsView):
         self.play_timer.stop()
         self.is_playing = False
         self.player.stop()
+        self.output_snippet.pause()
+        self.output_snippet.frame = 0
 
     def set_volume(self, volume: int) -> None:
         """
@@ -293,7 +300,20 @@ class ShowEditor(QGraphicsView):
             vframe = self.virtual_frame_from_x_pos(int(position.x()))
             self.playhead.setX(position.x())
             self.player.position = vframe / 100
+            self.output_snippet.set_frame(vframe)
             if self.is_playing:
                 self.start_frame = vframe
                 self.play_elapsed_timer.restart()
         super().mouseMoveEvent(event)
+
+    def toggle_show(self, status: bool) -> None:
+        """
+        Toggle whether to show the show or not
+        :param status: The status
+        :return: None
+        """
+        if status:
+            self.window.dmx_output.insert_snippet(self.output_snippet)
+        else:
+            self.window.dmx_output.remove_snippet(self.output_snippet)
+

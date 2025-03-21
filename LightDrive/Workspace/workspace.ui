@@ -1417,6 +1417,16 @@
                   </widget>
                  </item>
                  <item>
+                  <widget class="QPushButton" name="show_show_btn">
+                   <property name="text">
+                    <string>Show</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <spacer name="horizontalSpacer_13">
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>

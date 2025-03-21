@@ -172,6 +172,13 @@ class ShowManager:
         """
         self.show_editor.stop()
 
+    def show_toggle_show(self) -> None:
+        """
+        Toggles showing the show
+        :return: None
+        """
+        self.show_editor.toggle_show(self.sm.window.ui.show_show_btn.isChecked())
+
     def show_set_volume(self, volume: int) -> None:
         """
         Sets the volume of the current show

@@ -456,6 +456,8 @@ class Workspace(QMainWindow):
         self.ui.show_load_song_btn.clicked.connect(self.snippet_manager.show_manager.show_load_song)
         self.ui.show_add_snippets_btn.clicked.connect(self.snippet_manager.show_manager.show_add_snippets)
         self.ui.show_add_snippets_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.show_show_btn.clicked.connect(self.snippet_manager.show_manager.show_toggle_show)
+        self.ui.show_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
     def setup_control_desk_page(self) -> None:
         """
