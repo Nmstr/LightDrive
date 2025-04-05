@@ -385,6 +385,8 @@ class Workspace(QMainWindow):
         self.ui.directory_btn.setIcon(QPixmap("Assets/Icons/directory.svg"))
         self.ui.sound_resource_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_create)
         self.ui.sound_resource_btn.setIcon(QPixmap("Assets/Icons/sound_resource.svg"))
+        self.ui.show_btn.clicked.connect(self.snippet_manager.show_manager.show_create)
+        self.ui.show_btn.setIcon(QPixmap("Assets/Icons/show.svg"))
 
         self.ui.scene_add_fixture.clicked.connect(self.snippet_manager.scene_manager.scene_add_fixture)
         self.ui.scene_add_fixture.setIcon(QPixmap("Assets/Icons/add.svg"))
@@ -442,6 +444,20 @@ class Workspace(QMainWindow):
         self.ui.sound_resource_name_edit.editingFinished.connect(self.snippet_manager.sound_resource_manager.sound_resource_rename)
         self.ui.sound_resource_play_song_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_play_song)
         self.ui.sound_resource_load_song_btn.clicked.connect(self.snippet_manager.sound_resource_manager.sound_resource_load_song)
+
+        self.ui.show_name_edit.editingFinished.connect(self.snippet_manager.show_manager.show_rename)
+        self.ui.show_volume_spin.valueChanged.connect(self.snippet_manager.show_manager.show_set_volume)
+        self.ui.show_play_btn.clicked.connect(self.snippet_manager.show_manager.show_play)
+        self.ui.show_play_btn.setIcon(QPixmap("Assets/Icons/play.svg"))
+        self.ui.show_pause_btn.clicked.connect(self.snippet_manager.show_manager.show_pause)
+        self.ui.show_pause_btn.setIcon(QPixmap("Assets/Icons/pause.svg"))
+        self.ui.show_stop_btn.clicked.connect(self.snippet_manager.show_manager.show_stop)
+        self.ui.show_stop_btn.setIcon(QPixmap("Assets/Icons/stop.svg"))
+        self.ui.show_load_song_btn.clicked.connect(self.snippet_manager.show_manager.show_load_song)
+        self.ui.show_add_snippets_btn.clicked.connect(self.snippet_manager.show_manager.show_add_snippets)
+        self.ui.show_add_snippets_btn.setIcon(QPixmap("Assets/Icons/add.svg"))
+        self.ui.show_show_btn.clicked.connect(self.snippet_manager.show_manager.show_toggle_show)
+        self.ui.show_show_btn.setIcon(QPixmap("Assets/Icons/show_output.svg"))
 
     def setup_control_desk_page(self) -> None:
         """

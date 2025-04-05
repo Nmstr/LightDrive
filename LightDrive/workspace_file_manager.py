@@ -6,6 +6,7 @@ from Workspace.Snippets.script import ScriptData
 from Workspace.Snippets.two_d_efx import TwoDEfxData
 from Workspace.Snippets.directory import DirectoryData
 from Workspace.Snippets.sound_resource import SoundResourceData
+from Workspace.Snippets.show import ShowData
 from PySide6.QtWidgets import QFileDialog
 from dataclasses import asdict
 import tempfile
@@ -254,6 +255,9 @@ class WorkspaceFileManager:
                 case "sound_resource":
                     sound_resource_data = SoundResourceData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"))
                     self.window.snippet_manager.sound_resource_manager.sound_resource_create(parent=parent, sound_resource_data=sound_resource_data)
+                case "show":
+                    show_data = ShowData(snippet["uuid"], snippet["name"], directory=snippet.get("directory", "root"), sound_resource_uuid=snippet.get("sound_resource_uuid", None), added_snippets=snippet.get("added_snippets", []))
+                    self.window.snippet_manager.show_manager.show_create(parent=parent, show_data=show_data)
 
         while snippets:
             for snippet in snippets:

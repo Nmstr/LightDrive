@@ -19,7 +19,8 @@ dependencies = [
     "PySide6",
     "stupidArtnet",
     "tinytag",
-    "PySoundSphere[sounddevice-backend]"
+    "PySoundSphere[pygame-backend]",
+    "librosa"
 ]
 [project.urls]
 Source = "https://github.com/Nmstr/LightDrive"

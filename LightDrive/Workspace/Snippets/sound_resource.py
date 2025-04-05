@@ -20,7 +20,7 @@ class SoundResourceManager:
     def __init__(self, snippet_manager) -> None:
         self.sm = snippet_manager
         self.sr_tmp_dir = tempfile.mkdtemp()
-        self.audio_player = PySoundSphere.AudioPlayer("sounddevice", sounddevice_blocksize=1024)
+        self.audio_player = PySoundSphere.AudioPlayer("pygame")
 
     def sound_resource_display(self, sound_resource_uuid: str) -> None:
         """
