@@ -219,6 +219,21 @@ class ShowEditor(QGraphicsView):
                     "length": snippet_item.length
                 }
 
+    def remove_snippet_item(self, snippet_item_uuid: str) -> None:
+        """
+        Remove the snippet
+        :param snippet_item_uuid: The uuid of the snippet item
+        :return: None
+        """
+        if not snippet_item_uuid:
+            return
+        self.show_snippet.added_snippets.pop(snippet_item_uuid)
+        for snippet_item in self.snippet_items:
+            if snippet_item.uuid == snippet_item_uuid:
+                self.scene.removeItem(snippet_item)
+                self.snippet_items.remove(snippet_item)
+                break
+
     def virtual_frame_from_x_pos(self, x_pos: int) -> int:
         """
         Converts the x position to a virtual frame

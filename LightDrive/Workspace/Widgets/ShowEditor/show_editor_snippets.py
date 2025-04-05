@@ -48,6 +48,8 @@ class SnippetItem(QGraphicsItemGroup):
         self.context_menu = QMenu()
         change_length_action = self.context_menu.addAction("Change Length")
         change_length_action.triggered.connect(self.change_length)
+        remove_action = self.context_menu.addAction("Remove")
+        remove_action.triggered.connect(self.remove_snippet_item)
 
     def contextMenuEvent(self, event) -> None:  # noqa: N802
         """
@@ -74,6 +76,13 @@ class SnippetItem(QGraphicsItemGroup):
         self.length = new_length
         self.update_width_position()
         self.show_editor.show_snippet.added_snippets[self.uuid]["length"] = new_length
+
+    def remove_snippet_item(self) -> None:
+        """
+        Removes the snippet from the show
+        :return: None
+        """
+        self.show_editor.remove_snippet_item(self.uuid)
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
