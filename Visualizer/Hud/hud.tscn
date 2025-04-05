@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cbftg3nk3t3wh"]
+[gd_scene load_steps=8 format=3 uid="uid://cbftg3nk3t3wh"]
 
 [ext_resource type="Script" uid="uid://c550680u615rk" path="res://Hud/hud.gd" id="1_xedcd"]
 [ext_resource type="Script" uid="uid://xieuajoeo4fy" path="res://Hud/add_fixture_menu.gd" id="2_ngqfk"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://chwjojajomumw" path="res://Hud/fixture_property_editor.gd" id="4_l1kve"]
 [ext_resource type="Script" uid="uid://bhuewk143246c" path="res://Hud/universe_menu.gd" id="5_gbmnv"]
 [ext_resource type="Script" uid="uid://cnf4xqrft5gpj" path="res://Hud/stage_menu.gd" id="6_6jxed"]
+[ext_resource type="Script" uid="uid://dsur5wxnxjih4" path="res://Hud/environment_menu.gd" id="7_q8hkm"]
 
 [node name="Hud" type="Node2D"]
 script = ExtResource("1_xedcd")
@@ -49,6 +50,13 @@ offset_top = 320.0
 offset_right = 150.0
 offset_bottom = 380.0
 text = "Stage"
+
+[node name="EnvironmentButton" type="Button" parent="LeftSideBar"]
+offset_left = 50.0
+offset_top = 410.0
+offset_right = 150.0
+offset_bottom = 470.0
+text = "Environment"
 
 [node name="AddFixtureMenu" type="Node2D" parent="."]
 position = Vector2(-250, 0)
@@ -344,11 +352,50 @@ offset_right = 175.0
 offset_bottom = 500.0
 fixed_icon_size = Vector2i(128, 128)
 
+[node name="EnvironmentMenu" type="Panel" parent="."]
+offset_left = -1250.0
+offset_top = 30.0
+offset_right = -1050.0
+offset_bottom = 610.0
+script = ExtResource("7_q8hkm")
+
+[node name="RealisticLightingButton" type="CheckButton" parent="EnvironmentMenu"]
+layout_mode = 0
+offset_right = 44.0
+offset_bottom = 24.0
+text = "Realistic Lighting"
+
+[node name="CloseEnvironmentMenuButton" type="Button" parent="EnvironmentMenu"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 520.0
+offset_right = 175.0
+offset_bottom = 580.0
+text = "Close"
+
+[node name="FogDensityLabel" type="Label" parent="EnvironmentMenu"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 35.0
+offset_right = 95.0
+offset_bottom = 58.0
+text = "Fog Density"
+
+[node name="FogDensitySpin" type="SpinBox" parent="EnvironmentMenu"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 30.0
+offset_right = 186.562
+offset_bottom = 61.0
+step = 0.01
+value = 0.1
+
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/FileButton" to="FileMenu" method="_on_file_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/UniversesButton" to="UniverseMenu" method="_on_universes_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/StageButton" to="StageMenu" method="_on_stage_button_pressed"]
+[connection signal="pressed" from="LeftSideBar/EnvironmentButton" to="EnvironmentMenu" method="_on_environment_button_pressed"]
 [connection signal="item_clicked" from="AddFixtureMenu/FixtureMenuList" to="AddFixtureMenu/FixtureMenuList" method="_on_item_clicked"]
 [connection signal="pressed" from="AddFixtureMenu/CloseFixtureMenu" to="AddFixtureMenu/FixtureMenuList" method="_on_close_fixture_menu_pressed"]
 [connection signal="pressed" from="FileMenu/SaveFileButton" to="FileMenu" method="_on_save_file_button_pressed"]
@@ -373,3 +420,6 @@ fixed_icon_size = Vector2i(128, 128)
 [connection signal="pressed" from="UniverseMenu/ApplyUniversesButton" to="UniverseMenu" method="_on_apply_universes_button_pressed"]
 [connection signal="pressed" from="StageMenu/CloseStageMenuButton" to="StageMenu" method="_on_close_stage_menu_button_pressed"]
 [connection signal="item_clicked" from="StageMenu/StageMenuList" to="StageMenu" method="_on_stage_menu_list_item_clicked"]
+[connection signal="toggled" from="EnvironmentMenu/RealisticLightingButton" to="EnvironmentMenu" method="_on_realistic_lighting_button_toggled"]
+[connection signal="pressed" from="EnvironmentMenu/CloseEnvironmentMenuButton" to="EnvironmentMenu" method="_on_close_environment_menu_button_pressed"]
+[connection signal="value_changed" from="EnvironmentMenu/FogDensitySpin" to="EnvironmentMenu" method="_on_fog_density_spin_value_changed"]
