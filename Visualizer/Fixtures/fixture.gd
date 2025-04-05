@@ -13,6 +13,8 @@ var channel := 0
 var num_channels := 0
 var full_channel_configuration := {}
 var light_cone_materials := []
+var light_cones := []
+var real_light_cones := []
 
 @onready var collision_indicator := $CollisionIndicator
 @onready var transform_circle := $TransformCircle
@@ -61,6 +63,7 @@ func load_fixture_data(fixture_path: String) -> void:
 		
 		# Configure light sources
 		for light_source in json_data.get("light_sources"):
+			# Setup "fake" light
 			var light_cone := MeshInstance3D.new()
 			light_cone.position.x = light_source.get("x_offset")
 			light_cone.position.y = light_source.get("length") / 2 + light_source.get("y_offset")
@@ -76,11 +79,28 @@ func load_fixture_data(fixture_path: String) -> void:
 			light_cone_material.shading_mode = 0
 			light_cone.mesh.surface_set_material(0, light_cone_material)
 			light_cone_materials.append(light_cone_material)
+			
+			# Setup "real" light
+			var real_light_cone := SpotLight3D.new()
+			real_light_cone.position.x = light_source.get("x_offset")
+			real_light_cone.position.y = light_source.get("y_offset")
+			real_light_cone.position.z = light_source.get("z_offset")
+			real_light_cone.rotation.x = deg_to_rad(90)
+			real_light_cone.spot_range = light_source.get("length")
+			real_light_cone.spot_angle = light_source.get("angle")
+			real_light_cone.light_energy = 32
+			real_light_cone.light_volumetric_fog_energy = 32
+			real_light_cone.hide()
+			
+			# Add both lights to the pivot
 			var light_rotation_pivot := Node3D.new()
 			light_rotation_pivot.rotation.x = deg_to_rad(light_source.get("x_rotation"))
 			light_rotation_pivot.rotation.y = deg_to_rad(light_source.get("y_rotation"))
 			light_rotation_pivot.rotation.z = deg_to_rad(light_source.get("z_rotation"))
 			light_rotation_pivot.add_child(light_cone)
+			light_cones.append(light_cone)
+			light_rotation_pivot.add_child(real_light_cone)
+			real_light_cones.append(real_light_cone)
 			tilt_pivot.add_child(light_rotation_pivot)
 			
 		# Configure dmx channels
@@ -154,6 +174,7 @@ func handle_dmx(channel, value) -> void:
 			elif channel_config.color == "blue":
 				new_albedo = Color8(cur_albedo[0] * 255, cur_albedo[1] * 255, value)
 			light_cone_materials[light_source].set_albedo(new_albedo)
+			real_light_cones[light_source].light_color = new_albedo
 
 
 # This expects a value between 0 and 255
