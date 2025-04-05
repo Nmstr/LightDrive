@@ -29,6 +29,8 @@ large number of lights.
   - ❌ RGB Matrix
   - ❌ Scripts
   - ✅ Directories
+  - ✅ Sound Resources
+  - 🚧 Shows
 - 🚧 Console (Live individual channel control)
 - ❌ Show Creator (Fully timed light shows to music)
 - 🚧 Control Desk (Virtual lighting console)
