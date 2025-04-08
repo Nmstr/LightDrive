@@ -6,6 +6,14 @@ var universes := Array()
 var dmx_values := {}
 var selected_fixture: Node3D
 
+var xr_interface: XRInterface
+
+func _ready() -> void:
+	xr_interface = XRServer.find_interface("OpenXR")
+	if xr_interface and xr_interface.is_initialized():
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		get_viewport().use_xr = true
+
 
 func set_dmx_values(universe_entry, new_values: Array) -> void:
 	var universe := universes.find(universe_entry) + 1

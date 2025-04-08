@@ -11,13 +11,23 @@ config_version=5
 [application]
 
 config/name="Visualizer"
-run/main_scene="res://stage.tscn"
+run/main_scene="uid://c7yi56sq1vb2j"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Globals="*res://globals.gd"
+XRToolsUserSettings="*res://addons/godot-xr-tools/user_settings/user_settings.gd"
+XRToolsRumbleManager="*res://addons/godot-xr-tools/rumble/rumble_manager.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-xr-tools/plugin.cfg")
+
+[filesystem]
+
+import/blender/enabled=false
 
 [input]
 
@@ -45,3 +55,8 @@ r_click={
 [rendering]
 
 lights_and_shadows/directional_shadow/size=16384
+
+[xr]
+
+shaders/enabled.vr=true
+openxr/enabled.vr=true
