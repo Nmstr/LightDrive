@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b2vydsm7ofwte"]
+[gd_scene load_steps=9 format=3 uid="uid://b2vydsm7ofwte"]
 
 [ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="1_4x3ub"]
 [ext_resource type="PackedScene" uid="uid://bpdj5njb8nhot" path="res://addons/godot-xr-tools/hands/scenes/highpoly/left_fullglove_hand.tscn" id="2_d8eq3"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_imksx"]
 [ext_resource type="PackedScene" uid="uid://cbftg3nk3t3wh" path="res://Hud/hud.tscn" id="5_5o45g"]
 [ext_resource type="PackedScene" uid="uid://d1tl07geqm5xq" path="res://addons/godot-xr-tools/hands/scenes/highpoly/right_fullglove_hand.tscn" id="6_ka618"]
+[ext_resource type="PackedScene" uid="uid://bl2nuu3qhlb5k" path="res://addons/godot-xr-tools/functions/movement_direct.tscn" id="6_rv6ta"]
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="7_hqttd"]
 
 [node name="XROrigin3D" type="XROrigin3D"]
@@ -27,6 +28,9 @@ collision_layer = 5242880
 scene = ExtResource("5_5o45g")
 viewport_size = Vector2(1152, 648)
 scene_properties_keys = PackedStringArray("hud.gd")
+
+[node name="MovementDirect" parent="LeftHand" instance=ExtResource("6_rv6ta")]
+strafe = true
 
 [node name="RightHand" type="XRController3D" parent="."]
 tracker = &"right_hand"

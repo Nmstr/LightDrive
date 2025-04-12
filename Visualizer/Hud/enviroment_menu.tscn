@@ -8,11 +8,13 @@ offset_bottom = 580.0
 script = ExtResource("1_5ggyv")
 
 [node name="RealisticLightingButton" type="CheckButton" parent="."]
+layout_mode = 0
 offset_right = 44.0
 offset_bottom = 24.0
 text = "Realistic Lighting"
 
 [node name="CloseEnvironmentMenuButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 25.0
 offset_top = 520.0
 offset_right = 175.0
@@ -20,6 +22,7 @@ offset_bottom = 580.0
 text = "Close"
 
 [node name="FogDensityLabel" type="Label" parent="."]
+layout_mode = 0
 offset_left = 5.0
 offset_top = 35.0
 offset_right = 95.0
@@ -27,6 +30,7 @@ offset_bottom = 58.0
 text = "Fog Density"
 
 [node name="FogDensitySpin" type="SpinBox" parent="."]
+layout_mode = 0
 offset_left = 100.0
 offset_top = 30.0
 offset_right = 186.562

@@ -8,6 +8,7 @@ offset_bottom = 580.0
 script = ExtResource("1_d1wvh")
 
 [node name="FileMenuOptions" type="VBoxContainer" parent="."]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 180.0
