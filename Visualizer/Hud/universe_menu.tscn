@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3 uid="uid://blw5wg4vr5y21"]
+
+[ext_resource type="Script" uid="uid://bhuewk143246c" path="res://Hud/universe_menu.gd" id="1_c1e3o"]
+
+[node name="UniverseMenu" type="Panel"]
+offset_right = 200.0
+offset_bottom = 580.0
+script = ExtResource("1_c1e3o")
+
+[node name="CloseUniverseMenu" type="Button" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 520.0
+offset_right = 175.0
+offset_bottom = 580.0
+text = "Close"
+
+[node name="UniverseScroll" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 390.0
+
+[node name="UniverseVBox" type="VBoxContainer" parent="UniverseScroll"]
+layout_mode = 2
+
+[node name="AddUniverseButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 440.0
+offset_right = 175.0
+offset_bottom = 471.0
+text = "Add Universe"
+
+[node name="RemoveUniverseButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 480.0
+offset_right = 175.0
+offset_bottom = 511.0
+tooltip_text = "Removes the last universe"
+text = "Remove Universe"
+
+[node name="ApplyUniversesButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 400.0
+offset_right = 175.0
+offset_bottom = 431.0
+text = "Apply"
+
+[node name="AcceptDialog" type="AcceptDialog" parent="ApplyUniversesButton"]
+auto_translate_mode = 1
+title = "Universe Configuration Error"
+initial_position = 2
+
+[connection signal="pressed" from="CloseUniverseMenu" to="." method="_on_close_universe_menu_pressed"]
+[connection signal="pressed" from="AddUniverseButton" to="." method="_on_add_universe_button_pressed"]
+[connection signal="pressed" from="RemoveUniverseButton" to="." method="_on_remove_universe_button_pressed"]
+[connection signal="pressed" from="ApplyUniversesButton" to="." method="_on_apply_universes_button_pressed"]

@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckjjyrdxko3b"]
+
+[ext_resource type="Script" uid="uid://dss7ecw2u71a4" path="res://Hud/file_menu.gd" id="1_d1wvh"]
+
+[node name="FileMenu" type="Panel"]
+offset_right = 200.0
+offset_bottom = 580.0
+script = ExtResource("1_d1wvh")
+
+[node name="FileMenuOptions" type="VBoxContainer" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 180.0
+offset_bottom = 580.0
+
+[node name="SaveFileButton" type="Button" parent="FileMenuOptions"]
+layout_mode = 2
+text = "Save"
+
+[node name="LoadFileButton" type="Button" parent="FileMenuOptions"]
+layout_mode = 2
+text = "Load"
+
+[node name="CloseFileMenuButton" type="Button" parent="FileMenuOptions"]
+layout_mode = 2
+text = "Close"
+
+[node name="LoadFileDialog" type="FileDialog" parent="FileMenuOptions"]
+auto_translate_mode = 1
+title = "Open a File"
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.lds; LightDrive Stage Files")
+use_native_dialog = true
+
+[node name="SaveFileDialog" type="FileDialog" parent="FileMenuOptions"]
+auto_translate_mode = 1
+access = 2
+filters = PackedStringArray("*.lds; LightDrive Stage Files")
+use_native_dialog = true
+
+[connection signal="pressed" from="FileMenuOptions/SaveFileButton" to="." method="_on_save_file_button_pressed"]
+[connection signal="pressed" from="FileMenuOptions/LoadFileButton" to="." method="_on_load_file_button_pressed"]
+[connection signal="pressed" from="FileMenuOptions/CloseFileMenuButton" to="." method="_on_close_file_menu_button_pressed"]
+[connection signal="file_selected" from="FileMenuOptions/LoadFileDialog" to="." method="_on_load_file_dialog_file_selected"]
+[connection signal="file_selected" from="FileMenuOptions/SaveFileDialog" to="." method="_on_save_file_dialog_file_selected"]

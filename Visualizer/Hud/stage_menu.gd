@@ -39,8 +39,8 @@ func _on_close_stage_menu_button_pressed() -> void:
 func _on_stage_menu_list_item_clicked(index: int, _at_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index:
 		if Time.get_ticks_msec() - last_click_time < max_ms_double_click:
-			get_parent().get_parent().get_node("StageModel").unload_stage_model() # Remove current model
-			get_parent().get_parent().get_node("StageModel").load_stage_model($StageMenuList.get_item_metadata(index))  #Load new model
+			get_node('/root/Stage/StageModel').unload_stage_model() # Remove current model
+			get_node('/root/Stage/StageModel').load_stage_model($StageMenuList.get_item_metadata(index))  #Load new model
 			last_click_time = 0 # Reset double click
 		else:
 			last_click_time = Time.get_ticks_msec()

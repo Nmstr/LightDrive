@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4n203je7ajds"]
+
+[ext_resource type="Script" uid="uid://cnf4xqrft5gpj" path="res://Hud/stage_menu.gd" id="1_wrcxo"]
+
+[node name="StageMenu" type="Panel"]
+offset_right = 200.0
+offset_bottom = 580.0
+script = ExtResource("1_wrcxo")
+
+[node name="CloseStageMenuButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 520.0
+offset_right = 175.0
+offset_bottom = 580.0
+text = "Close"
+
+[node name="StageMenuList" type="ItemList" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 175.0
+offset_bottom = 500.0
+fixed_icon_size = Vector2i(128, 128)
+
+[connection signal="pressed" from="CloseStageMenuButton" to="." method="_on_close_stage_menu_button_pressed"]
+[connection signal="item_clicked" from="StageMenuList" to="." method="_on_stage_menu_list_item_clicked"]

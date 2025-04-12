@@ -41,7 +41,7 @@ func _on_close_fixture_menu_pressed() -> void:
 func _on_item_clicked(index: int, _at_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index:
 		if Time.get_ticks_msec() - last_click_time < max_ms_double_click:
-			hud_node.get_parent().add_fixture(get_item_metadata(index))
+			get_node('/root/Stage').add_fixture(get_item_metadata(index))
 			last_click_time = 0 # Reset double click
 		else:
 			last_click_time = Time.get_ticks_msec()

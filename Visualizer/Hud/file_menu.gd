@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends Panel
 
 var dialog_selected_file := ""
 
@@ -6,13 +6,12 @@ var dialog_selected_file := ""
 func _on_file_button_pressed() -> void:
 	get_parent().show_menu("FileMenu")
 
-
 func _on_close_file_menu_button_pressed() -> void:
 	get_parent().hide_menu()
 
 
 func _on_save_file_button_pressed() -> void:
-	$SaveFileDialog.show()
+	$FileMenuOptions/SaveFileDialog.show()
 
 
 func _on_save_file_dialog_file_selected(path: String) -> void:
@@ -36,12 +35,12 @@ func _save_file(path: String) -> void:
 		})
 	# Collect the universe data
 	var universe_data := []
-	for universe in get_parent().get_parent().universes:
+	for universe in get_node('/root/Stage').universes:
 		universe_data.append(universe.get_port())
 	
 	# Collect stage data
 	var stage_data = {
-		"stage_path": get_parent().get_parent().get_node("StageModel").path
+		"stage_path": get_node('/root/Stage/StageModel').path
 	}
 	
 	# Create the save file
@@ -55,7 +54,7 @@ func _save_file(path: String) -> void:
 
 
 func _on_load_file_button_pressed() -> void:
-	$LoadFileDialog.show()
+	$FileMenuOptions/LoadFileDialog.show()
 
 
 func _on_load_file_dialog_file_selected(path: String) -> void:
@@ -71,10 +70,10 @@ func _load_file(path: String) -> void:
 	var save_nodes = get_tree().get_nodes_in_group("Persist")
 	for i in save_nodes:
 		i.queue_free()
-	get_parent().get_parent().fixtures = []
-	for universe in get_parent().get_parent().universes:
+	get_node('/root/Stage').fixtures = []
+	for universe in get_node('/root/Stage').universes:
 		universe.queue_free()
-	get_parent().get_parent().universes = []
+	get_node('/root/Stage').universes = []
 	
 	# Load the save file
 	var save_file := FileAccess.open(path, FileAccess.READ)
@@ -82,7 +81,7 @@ func _load_file(path: String) -> void:
 	json.parse(save_file.get_as_text())
 	# Load the fixtures
 	for fixture in json.data["fixture_data"]:
-		get_parent().get_parent().add_fixture(fixture.fixture_path,
+		get_node('/root/Stage').add_fixture(fixture.fixture_path,
 				fixture.x_pos,
 				fixture.y_pos,
 				fixture.z_pos,
@@ -98,6 +97,5 @@ func _load_file(path: String) -> void:
 		get_parent().get_node("UniverseMenu").create_universe(universe)
 	
 	# Load the stage model
-	get_parent().get_parent().get_node("StageModel").unload_stage_model()
-	get_parent().get_parent().get_node("StageModel").load_stage_model(json.data["stage_data"].get("stage_path"))
-	
+	get_node('/root/Stage/StageModel').unload_stage_model()
+	get_node('/root/Stage/StageModel').load_stage_model(json.data["stage_data"].get("stage_path"))

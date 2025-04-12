@@ -13,6 +13,8 @@ func _ready() -> void:
 	if xr_interface and xr_interface.is_initialized():
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 		get_viewport().use_xr = true
+		get_node("XROrigin3D").visible = true
+		get_node("CustomCamera").visible = false
 
 
 func set_dmx_values(universe_entry, new_values: Array) -> void:

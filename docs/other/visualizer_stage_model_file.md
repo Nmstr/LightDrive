@@ -19,6 +19,9 @@ These files include the configuration of the stage model. The `objects` property
 that are also in the model.json. Each object can have a `color` property, which sets the color of the object.
 They should also have a `surface_overrides` property, which is an array of surface indices and colors. The
 colors are in hexadecimal format. They override the color of the surface with the given index.
+The `initial_camera_position` property is an array of three numbers, which represent the initial camera
+position in the 3D space. The camera will be placed at this position when the model is loaded. This needs
+to be properly set for VR support.
 
 An example config.json file:
 ```
@@ -33,7 +36,8 @@ An example config.json file:
         "3": "#FF0000"
       }
     }
-  }
+  },
+  "initial_camera_position": [0.0, 1.0, 0.0]
 }
 ```
 
