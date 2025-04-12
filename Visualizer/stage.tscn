@@ -1,11 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://c7yi56sq1vb2j"]
+[gd_scene load_steps=10 format=3 uid="uid://c7yi56sq1vb2j"]
 
 [ext_resource type="Script" uid="uid://b1c0vb2dotygw" path="res://stage.gd" id="1_qgw0x"]
 [ext_resource type="PackedScene" uid="uid://bqskldg7nou4b" path="res://StageModel/stage_model.tscn" id="4_gx6sy"]
 [ext_resource type="PackedScene" uid="uid://cbftg3nk3t3wh" path="res://Hud/hud.tscn" id="5_ma6c1"]
 [ext_resource type="PackedScene" uid="uid://vw3k6es8640q" path="res://custom_camera.tscn" id="5_rxip7"]
-[ext_resource type="PackedScene" uid="uid://bq86r4yll8po" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/left_fullglove_low.tscn" id="5_vpggq"]
-[ext_resource type="PackedScene" uid="uid://xqimcf20s2jp" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/right_fullglove_low.tscn" id="6_1edn8"]
+[ext_resource type="PackedScene" uid="uid://d1tl07geqm5xq" path="res://addons/godot-xr-tools/hands/scenes/highpoly/right_fullglove_hand.tscn" id="5_vsjsl"]
+[ext_resource type="PackedScene" uid="uid://fiul51tsyoop" path="res://addons/godot-xr-tools/functions/function_teleport.tscn" id="6_jx6rg"]
+[ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="7_g8oy1"]
+[ext_resource type="PackedScene" uid="uid://bpdj5njb8nhot" path="res://addons/godot-xr-tools/hands/scenes/highpoly/left_fullglove_hand.tscn" id="8_i76fu"]
 
 [sub_resource type="Environment" id="Environment_yy887"]
 
@@ -29,12 +31,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28647, 2.39138)
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 
+[node name="PlayerBody" parent="XROrigin3D" instance=ExtResource("7_g8oy1")]
+
 [node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
 tracker = &"left_hand"
 
-[node name="LeftHand" parent="XROrigin3D/LeftHand" instance=ExtResource("5_vpggq")]
+[node name="LeftHand" parent="XROrigin3D/LeftHand" instance=ExtResource("8_i76fu")]
 
 [node name="RightHand" type="XRController3D" parent="XROrigin3D"]
 tracker = &"right_hand"
 
-[node name="RightHand" parent="XROrigin3D/RightHand" instance=ExtResource("6_1edn8")]
+[node name="RightHand" parent="XROrigin3D/RightHand" instance=ExtResource("5_vsjsl")]
+
+[node name="FunctionTeleport" parent="XROrigin3D/RightHand" instance=ExtResource("6_jx6rg")]

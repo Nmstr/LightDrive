@@ -23,6 +23,7 @@ func load_stage_model(stage_path: String) -> void:
 	
 	gltf.append_from_buffer(model_file, "base_path?", gltf_state)
 	var node := gltf.generate_scene(gltf_state)
+	node.get_children()[0].create_convex_collision()  # Makes the stage colidable for VR support
 	add_child(node)
 	var full_model_node = node
 	if node.get_children()[0] is not MeshInstance3D:
