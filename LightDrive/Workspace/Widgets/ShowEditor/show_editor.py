@@ -2,8 +2,8 @@ from Backend.snippets import ShowOutputSnippet
 from Workspace.Widgets.ShowEditor.show_editor_general import TimingTickBar, Playhead
 from Workspace.Widgets.ShowEditor.show_editor_snippets import SnippetTrack, SnippetItem
 from Workspace.Widgets.ShowEditor.show_editor_audio import AudioTrack, WaveformItem, Markers
-from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
-from PySide6.QtGui import QWheelEvent
+from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QGraphicsLineItem
+from PySide6.QtGui import QWheelEvent, QPen
 from PySide6.QtCore import Qt, QTimer, QElapsedTimer
 from tinytag import TinyTag
 import numpy as np
@@ -81,6 +81,11 @@ class ShowEditor(QGraphicsView):
 
         self.y = None
         self.sr = None
+
+        self.extended_marker = QGraphicsLineItem(0, 100, 1, 1050)
+        self.extended_marker.setPen(QPen(Qt.black, 1))
+        self.extended_marker.hide()
+        self.scene.addItem(self.extended_marker)
 
     def load_player(self) -> None:
         """

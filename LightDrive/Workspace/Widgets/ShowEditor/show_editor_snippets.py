@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QGraphicsRectItem, QGraphicsItemGroup, QGraphicsTextItem, QGraphicsItem, QMenu, \
-    QInputDialog
+    QInputDialog, QApplication
 from PySide6.QtCore import Qt, QTimer
 
 class SnippetTrack(QGraphicsRectItem):
@@ -84,6 +84,24 @@ class SnippetItem(QGraphicsItemGroup):
         """
         self.show_editor.remove_snippet_item(self.uuid)
 
+    def get_snap_position(self, current_x_pos: int) -> int:
+        """
+        Get the position the snippet should be snapped to (closest marker)
+        :return: The snap position
+        """
+        if QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
+            return current_x_pos  # No snapping if shift is pressed
+        current_time = self.show_editor.x_pos_from_virtual_frame(current_x_pos) / 100
+        close_markers = [self.show_editor.onset_markers.get_marker(current_time),
+                         self.show_editor.beat_markers.get_marker(current_time),
+                         self.show_editor.vary_beat_markers.get_marker(current_time)]
+        valid_markers = [marker for marker in close_markers if marker is not None]
+        if not valid_markers:
+            return current_x_pos  # If no markers are found, return the current position
+        closest_marker_time = min(valid_markers, key=lambda x: abs(x - current_time))
+        marker_pos = self.show_editor.virtual_frame_from_x_pos(closest_marker_time * 100)
+        return marker_pos
+
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
             # Keep in the middle of the tracks
@@ -93,6 +111,17 @@ class SnippetItem(QGraphicsItemGroup):
                 value.setY(150)
             if value.x() < 0: # Left bounds
                 value.setX(0)
+            if not QApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
+                try:
+                    snap_pos = self.get_snap_position(value.x())
+                    self.show_editor.extended_marker.show()
+                    self.show_editor.extended_marker.setX(snap_pos)
+                    value.setX(snap_pos)
+                except TypeError:
+                    self.show_editor.extended_marker.hide()
+                except AttributeError:
+                    print("Marker not found")
+
             if not self._disable_frame_updates:
                 self.frame = self.show_editor.x_pos_from_virtual_frame(value.x())
                 if self.show_editor.show_snippet.added_snippets.get(self.uuid):
