@@ -107,11 +107,27 @@ class Markers(QGraphicsItem):
         return QRectF(0, 0, self.width, self.height)
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
+        visible_rect = self.show_editor.mapToScene(self.show_editor.viewport().rect()).boundingRect()
+        visible_start = max(0, visible_rect.left())
+        visible_end = min(self.width, visible_rect.right())
+
         pen = QPen(self.color, 1)
         painter.setPen(pen)
         for marker_time in self.marker_times:
             x_pos = self.show_editor.virtual_frame_from_x_pos(marker_time * 100)
-            painter.drawLine(x_pos, self.start_y, x_pos, self.end_y)
+            if visible_start <= x_pos <= visible_end:
+                painter.drawLine(x_pos, self.start_y, x_pos, self.end_y)
 
     def update_width(self) -> None:
         self.width = self.show_editor.track_length * self.show_editor.zoom
+
+    def get_marker(self, time: float) -> float | None:
+        """
+        Check if the marker exists at the given time
+        :param time: The time to check
+        :return: The position of the marker if it exists, otherwise None
+        """
+        for marker_time in self.marker_times:
+            if abs(time - marker_time) <= 0.1:
+                return marker_time
+        return None
