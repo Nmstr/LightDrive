@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://c550680u615rk" path="res://Hud/hud.gd" id="1_xedcd"]
 [ext_resource type="Script" uid="uid://xieuajoeo4fy" path="res://Hud/add_fixture_menu.gd" id="2_ngqfk"]
-[ext_resource type="Script" uid="uid://dss7ecw2u71a4" path="res://Hud/file_menu.gd" id="3_jop16"]
+[ext_resource type="PackedScene" uid="uid://ckjjyrdxko3b" path="res://Hud/file_menu.tscn" id="3_q8hkm"]
 [ext_resource type="Script" uid="uid://chwjojajomumw" path="res://Hud/fixture_property_editor.gd" id="4_l1kve"]
-[ext_resource type="Script" uid="uid://bhuewk143246c" path="res://Hud/universe_menu.gd" id="5_gbmnv"]
-[ext_resource type="Script" uid="uid://cnf4xqrft5gpj" path="res://Hud/stage_menu.gd" id="6_6jxed"]
-[ext_resource type="Script" uid="uid://dsur5wxnxjih4" path="res://Hud/environment_menu.gd" id="7_q8hkm"]
+[ext_resource type="PackedScene" uid="uid://blw5wg4vr5y21" path="res://Hud/universe_menu.tscn" id="5_q8hkm"]
+[ext_resource type="PackedScene" uid="uid://bdrqgusgcic0h" path="res://Hud/enviroment_menu.tscn" id="7_q8hkm"]
+[ext_resource type="PackedScene" uid="uid://b4n203je7ajds" path="res://Hud/stage_menu.tscn" id="7_vbupi"]
 
 [node name="Hud" type="Node2D"]
 script = ExtResource("1_xedcd")
@@ -75,38 +75,11 @@ offset_bottom = 628.0
 text = "Close
 "
 
-[node name="FileMenu" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(200, 0)
+[node name="FileMenu" parent="." instance=ExtResource("3_q8hkm")]
 offset_left = -500.0
 offset_top = 30.0
 offset_right = -300.0
-offset_bottom = 618.0
-script = ExtResource("3_jop16")
-
-[node name="SaveFileButton" type="Button" parent="FileMenu"]
-layout_mode = 2
-text = "Save"
-
-[node name="LoadFileButton" type="Button" parent="FileMenu"]
-layout_mode = 2
-text = "Load"
-
-[node name="CloseFileMenuButton" type="Button" parent="FileMenu"]
-layout_mode = 2
-text = "Close"
-
-[node name="LoadFileDialog" type="FileDialog" parent="FileMenu"]
-title = "Open a File"
-ok_button_text = "Open"
-file_mode = 0
-access = 2
-filters = PackedStringArray("*.lds; LightDrive Stage Files")
-use_native_dialog = true
-
-[node name="SaveFileDialog" type="FileDialog" parent="FileMenu"]
-access = 2
-filters = PackedStringArray("*.lds; LightDrive Stage Files")
-use_native_dialog = true
+offset_bottom = 610.0
 
 [node name="FixturePropertyEditor" type="ScrollContainer" parent="."]
 offset_left = 1200.0
@@ -277,118 +250,23 @@ title = "Confirm fixture removal"
 initial_position = 2
 dialog_text = "Are you sure you want to remove this fixture? This can not be reversed."
 
-[node name="UniverseMenu" type="Panel" parent="."]
+[node name="UniverseMenu" parent="." instance=ExtResource("5_q8hkm")]
 offset_left = -750.0
 offset_top = 30.0
 offset_right = -550.0
 offset_bottom = 610.0
-script = ExtResource("5_gbmnv")
 
-[node name="CloseUniverseMenu" type="Button" parent="UniverseMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 520.0
-offset_right = 175.0
-offset_bottom = 580.0
-text = "Close"
-
-[node name="UniverseScroll" type="ScrollContainer" parent="UniverseMenu"]
-layout_mode = 0
-offset_right = 200.0
-offset_bottom = 390.0
-
-[node name="UniverseVBox" type="VBoxContainer" parent="UniverseMenu/UniverseScroll"]
-layout_mode = 2
-
-[node name="AddUniverseButton" type="Button" parent="UniverseMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 440.0
-offset_right = 175.0
-offset_bottom = 471.0
-text = "Add Universe"
-
-[node name="RemoveUniverseButton" type="Button" parent="UniverseMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 480.0
-offset_right = 175.0
-offset_bottom = 511.0
-tooltip_text = "Removes the last universe"
-text = "Remove Universe"
-
-[node name="ApplyUniversesButton" type="Button" parent="UniverseMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 400.0
-offset_right = 175.0
-offset_bottom = 431.0
-text = "Apply"
-
-[node name="AcceptDialog" type="AcceptDialog" parent="UniverseMenu/ApplyUniversesButton"]
-title = "Universe Configuration Error"
-initial_position = 2
-
-[node name="StageMenu" type="Panel" parent="."]
+[node name="StageMenu" parent="." instance=ExtResource("7_vbupi")]
 offset_left = -1000.0
 offset_top = 30.0
 offset_right = -800.0
 offset_bottom = 610.0
-script = ExtResource("6_6jxed")
 
-[node name="CloseStageMenuButton" type="Button" parent="StageMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 520.0
-offset_right = 175.0
-offset_bottom = 580.0
-text = "Close"
-
-[node name="StageMenuList" type="ItemList" parent="StageMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 25.0
-offset_right = 175.0
-offset_bottom = 500.0
-fixed_icon_size = Vector2i(128, 128)
-
-[node name="EnvironmentMenu" type="Panel" parent="."]
+[node name="EnvironmentMenu" parent="." instance=ExtResource("7_q8hkm")]
 offset_left = -1250.0
 offset_top = 30.0
 offset_right = -1050.0
 offset_bottom = 610.0
-script = ExtResource("7_q8hkm")
-
-[node name="RealisticLightingButton" type="CheckButton" parent="EnvironmentMenu"]
-layout_mode = 0
-offset_right = 44.0
-offset_bottom = 24.0
-text = "Realistic Lighting"
-
-[node name="CloseEnvironmentMenuButton" type="Button" parent="EnvironmentMenu"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 520.0
-offset_right = 175.0
-offset_bottom = 580.0
-text = "Close"
-
-[node name="FogDensityLabel" type="Label" parent="EnvironmentMenu"]
-layout_mode = 0
-offset_left = 5.0
-offset_top = 35.0
-offset_right = 95.0
-offset_bottom = 58.0
-text = "Fog Density"
-
-[node name="FogDensitySpin" type="SpinBox" parent="EnvironmentMenu"]
-layout_mode = 0
-offset_left = 100.0
-offset_top = 30.0
-offset_right = 186.562
-offset_bottom = 61.0
-step = 0.01
-value = 0.1
 
 [connection signal="pressed" from="ToggleModeButton" to="." method="_on_toggle_mode_button_pressed"]
 [connection signal="pressed" from="LeftSideBar/AddFixtureButton" to="AddFixtureMenu/FixtureMenuList" method="_on_add_fixture_button_pressed"]
@@ -398,12 +276,6 @@ value = 0.1
 [connection signal="pressed" from="LeftSideBar/EnvironmentButton" to="EnvironmentMenu" method="_on_environment_button_pressed"]
 [connection signal="item_clicked" from="AddFixtureMenu/FixtureMenuList" to="AddFixtureMenu/FixtureMenuList" method="_on_item_clicked"]
 [connection signal="pressed" from="AddFixtureMenu/CloseFixtureMenu" to="AddFixtureMenu/FixtureMenuList" method="_on_close_fixture_menu_pressed"]
-[connection signal="pressed" from="FileMenu/SaveFileButton" to="FileMenu" method="_on_save_file_button_pressed"]
-[connection signal="button_up" from="FileMenu/LoadFileButton" to="FileMenu" method="_on_load_file_button_button_up"]
-[connection signal="pressed" from="FileMenu/LoadFileButton" to="FileMenu" method="_on_load_file_button_pressed"]
-[connection signal="pressed" from="FileMenu/CloseFileMenuButton" to="FileMenu" method="_on_close_file_menu_button_pressed"]
-[connection signal="file_selected" from="FileMenu/LoadFileDialog" to="FileMenu" method="_on_load_file_dialog_file_selected"]
-[connection signal="file_selected" from="FileMenu/SaveFileDialog" to="FileMenu" method="_on_save_file_dialog_file_selected"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/PositionHBox/XPosSpin" to="FixturePropertyEditor" method="_on_x_pos_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/PositionHBox/YPosSpin" to="FixturePropertyEditor" method="_on_y_pos_spin_value_changed"]
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/PositionHBox/ZPosSpin" to="FixturePropertyEditor" method="_on_z_pos_spin_value_changed"]
@@ -414,12 +286,3 @@ value = 0.1
 [connection signal="value_changed" from="FixturePropertyEditor/Background/FixturePropertyVBox/ChannelHBox/ChannelSpin" to="FixturePropertyEditor" method="_on_channel_spin_value_changed"]
 [connection signal="pressed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton" to="FixturePropertyEditor" method="_on_remove_fixture_button_pressed"]
 [connection signal="confirmed" from="FixturePropertyEditor/Background/FixturePropertyVBox/RemoveFixtureButton/RemoveFixtureDialog" to="FixturePropertyEditor" method="_on_remove_fixture_dialog_confirmed"]
-[connection signal="pressed" from="UniverseMenu/CloseUniverseMenu" to="UniverseMenu" method="_on_close_universe_menu_pressed"]
-[connection signal="pressed" from="UniverseMenu/AddUniverseButton" to="UniverseMenu" method="_on_add_universe_button_pressed"]
-[connection signal="pressed" from="UniverseMenu/RemoveUniverseButton" to="UniverseMenu" method="_on_remove_universe_button_pressed"]
-[connection signal="pressed" from="UniverseMenu/ApplyUniversesButton" to="UniverseMenu" method="_on_apply_universes_button_pressed"]
-[connection signal="pressed" from="StageMenu/CloseStageMenuButton" to="StageMenu" method="_on_close_stage_menu_button_pressed"]
-[connection signal="item_clicked" from="StageMenu/StageMenuList" to="StageMenu" method="_on_stage_menu_list_item_clicked"]
-[connection signal="toggled" from="EnvironmentMenu/RealisticLightingButton" to="EnvironmentMenu" method="_on_realistic_lighting_button_toggled"]
-[connection signal="pressed" from="EnvironmentMenu/CloseEnvironmentMenuButton" to="EnvironmentMenu" method="_on_close_environment_menu_button_pressed"]
-[connection signal="value_changed" from="EnvironmentMenu/FogDensitySpin" to="EnvironmentMenu" method="_on_fog_density_spin_value_changed"]

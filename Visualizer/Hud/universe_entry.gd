@@ -8,7 +8,7 @@ var time_since_last_attempt := 0.0
 
 
 func _ready() -> void:
-	$InfoSide/UniverseLabel.text = "Universe " + str(get_parent().get_parent().get_parent().get_parent().get_parent().universes.size() + 1)
+	$InfoSide/UniverseLabel.text = "Universe " + str(get_node("/root/Stage").universes.size() + 1)
 
 func set_port(port) -> void:
 	$InfoSide/PortHBox/PortSpin.value = port
@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 			data = JSON.parse_string(data)
 			if data == null:
 				return
-			get_parent().get_parent().get_parent().get_parent().get_parent().set_dmx_values(self, data)
+			get_node("/root/Stage").set_dmx_values(self, data)
 	elif client.get_status() == StreamPeerTCP.STATUS_CONNECTING:
 		pass
 	else:

@@ -14,7 +14,7 @@ func _on_close_universe_menu_pressed() -> void:
 func _on_add_universe_button_pressed() -> void:
 	# Check if port 7500 is free and if so use it
 	var used_7500 := false
-	for universe in get_parent().get_parent().universes:
+	for universe in get_node('/root/Stage').universes:
 		if universe.get_port() == 7500:
 			used_7500 = true
 			break
@@ -26,17 +26,17 @@ func _on_add_universe_button_pressed() -> void:
 func create_universe(port: int) -> void:
 	var universe_entry := universe_entry_scene.instantiate()
 	$UniverseScroll/UniverseVBox.add_child(universe_entry)
-	get_parent().get_parent().universes.append(universe_entry)
+	get_node('/root/Stage').universes.append(universe_entry)
 	universe_entry.set_port(port)
 
 
 func _on_remove_universe_button_pressed() -> void:
-	if get_parent().get_parent().universes.size() <= 0:
+	if get_node('/root/Stage').universes.size() <= 0:
 		return # There are no universes to remove
-	var removed_universe = get_parent().get_parent().universes.pop_back()
+	var removed_universe = get_node('/root/Stage').universes.pop_back()
 	removed_universe.queue_free()
 
 
 func _on_apply_universes_button_pressed() -> void:
-	for universe in get_parent().get_parent().universes:
+	for universe in get_node('/root/Stage').universes:
 		universe.restart_listening()
