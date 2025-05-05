@@ -28,10 +28,6 @@ class ControlDesk(QGraphicsView):
         """
         Add a button to the control desk
         """
-        abstract_desk_item = AbstractDeskItem(self, 0, 0, 100, 100, uuid=str(uuid.uuid4()))
-        self.scene.addItem(abstract_desk_item)
-        self.scene_items.append(abstract_desk_item)
-
         #button = DeskButton(self, 0, 0, 100, 100, button_uuid=str(uuid.uuid4()))
         #self.scene.addItem(button)
         #self.scene_items.append(button)
@@ -59,9 +55,9 @@ class ControlDesk(QGraphicsView):
         """
         Add a label to the control desk
         """
-        #label = DeskLabel(self, 0, 0, 150, 40, label_uuid=str(uuid.uuid4()), label_text="Label")
-        #self.scene.addItem(label)
-        #self.scene_items.append(label)
+        label = DeskLabel(self, 0, 0, 150, 40, uuid=str(uuid.uuid4()), text="Label")
+        self.scene.addItem(label)
+        self.scene_items.append(label)
 
     def add_clock(self) -> None:
         """
