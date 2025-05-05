@@ -17,6 +17,12 @@ class ControlDesk(QGraphicsView):
         self.scene_items = []
         self.available_hotkeys = []
 
+    def add_controller(self):
+        """
+        Add a controller to the control desk
+        """
+        pass
+
     def add_btn(self) -> None:
         """
         Add a button to the control desk

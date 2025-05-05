@@ -467,6 +467,8 @@ class Workspace(QMainWindow):
         self.control_desk_view = ControlDesk(self)
         self.ui.control_desk_content_frame.layout().addWidget(self.control_desk_view)
 
+        self.ui.desk_add_controller.clicked.connect(self.control_desk_view.add_controller)
+        self.ui.desk_add_controller.setIcon(QPixmap("Assets/Icons/desk_controller.svg"))
         self.ui.desk_add_btn.clicked.connect(self.control_desk_view.add_btn)
         self.ui.desk_add_btn.setIcon(QPixmap("Assets/Icons/desk_button.svg"))
         self.ui.desk_add_fader.clicked.connect(self.control_desk_view.add_fader)

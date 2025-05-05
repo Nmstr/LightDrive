@@ -1509,6 +1509,13 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <item>
+           <widget class="QPushButton" name="desk_add_controller">
+            <property name="text">
+             <string>Add Controller</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="desk_add_btn">
             <property name="text">
              <string>Add Button</string>
