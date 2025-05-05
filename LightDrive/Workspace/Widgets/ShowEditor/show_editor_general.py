@@ -64,3 +64,10 @@ class Playhead(QGraphicsItemGroup):
         self.addToGroup(self.head)
         self.setZValue(1)
 
+    def update_height(self, height: int) -> None:
+        """
+        Update the height of the playhead
+        :param height: The new height of the playhead
+        :return: None
+        """
+        self.body.setRect(0, 0, 3, height)

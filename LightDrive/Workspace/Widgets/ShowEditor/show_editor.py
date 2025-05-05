@@ -46,6 +46,7 @@ class ShowEditor(QGraphicsView):
         self.scene.addItem(self.audiotrack)
         self.playhead = Playhead()
         self.playhead.setY(50)
+        self.playhead.update_height(1100)
         self.scene.addItem(self.playhead)
 
         self.snippets_tracks = []
