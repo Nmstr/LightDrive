@@ -1,5 +1,4 @@
 from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock
-from Workspace.Widgets.Desk.abstract_desk_item import AbstractDeskItem
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
 import uuid
@@ -28,10 +27,10 @@ class ControlDesk(QGraphicsView):
         """
         Add a button to the control desk
         """
-        #button = DeskButton(self, 0, 0, 100, 100, button_uuid=str(uuid.uuid4()))
-        #self.scene.addItem(button)
-        #self.scene_items.append(button)
-        #self.regenerate_hotkeys()
+        button = DeskButton(self, 0, 0, 100, 100, uuid=str(uuid.uuid4()))
+        self.scene.addItem(button)
+        self.scene_items.append(button)
+        self.regenerate_hotkeys()
 
     def add_fader(self) -> None:
         """

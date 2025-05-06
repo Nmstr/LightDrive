@@ -31,8 +31,8 @@ class AbstractDeskItem(QGraphicsItem):
     def boundingRect(self) -> QRectF:  # noqa: N802
         return QRectF(0, 0, self.width, self.height)
 
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setBrush(Qt.lightGray)
+    def paint(self, painter: QPainter, option, widget=None, brush_color=Qt.lightGray) -> None:
+        painter.setBrush(brush_color)
         painter.drawRect(self.boundingRect())
 
         # Draw resize handle in bottom right when not in live mode

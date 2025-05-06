@@ -1,8 +1,8 @@
 from .abstract_desk_item import AbstractDeskItem
 from Backend.output import OutputSnippet
 from Backend.snippets import SequenceOutputSnippet, TwoDEfxOutputSnippet
-from PySide6.QtWidgets import QGraphicsItem, QDialog, QVBoxLayout, QGraphicsTextItem, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
-from PySide6.QtGui import QPen, QKeySequence
+from PySide6.QtWidgets import QGraphicsItem, QDialog, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
+from PySide6.QtGui import QPen, QKeySequence, QPainter, QStaticText
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt, QKeyCombination, QTimer
 
@@ -45,11 +45,11 @@ class SnippetLinkingSelection(QDialog):
         add_items(root, self.snippet_tree)
 
 class DeskButtonConfig(QDialog):
-    def __init__(self, window, button_label: str, linked_snippet_uuid: str, hotkey: str, mode: str, mode_duration: int) -> None:
+    def __init__(self, window, label: str, linked_snippet_uuid: str, hotkey: str, mode: str, mode_duration: int) -> None:
         """
         Create a dialog for configuring a button
         :param window: The main window
-        :param button_label: The label of the button
+        :param label: The label of the button
         :param linked_snippet_uuid: The UUID of the linked snippet
         :param hotkey: The hotkey of the button
         :param mode: The mode of the button (toggle, flash)
@@ -57,7 +57,7 @@ class DeskButtonConfig(QDialog):
         """
         super().__init__()
         self.window = window
-        self.button_label = button_label
+        self.label = label
         self.linked_snippet_uuid = linked_snippet_uuid
         self.mode = mode
         self.mode_duration = mode_duration
@@ -82,7 +82,7 @@ class DeskButtonConfig(QDialog):
         self.ui.flash_mode_radio.toggled.connect(lambda: self.set_mode("flash"))
 
         # Set the initial values
-        self.ui.label_edit.setText(self.button_label)
+        self.ui.label_edit.setText(self.label)
         snippet_data = self.window.snippet_manager.available_snippets.get(linked_snippet_uuid)
         if snippet_data:
             self.ui.snippet_edit.setText(snippet_data.name)
@@ -151,7 +151,7 @@ class DeskButtonConfig(QDialog):
 
 class DeskButton(AbstractDeskItem):
     def __init__(self, desk, x: int, y: int, width: int, height: int,
-                button_label: str = "Button", linked_snippet_uuid: str = None, button_uuid: str = None,
+                label: str = "Button", linked_snippet_uuid: str = None, uuid: str = None,
                 hotkey: str = None, mode: str = "toggle", mode_duration: int = 0) -> None:
         """
         Create a button object
@@ -160,20 +160,19 @@ class DeskButton(AbstractDeskItem):
         :param y: The y position of the button
         :param width: The width of the button
         :param height: The height of the button
-        :param button_label: The label of the button
+        :param label: The label of the button
         :param linked_snippet_uuid: The UUID of the snippet to link to
-        :param button_uuid: The UUID of the button
+        :param uuid: The UUID of the button
         :param hotkey: The hotkey of the button
         :param mode: The mode of the button (toggle, flash)
         :param mode_duration: The duration of the flash mode
         """
-        super().__init__(desk, x, y, width, height)
-        self.button_label = button_label
+        super().__init__(desk, x, y, width, height, uuid)
+        self.label = label
         self.linked_snippet_uuid = linked_snippet_uuid
         self.desk = desk
         self.pressed = False
         self.output_snippet = None
-        self.button_uuid = button_uuid
         self.hotkey = hotkey
         self.mode = mode
         self.mode_duration = mode_duration
@@ -183,12 +182,16 @@ class DeskButton(AbstractDeskItem):
         self.deactivation_timer.setSingleShot(True)
         self.deactivation_timer.timeout.connect(lambda: self.clicked())
 
-        self.label = QGraphicsTextItem(self.button_label)
-        self.label.setPos(x, y)
-        self.label.setDefaultTextColor(Qt.black)
-        self.addToGroup(self.label)
-
         self.setPos(x, y)
+
+    def paint(self, painter: QPainter, option, widget=None) -> None:
+        brush_color = Qt.lightGray
+        if self.pressed:
+            brush_color = Qt.darkGray
+            painter.setPen(QPen(Qt.green, 2))
+        super().paint(painter, option, widget, brush_color)
+        painter.setPen(QPen(Qt.black, 1))
+        painter.drawStaticText(0, 0, QStaticText(self.label))
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
         """
@@ -206,10 +209,11 @@ class DeskButton(AbstractDeskItem):
             return  # Disallow button press outside live mode
 
         self.pressed = not self.pressed
+        self.update()
         if self.pressed:
-            self.body.setBrush(Qt.darkGray)
-            self.body.setPen(QPen(Qt.green, 2))
             linked_snippet = self.desk.window.snippet_manager.available_snippets.get(self.linked_snippet_uuid)
+            if not linked_snippet:
+                return
             if linked_snippet.type == "scene":
                 values = self.desk.window.snippet_manager.scene_manager.scene_construct_output_values(self.linked_snippet_uuid)
                 if values:
@@ -225,8 +229,6 @@ class DeskButton(AbstractDeskItem):
             if self.mode == "flash":  # Disable the button after the mode duration, if in flash mode
                 self.deactivation_timer.start(self.mode_duration)
         else:
-            self.body.setBrush(Qt.lightGray)
-            self.body.setPen(QPen(Qt.black, 1))
             if self.deactivation_timer.isActive():  # Stop the timer if it is active
                 self.deactivation_timer.stop()
             if self.output_snippet:  # Remove the output snippet if it exists (stops output)
@@ -239,12 +241,11 @@ class DeskButton(AbstractDeskItem):
         """
         if self.desk.window.live_mode:
             return  # Disable editing in live mode
-        config_dlg = DeskButtonConfig(window=self.desk.window, button_label=self.button_label,
+        config_dlg = DeskButtonConfig(window=self.desk.window, label=self.label,
                                       linked_snippet_uuid=self.linked_snippet_uuid, hotkey=self.hotkey,
                                       mode = self.mode, mode_duration = self.mode_duration)
         if config_dlg.exec():
-            self.button_label = config_dlg.ui.label_edit.text()
-            self.label.setPlainText(config_dlg.ui.label_edit.text())
+            self.label = config_dlg.ui.label_edit.text()
             self.linked_snippet_uuid = config_dlg.linked_snippet_uuid
             self.hotkey = config_dlg.ui.hotkey_edit.text()
             self.desk.regenerate_hotkeys()
