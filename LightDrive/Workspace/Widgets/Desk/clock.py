@@ -1,6 +1,7 @@
 from .abstract_desk_item import AbstractDeskItem
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QGraphicsTextItem, QDialogButtonBox, QSpinBox, QLabel
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QSpinBox, QLabel
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QPainter, QStaticText, QPen
 import datetime
 
 class DeskClockConfig(QDialog):
@@ -30,7 +31,7 @@ class DeskClockConfig(QDialog):
         self.setLayout(layout)
 
 class DeskClock(AbstractDeskItem):
-    def __init__(self, desk, x: int, y: int, width: int, height: int, clock_uuid: str, polling_rate: int) -> None:
+    def __init__(self, desk, x: int, y: int, width: int, height: int, uuid: str, polling_rate: int) -> None:
         """
         Create a label object
         :param desk: The control desk object
@@ -38,30 +39,22 @@ class DeskClock(AbstractDeskItem):
         :param y: The y position of the clock
         :param width: The width of the clock
         :param height: The height of the clock
-        :param clock_uuid: The UUID of the clock
+        :param uuid: The UUID of the clock
         :param polling_rate: The rate at which the clock updates
         """
-        super().__init__(desk, x, y, width, height)
+        super().__init__(desk, x, y, width, height, uuid)
         self.desk = desk
-        self.clock_uuid = clock_uuid
         self.polling_rate = polling_rate
-
-        self.label = QGraphicsTextItem("00:00:00")
-        self.label.setPos(x, y)  # Center the label inside the rect
-        self.label.setDefaultTextColor(Qt.black)
-        self.addToGroup(self.label)
-        self.update_time()
 
         self.timer = QTimer()
         self.timer.setInterval(self.polling_rate)
-        self.timer.timeout.connect(self.update_time)
+        self.timer.timeout.connect(self.update)
         self.timer.start(self.polling_rate)
 
-    def update_time(self) -> None:
-        """
-        Update the time on the clock
-        """
-        self.label.setPlainText(datetime.datetime.now().strftime("%H:%M:%S"))
+    def paint(self, painter: QPainter, option, widget=None) -> None:
+        super().paint(painter, option, widget)
+        painter.setPen(QPen(Qt.black, 1))
+        painter.drawStaticText(0, 0, QStaticText(datetime.datetime.now().strftime("%H:%M:%S")))
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
         """

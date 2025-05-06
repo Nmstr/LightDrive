@@ -63,9 +63,9 @@ class ControlDesk(QGraphicsView):
         """
         Add a clock to the control desk
         """
-        #clock = DeskClock(self, 0, 0, 150, 40, clock_uuid=str(uuid.uuid4()), polling_rate=1000)
-        #self.scene.addItem(clock)
-        #self.scene_items.append(clock)
+        clock = DeskClock(self, 0, 0, 150, 40, uuid=str(uuid.uuid4()), polling_rate=1000)
+        self.scene.addItem(clock)
+        self.scene_items.append(clock)
 
     def load_desk_configuration(self, configuration: list) -> None:
         """
