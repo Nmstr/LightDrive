@@ -1,4 +1,6 @@
 from .abstract_desk_item import AbstractDeskItem
+from Backend.output import OutputSnippet
+from Backend.snippets import SequenceOutputSnippet, TwoDEfxOutputSnippet
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtUiTools import QUiLoader
@@ -111,6 +113,36 @@ class DeskController(AbstractDeskItem):
         super().__init__(desk, x, y, width, height, uuid)
         self.desk = desk
         self.linked_snippet_uuid = linked_snippet_uuid
+        self.output_snippet = None
+
+    def activate(self) -> None:
+        """
+        Activate the controller
+        :return: None
+        """
+        linked_snippet = self.desk.window.snippet_manager.available_snippets.get(self.linked_snippet_uuid)
+        if not linked_snippet:
+            return
+        if linked_snippet.type == "scene":
+            values = self.desk.window.snippet_manager.scene_manager.scene_construct_output_values(self.linked_snippet_uuid)
+            if values:
+                self.output_snippet = OutputSnippet(self.desk.window.dmx_output, values)
+                self.desk.window.dmx_output.insert_snippet(self.output_snippet)
+        elif linked_snippet.type == "sequence":
+            self.output_snippet = SequenceOutputSnippet(self.desk.window, self.linked_snippet_uuid)
+            self.desk.window.dmx_output.insert_snippet(self.output_snippet)
+        elif linked_snippet.type == "two_d_efx":
+            self.output_snippet = TwoDEfxOutputSnippet(self.desk.window, self.linked_snippet_uuid)
+            self.desk.window.dmx_output.insert_snippet(self.output_snippet)
+
+    def deactivate(self) -> None:
+        """
+        Deactivate the controller
+        :return: None
+        """
+        if self.output_snippet:  # Remove the output snippet if it exists (stops output)
+            self.desk.window.dmx_output.remove_snippet(self.output_snippet)
+            self.output_snippet = None
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
         super().paint(painter, option, widget, brush_color=Qt.transparent)

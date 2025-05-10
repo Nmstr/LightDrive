@@ -156,6 +156,17 @@ class ControlDesk(QGraphicsView):
                 })
         return desk_configuration
 
+    def get_item_with_uuid(self, uuid: str):
+        """
+        Get the item with the given UUID
+        :param uuid: The UUID of the item to get
+        :return: The item with the given UUID
+        """
+        for item in self.scene_items:
+            if item.uuid == uuid:
+                return item
+        return None
+
     def regenerate_hotkeys(self) -> None:
         """
         (Re)generates the hotkeys for the buttons
