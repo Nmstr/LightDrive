@@ -61,6 +61,18 @@ class AbstractDeskItem(QGraphicsItem):
         if self.desk.window.live_mode:
             super().mousePressEvent(event)
             return
+        if self.desk.is_linking:
+            # Get the own type of the item
+            own_type = None
+            for element in self.desk.get_desk_configuration():
+                if element["uuid"] == self.uuid:
+                    own_type = element["type"]
+                    break
+            # Own type matches the target type
+            if own_type == self.desk.is_linking:
+                self.desk.complete_linking(self.uuid)
+                super().mousePressEvent(event)
+                return
 
         if self.is_in_resize_handle(event.pos()):  # If in resize handle, start resizing
             self.resizing = True
@@ -101,7 +113,7 @@ class AbstractDeskItem(QGraphicsItem):
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
-            if self.desk.window.live_mode:  # Disable movement in live mode
+            if self.desk.window.live_mode or self.desk.is_linking:  # Disable movement in live mode or linking mode
                 value.setX(self.x())
                 value.setY(self.y())
                 return super().itemChange(change, value)

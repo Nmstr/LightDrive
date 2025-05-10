@@ -56,8 +56,8 @@ class DeskLabel(AbstractDeskItem):
         """
         Edit the label's properties
         """
-        if self.desk.window.live_mode:
-            return  # Disable editing in live mode
+        if self.desk.window.live_mode or self.desk.is_linking:
+            return  # Disable editing in live mode or when linking
         config_dlg = DeskLabelConfig(window=self.desk.window, text=self.text)
         if config_dlg.exec():
             self.text = config_dlg.label_edit.text()

@@ -60,8 +60,8 @@ class DeskClock(AbstractDeskItem):
         """
         Edit the label's properties
         """
-        if self.desk.window.live_mode:
-            return  # Disable editing in live mode
+        if self.desk.window.live_mode or self.desk.is_linking:
+            return  # Disable editing in live mode or when linking
         config_dlg = DeskClockConfig(window=self.desk.window, polling_rate=self.polling_rate)
         if config_dlg.exec():
             self.polling_rate = config_dlg.polling_rate_edit.value()

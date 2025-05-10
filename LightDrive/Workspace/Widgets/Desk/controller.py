@@ -121,8 +121,8 @@ class DeskController(AbstractDeskItem):
         """
         Edit the label's properties
         """
-        if self.desk.window.live_mode:
-            return  # Disable editing in live mode
+        if self.desk.window.live_mode or self.desk.is_linking:
+            return  # Disable editing in live mode or when linking
         config_dlg = DeskControllerConfig(window=self.desk.window, linked_snippet_uuid=self.linked_snippet_uuid)
         if config_dlg.exec():
             self.linked_snippet_uuid = config_dlg.linked_snippet_uuid

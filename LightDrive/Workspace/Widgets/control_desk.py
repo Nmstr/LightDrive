@@ -1,9 +1,12 @@
 from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtCore import Signal
 import uuid
 
 class ControlDesk(QGraphicsView):
+    linking_completed = Signal(object)
+
     def __init__(self, window: QMainWindow) -> None:
         """
         Create the control desk object
@@ -16,6 +19,7 @@ class ControlDesk(QGraphicsView):
         self.setSceneRect(0, 0, 1920, 1080)
         self.scene_items = []
         self.available_hotkeys = []
+        self.is_linking = None
 
     def add_controller(self):
         """
@@ -77,7 +81,7 @@ class ControlDesk(QGraphicsView):
         for item in configuration:
             if item["type"] == "button":
                 button = DeskButton(self, item["x"], item["y"], item["width"], item["height"],
-                                    label=item.get("label", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None),
+                                    label=item.get("label", None), linked_controller_uuid=item.get("linked_controller_uuid", None),
                                     uuid=item.get("uuid", None), hotkey=item.get("hotkey", None), mode=item.get("mode", "toggle"),
                                     mode_duration=item.get("mode_duration", 0))
                 self.scene.addItem(button)
@@ -111,7 +115,7 @@ class ControlDesk(QGraphicsView):
                     "type": "button",
                     "uuid": item.uuid,
                     "label": item.label,
-                    "linked_snippet_uuid": item.linked_snippet_uuid,
+                    "linked_controller_uuid": item.linked_controller_uuid,
                     "x": item.x(),
                     "y": item.y(),
                     "width": item.width,
@@ -189,3 +193,21 @@ class ControlDesk(QGraphicsView):
             if isinstance(item, DeskButton):
                 if item.pressed:
                     item.clicked()
+
+    def link_desk_item(self, target_type: str) -> None:
+        """
+        Activate linking mode for a specific item type.
+        :param target_type: The type of item to link to (e.g. "controller", "button")
+        :return: None
+        """
+        self.is_linking = target_type
+        self.window.statusBar().showMessage(f"Linking mode activated. Click on a {target_type} to link it.")
+
+    def complete_linking(self, result):
+        """
+        Called when a link target has been selected
+        :param result: The result of the linking operation
+        """
+        self.is_linking = None
+        self.linking_completed.emit(result)
+        self.window.statusBar().clearMessage()

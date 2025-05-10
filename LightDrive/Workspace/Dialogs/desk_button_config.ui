@@ -34,14 +34,14 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="snippet_edit">
+       <widget class="QLineEdit" name="controller_edit">
         <property name="readOnly">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="2" column="3">
-       <widget class="QPushButton" name="unlink_snippet_btn">
+       <widget class="QPushButton" name="unlink_controller_btn">
         <property name="text">
          <string>Unlink</string>
         </property>
@@ -58,14 +58,14 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="snippet_label">
+       <widget class="QLabel" name="controller_label">
         <property name="text">
-         <string>Snippet</string>
+         <string>Controller</string>
         </property>
        </widget>
       </item>
       <item row="2" column="2">
-       <widget class="QPushButton" name="link_snippet_btn">
+       <widget class="QPushButton" name="link_controller_btn">
         <property name="text">
          <string>Link</string>
         </property>
@@ -211,9 +211,9 @@
  </widget>
  <tabstops>
   <tabstop>label_edit</tabstop>
-  <tabstop>snippet_edit</tabstop>
-  <tabstop>link_snippet_btn</tabstop>
-  <tabstop>unlink_snippet_btn</tabstop>
+  <tabstop>controller_edit</tabstop>
+  <tabstop>link_controller_btn</tabstop>
+  <tabstop>unlink_controller_btn</tabstop>
   <tabstop>hotkey_edit</tabstop>
   <tabstop>select_hotkey_btn</tabstop>
   <tabstop>clear_hotkey_btn</tabstop>
