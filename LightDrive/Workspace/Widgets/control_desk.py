@@ -1,4 +1,4 @@
-from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock
+from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
 import uuid
@@ -21,7 +21,9 @@ class ControlDesk(QGraphicsView):
         """
         Add a controller to the control desk
         """
-        pass
+        controller = DeskController(self, 0, 0, 50, 50, uuid=str(uuid.uuid4()))
+        self.scene.addItem(controller)
+        self.scene_items.append(controller)
 
     def add_btn(self) -> None:
         """
@@ -90,6 +92,11 @@ class ControlDesk(QGraphicsView):
                             uuid=item.get("uuid", None), polling_rate=item.get("polling_rate", 1000))
                 self.scene.addItem(clock)
                 self.scene_items.append(clock)
+            elif item["type"] == "controller":
+                controller = DeskController(self, item["x"], item["y"], item["width"], item["height"],
+                                            uuid=item.get("uuid", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None))
+                self.scene.addItem(controller)
+                self.scene_items.append(controller)
         self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
@@ -128,6 +135,16 @@ class ControlDesk(QGraphicsView):
                     "type": "clock",
                     "uuid": item.uuid,
                     "polling_rate": item.polling_rate,
+                    "x": item.x(),
+                    "y": item.y(),
+                    "width": item.width,
+                    "height": item.height
+                })
+            elif isinstance(item, DeskController):
+                desk_configuration.append({
+                    "type": "controller",
+                    "uuid": item.uuid,
+                    "linked_snippet_uuid": item.linked_snippet_uuid,
                     "x": item.x(),
                     "y": item.y(),
                     "width": item.width,
