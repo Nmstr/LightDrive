@@ -58,7 +58,7 @@ class DeskButtonConfig(QDialog):
         layout.addWidget(self.ui)
         self.setLayout(layout)
 
-    def link_controller(self):
+    def link_controller(self) -> None:
         """
         Links the controller to the button
         :return: None
@@ -75,7 +75,7 @@ class DeskButtonConfig(QDialog):
         self.linked_controller_uuid = None
         self.ui.controller_edit.clear()
 
-    def on_linking_completed(self, result):
+    def on_linking_completed(self, result: str) -> None:
         """
         Handles the result of the linking operation
         :param result: The UUID of the linked controller

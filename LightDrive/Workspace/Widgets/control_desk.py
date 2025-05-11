@@ -21,7 +21,7 @@ class ControlDesk(QGraphicsView):
         self.available_hotkeys = []
         self.is_linking = None
 
-    def add_controller(self):
+    def add_controller(self) -> None:
         """
         Add a controller to the control desk
         """
@@ -156,7 +156,7 @@ class ControlDesk(QGraphicsView):
                 })
         return desk_configuration
 
-    def get_item_with_uuid(self, uuid: str):
+    def get_item_with_uuid(self, uuid: str) -> object | None:
         """
         Get the item with the given UUID
         :param uuid: The UUID of the item to get
@@ -214,7 +214,7 @@ class ControlDesk(QGraphicsView):
         self.is_linking = target_type
         self.window.statusBar().showMessage(f"Linking mode activated. Click on a {target_type} to link it.")
 
-    def complete_linking(self, result):
+    def complete_linking(self, result: str) -> None:
         """
         Called when a link target has been selected
         :param result: The result of the linking operation
