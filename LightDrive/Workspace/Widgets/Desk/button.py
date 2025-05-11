@@ -38,6 +38,7 @@ class DeskButtonConfig(QDialog):
         self.ui.button_box.accepted.connect(self.accept)
         self.ui.button_box.rejected.connect(self.reject)
         self.ui.link_controller_btn.clicked.connect(self.link_controller)
+        self.ui.unlink_controller_btn.clicked.connect(self.unlink_controller)
         self.ui.clear_hotkey_btn.clicked.connect(lambda: self.ui.hotkey_edit.clear())
         self.ui.select_hotkey_btn.clicked.connect(self.start_key_capture)#
         self.ui.toggle_mode_radio.toggled.connect(lambda: self.set_mode("toggle"))
@@ -65,6 +66,14 @@ class DeskButtonConfig(QDialog):
         self.setVisible(False)
         self.window.control_desk_view.linking_completed.connect(self.on_linking_completed)
         self.window.control_desk_view.link_desk_item("controller")
+
+    def unlink_controller(self) -> None:
+        """
+        Unlinks the controller from the button
+        :return: None
+        """
+        self.linked_controller_uuid = None
+        self.ui.controller_edit.clear()
 
     def on_linking_completed(self, result):
         """
