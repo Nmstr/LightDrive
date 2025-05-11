@@ -1,9 +1,12 @@
-from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock
+from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtCore import Signal
 import uuid
 
 class ControlDesk(QGraphicsView):
+    linking_completed = Signal(object)
+
     def __init__(self, window: QMainWindow) -> None:
         """
         Create the control desk object
@@ -16,12 +19,21 @@ class ControlDesk(QGraphicsView):
         self.setSceneRect(0, 0, 1920, 1080)
         self.scene_items = []
         self.available_hotkeys = []
+        self.is_linking = None
+
+    def add_controller(self) -> None:
+        """
+        Add a controller to the control desk
+        """
+        controller = DeskController(self, 0, 0, 50, 50, uuid=str(uuid.uuid4()))
+        self.scene.addItem(controller)
+        self.scene_items.append(controller)
 
     def add_btn(self) -> None:
         """
         Add a button to the control desk
         """
-        button = DeskButton(self, 0, 0, 100, 100, button_uuid=str(uuid.uuid4()))
+        button = DeskButton(self, 0, 0, 100, 100, uuid=str(uuid.uuid4()))
         self.scene.addItem(button)
         self.scene_items.append(button)
         self.regenerate_hotkeys()
@@ -48,7 +60,7 @@ class ControlDesk(QGraphicsView):
         """
         Add a label to the control desk
         """
-        label = DeskLabel(self, 0, 0, 150, 40, label_uuid=str(uuid.uuid4()), label_text="Label")
+        label = DeskLabel(self, 0, 0, 150, 40, uuid=str(uuid.uuid4()), text="Label")
         self.scene.addItem(label)
         self.scene_items.append(label)
 
@@ -56,7 +68,7 @@ class ControlDesk(QGraphicsView):
         """
         Add a clock to the control desk
         """
-        clock = DeskClock(self, 0, 0, 150, 40, clock_uuid=str(uuid.uuid4()), polling_rate=1000)
+        clock = DeskClock(self, 0, 0, 150, 40, uuid=str(uuid.uuid4()), polling_rate=1000)
         self.scene.addItem(clock)
         self.scene_items.append(clock)
 
@@ -69,21 +81,26 @@ class ControlDesk(QGraphicsView):
         for item in configuration:
             if item["type"] == "button":
                 button = DeskButton(self, item["x"], item["y"], item["width"], item["height"],
-                                    button_label=item.get("label", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None),
-                                    button_uuid=item.get("uuid", None), hotkey=item.get("hotkey", None), mode=item.get("mode", "toggle"),
+                                    label=item.get("label", None), linked_controller_uuid=item.get("linked_controller_uuid", None),
+                                    uuid=item.get("uuid", None), hotkey=item.get("hotkey", None), mode=item.get("mode", "toggle"),
                                     mode_duration=item.get("mode_duration", 0))
                 self.scene.addItem(button)
                 self.scene_items.append(button)
             elif item["type"] == "label":
                 label = DeskLabel(self, item["x"], item["y"], item["width"], item["height"],
-                                label_uuid=item.get("uuid", None), label_text=item.get("label", "Label"))
+                            uuid=item.get("uuid", None), text=item.get("label", "Label"))
                 self.scene.addItem(label)
                 self.scene_items.append(label)
             elif item["type"] == "clock":
                 clock = DeskClock(self, item["x"], item["y"], item["width"], item["height"],
-                                clock_uuid=item.get("uuid", None), polling_rate=item.get("polling_rate", 1000))
+                            uuid=item.get("uuid", None), polling_rate=item.get("polling_rate", 1000))
                 self.scene.addItem(clock)
                 self.scene_items.append(clock)
+            elif item["type"] == "controller":
+                controller = DeskController(self, item["x"], item["y"], item["width"], item["height"],
+                                            uuid=item.get("uuid", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None))
+                self.scene.addItem(controller)
+                self.scene_items.append(controller)
         self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
@@ -96,13 +113,13 @@ class ControlDesk(QGraphicsView):
             if isinstance(item, DeskButton):
                 desk_configuration.append({
                     "type": "button",
-                    "uuid": item.button_uuid,
-                    "label": item.button_label,
-                    "linked_snippet_uuid": item.linked_snippet_uuid,
+                    "uuid": item.uuid,
+                    "label": item.label,
+                    "linked_controller_uuid": item.linked_controller_uuid,
                     "x": item.x(),
                     "y": item.y(),
-                    "width": item.body.rect().width(),
-                    "height": item.body.rect().height(),
+                    "width": item.width,
+                    "height": item.height,
                     "hotkey": item.hotkey,
                     "mode": item.mode,
                     "mode_duration": item.mode_duration
@@ -110,24 +127,45 @@ class ControlDesk(QGraphicsView):
             elif isinstance(item, DeskLabel):
                 desk_configuration.append({
                     "type": "label",
-                    "uuid": item.label_uuid,
-                    "label": item.label_text,
+                    "uuid": item.uuid,
+                    "label": item.text,
                     "x": item.x(),
                     "y": item.y(),
-                    "width": item.body.rect().width(),
-                    "height": item.body.rect().height()
+                    "width": item.width,
+                    "height": item.height
                 })
             elif isinstance(item, DeskClock):
                 desk_configuration.append({
                     "type": "clock",
-                    "uuid": item.clock_uuid,
+                    "uuid": item.uuid,
                     "polling_rate": item.polling_rate,
                     "x": item.x(),
                     "y": item.y(),
-                    "width": item.body.rect().width(),
-                    "height": item.body.rect().height()
+                    "width": item.width,
+                    "height": item.height
+                })
+            elif isinstance(item, DeskController):
+                desk_configuration.append({
+                    "type": "controller",
+                    "uuid": item.uuid,
+                    "linked_snippet_uuid": item.linked_snippet_uuid,
+                    "x": item.x(),
+                    "y": item.y(),
+                    "width": item.width,
+                    "height": item.height
                 })
         return desk_configuration
+
+    def get_item_with_uuid(self, uuid: str) -> object | None:
+        """
+        Get the item with the given UUID
+        :param uuid: The UUID of the item to get
+        :return: The item with the given UUID
+        """
+        for item in self.scene_items:
+            if item.uuid == uuid:
+                return item
+        return None
 
     def regenerate_hotkeys(self) -> None:
         """
@@ -155,6 +193,7 @@ class ControlDesk(QGraphicsView):
             if isinstance(item, DeskButton):
                 if item.pressed:
                     return True
+        return False
 
     def disable_all_items(self) -> None:
         """
@@ -165,3 +204,21 @@ class ControlDesk(QGraphicsView):
             if isinstance(item, DeskButton):
                 if item.pressed:
                     item.clicked()
+
+    def link_desk_item(self, target_type: str) -> None:
+        """
+        Activate linking mode for a specific item type.
+        :param target_type: The type of item to link to (e.g. "controller", "button")
+        :return: None
+        """
+        self.is_linking = target_type
+        self.window.statusBar().showMessage(f"Linking mode activated. Click on a {target_type} to link it.")
+
+    def complete_linking(self, result: str) -> None:
+        """
+        Called when a link target has been selected
+        :param result: The result of the linking operation
+        """
+        self.is_linking = None
+        self.linking_completed.emit(result)
+        self.window.statusBar().clearMessage()
