@@ -1,7 +1,7 @@
 from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController, DeskWire
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
-from PySide6.QtCore import Signal, QPoint
+from PySide6.QtCore import Signal
 import uuid
 
 class ControlDesk(QGraphicsView):
@@ -225,13 +225,18 @@ class ControlDesk(QGraphicsView):
         self.is_linking = None
         self.linking_completed.emit(result)
         self.window.statusBar().clearMessage()
-        result_item = self.get_item_with_uuid(result)
-        source_item = self.get_item_with_uuid(self.linking_source_uuid)
+        wire = DeskWire(self, uuid=str(uuid.uuid4()),
+                        start_item_uuid=self.linking_source_uuid,
+                        end_item_uuid=result)
         self.linking_source_uuid = None
-        wire_control_points = [
-            QPoint(source_item.x() + source_item.width / 2, source_item.y() + source_item.height / 2),
-            QPoint(result_item.x() + result_item.width / 2, result_item.y() + result_item.height / 2)
-        ]
-        wire = DeskWire(self, uuid=str(uuid.uuid4()), control_points=wire_control_points)
         self.scene.addItem(wire)
         self.scene_items.append(wire)
+
+    def update_wires(self) -> None:
+        """
+        Update the wires on the control desk
+        :return: None
+        """
+        for item in self.scene_items:
+            if isinstance(item, DeskWire):
+                item.update()

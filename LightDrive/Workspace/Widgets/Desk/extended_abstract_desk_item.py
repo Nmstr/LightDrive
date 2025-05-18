@@ -93,6 +93,7 @@ class ExtendedAbstractDeskItem(AbstractDeskItem):
                 self.update()
             event.accept()
         else:
+            self.desk.update_wires()
             super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event) -> None:  # noqa: N802
