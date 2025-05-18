@@ -1,4 +1,4 @@
-from .abstract_desk_item import AbstractDeskItem
+from .extended_abstract_desk_item import ExtendedAbstractDeskItem
 from Backend.output import OutputSnippet
 from Backend.snippets import SequenceOutputSnippet, TwoDEfxOutputSnippet
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
@@ -98,7 +98,7 @@ class DeskControllerConfig(QDialog):
         self.linked_snippet_uuid = None
         self.ui.snippet_edit.clear()
 
-class DeskController(AbstractDeskItem):
+class DeskController(ExtendedAbstractDeskItem):
     def __init__(self, desk, x: int, y: int, width: int, height: int, uuid: str, linked_snippet_uuid: str = None) -> None:
         """
         Create a desk controller

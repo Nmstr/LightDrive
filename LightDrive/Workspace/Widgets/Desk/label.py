@@ -1,4 +1,4 @@
-from .abstract_desk_item import AbstractDeskItem
+from .extended_abstract_desk_item import ExtendedAbstractDeskItem
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QGraphicsTextItem, QDialogButtonBox, QLineEdit
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QStaticText, QPen
@@ -27,7 +27,7 @@ class DeskLabelConfig(QDialog):
         layout.addWidget(self.button_box)
         self.setLayout(layout)
 
-class DeskLabel(AbstractDeskItem):
+class DeskLabel(ExtendedAbstractDeskItem):
     def __init__(self, desk, x: int, y: int, width: int, height: int, uuid: str, text: str = "Label") -> None:
         """
         Create a label object

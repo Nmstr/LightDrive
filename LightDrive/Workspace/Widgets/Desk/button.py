@@ -1,4 +1,4 @@
-from .abstract_desk_item import AbstractDeskItem
+from .extended_abstract_desk_item import ExtendedAbstractDeskItem
 from PySide6.QtWidgets import QGraphicsItem, QDialog, QVBoxLayout
 from PySide6.QtGui import QPen, QKeySequence, QPainter, QStaticText
 from PySide6.QtUiTools import QUiLoader
@@ -141,7 +141,7 @@ class DeskButtonConfig(QDialog):
         elif mode == "flash":
             self.ui.flash_duration_spin.setEnabled(True)
 
-class DeskButton(AbstractDeskItem):
+class DeskButton(ExtendedAbstractDeskItem):
     def __init__(self, desk, x: int, y: int, width: int, height: int,
                 label: str = "Button", linked_controller_uuid: str = None, uuid: str = None,
                 hotkey: str = None, mode: str = "toggle", mode_duration: int = 0) -> None:
