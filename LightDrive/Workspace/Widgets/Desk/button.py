@@ -7,10 +7,11 @@ from PySide6.QtCore import QFile, Qt, QKeyCombination, QTimer, Signal
 class DeskButtonConfig(QDialog):
     configuration_completed = Signal(dict)
 
-    def __init__(self, window, label: str, linked_controller_uuid: str, hotkey: str, mode: str, mode_duration: int) -> None:
+    def __init__(self, window, uuid: str, label: str, linked_controller_uuid: str, hotkey: str, mode: str, mode_duration: int) -> None:
         """
         Create a dialog for configuring a button
         :param window: The main window
+        :param uuid: The UUID of the button
         :param label: The label of the button
         :param linked_controller_uuid: The UUID of the linked controller
         :param hotkey: The hotkey of the button
@@ -19,6 +20,7 @@ class DeskButtonConfig(QDialog):
         """
         super().__init__()
         self.window = window
+        self.uuid = uuid
         self.label = label
         self.linked_controller_uuid = linked_controller_uuid
         self.mode = mode
@@ -65,7 +67,7 @@ class DeskButtonConfig(QDialog):
         """
         self.setVisible(False)
         self.window.control_desk_view.linking_completed.connect(self.on_linking_completed)
-        self.window.control_desk_view.link_desk_item("controller")
+        self.window.control_desk_view.link_desk_item("controller", self.uuid)
 
     def unlink_controller(self) -> None:
         """
@@ -218,7 +220,7 @@ class DeskButton(ExtendedAbstractDeskItem):
         """
         if self.desk.window.live_mode or self.desk.is_linking:
             return  # Disable editing in live mode or when linking
-        config_dlg = DeskButtonConfig(window=self.desk.window, label=self.label,
+        config_dlg = DeskButtonConfig(window=self.desk.window, uuid=self.uuid, label=self.label,
                                       linked_controller_uuid=self.linked_controller_uuid, hotkey=self.hotkey,
                                       mode = self.mode, mode_duration = self.mode_duration)
         config_dlg.configuration_completed.connect(self.apply_configuration)

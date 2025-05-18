@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPainter, QPen, QPainterPath
 
 class DeskWire(AbstractDeskItem):
-    def __init__(self, desk, uuid: str, control_points: list[QPoint] = None) -> None:
+    def __init__(self, desk, uuid: str, control_points: list[QPoint]) -> None:
         """
         Create a wire
         :param desk: The control desk
@@ -11,8 +11,6 @@ class DeskWire(AbstractDeskItem):
         """
         super().__init__(desk, 0, 0, 1920, 1080, uuid)
         self.desk = desk
-        if not control_points:
-            control_points = [QPoint(0, 0), QPoint(0, 0)]
         self.control_points = control_points
 
         self.setZValue(-100)

@@ -1,7 +1,7 @@
 from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController, DeskWire
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QPoint
 import uuid
 
 class ControlDesk(QGraphicsView):
@@ -20,6 +20,7 @@ class ControlDesk(QGraphicsView):
         self.scene_items = []
         self.available_hotkeys = []
         self.is_linking = None
+        self.linking_source_uuid = None
 
     def add_controller(self) -> None:
         """
@@ -205,13 +206,15 @@ class ControlDesk(QGraphicsView):
                 if item.pressed:
                     item.clicked()
 
-    def link_desk_item(self, target_type: str) -> None:
+    def link_desk_item(self, target_type: str, source_uuid: str) -> None:
         """
         Activate linking mode for a specific item type.
         :param target_type: The type of item to link to (e.g. "controller", "button")
+        :param source_uuid: The UUID of the source item
         :return: None
         """
         self.is_linking = target_type
+        self.linking_source_uuid = source_uuid
         self.window.statusBar().showMessage(f"Linking mode activated. Click on a {target_type} to link it.")
 
     def complete_linking(self, result: str) -> None:
@@ -222,3 +225,13 @@ class ControlDesk(QGraphicsView):
         self.is_linking = None
         self.linking_completed.emit(result)
         self.window.statusBar().clearMessage()
+        result_item = self.get_item_with_uuid(result)
+        source_item = self.get_item_with_uuid(self.linking_source_uuid)
+        self.linking_source_uuid = None
+        wire_control_points = [
+            QPoint(source_item.x() + source_item.width / 2, source_item.y() + source_item.height / 2),
+            QPoint(result_item.x() + result_item.width / 2, result_item.y() + result_item.height / 2)
+        ]
+        wire = DeskWire(self, uuid=str(uuid.uuid4()), control_points=wire_control_points)
+        self.scene.addItem(wire)
+        self.scene_items.append(wire)
