@@ -1,4 +1,4 @@
-from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController
+from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController, DeskWire
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QShortcut, QKeySequence
 from PySide6.QtCore import Signal

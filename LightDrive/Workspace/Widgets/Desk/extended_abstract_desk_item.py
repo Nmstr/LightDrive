@@ -23,9 +23,6 @@ class ExtendedAbstractDeskItem(AbstractDeskItem):
         self.min_width = 50
         self.min_height = 50
 
-    def boundingRect(self) -> QRectF:  # noqa: N802
-        return QRectF(0, 0, self.width, self.height)
-
     def paint(self, painter: QPainter, option, widget=None, brush_color=Qt.lightGray) -> None:
         painter.setBrush(brush_color)
         painter.drawRect(self.boundingRect())

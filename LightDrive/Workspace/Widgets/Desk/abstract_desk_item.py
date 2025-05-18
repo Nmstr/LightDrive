@@ -1,3 +1,4 @@
+from PySide6.QtCore import QRectF
 from PySide6.QtWidgets import QGraphicsItem
 
 class AbstractDeskItem(QGraphicsItem):
@@ -18,6 +19,9 @@ class AbstractDeskItem(QGraphicsItem):
         self.uuid = uuid
 
         self.setPos(x, y)
+
+    def boundingRect(self) -> QRectF:  # noqa: N802
+        return QRectF(0, 0, self.width, self.height)
 
     def itemChange(self, change, value):  # noqa: N802
         if change == QGraphicsItem.ItemPositionChange:
