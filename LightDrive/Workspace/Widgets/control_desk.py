@@ -102,6 +102,11 @@ class ControlDesk(QGraphicsView):
                                             uuid=item.get("uuid", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None))
                 self.scene.addItem(controller)
                 self.scene_items.append(controller)
+            elif item["type"] == "wire":
+                wire = DeskWire(self, uuid=item.get("uuid", None), start_item_uuid=item.get("start_item_uuid", None),
+                                end_item_uuid=item.get("end_item_uuid", None), control_points=item.get("control_points", []))
+                self.scene.addItem(wire)
+                self.scene_items.append(wire)
         self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
@@ -154,6 +159,14 @@ class ControlDesk(QGraphicsView):
                     "y": item.y(),
                     "width": item.width,
                     "height": item.height
+                })
+            elif isinstance(item, DeskWire):
+                desk_configuration.append({
+                    "type": "wire",
+                    "uuid": item.uuid,
+                    "start_item_uuid": item.start_item_uuid,
+                    "end_item_uuid": item.end_item_uuid,
+                    "control_points": item.control_points
                 })
         return desk_configuration
 
