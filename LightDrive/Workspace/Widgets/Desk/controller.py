@@ -151,7 +151,7 @@ class DeskController(ExtendedAbstractDeskItem):
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
         """
-        Edit the label's properties
+        Edit the properties of the controller
         """
         if self.desk.window.live_mode or self.desk.is_linking:
             return  # Disable editing in live mode or when linking
