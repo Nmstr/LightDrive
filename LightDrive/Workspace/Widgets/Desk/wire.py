@@ -150,6 +150,7 @@ class DeskWire(AbstractDeskItem):
         if not control_points:
             control_points = []
         self.control_points = control_points
+        self.dragging_point_index = None
 
         self.setZValue(-100)
 
@@ -167,6 +168,7 @@ class DeskWire(AbstractDeskItem):
         # Draw along control points
         for point in self.control_points:
             path.lineTo(QPoint(point[0], point[1]))
+            path.addEllipse(QPoint(point[0], point[1]), 5, 5)
 
         # Draw to end item
         end_item = self.desk.get_item_with_uuid(self.end_item_uuid)
@@ -198,6 +200,54 @@ class DeskWire(AbstractDeskItem):
         painter.setPen(QPen(Qt.black, 2))
         path = self.get_painter_path()
         painter.drawPath(path)
+
+    def mousePressEvent(self, event) -> None:  # noqa: N802
+        """
+        Handle mouse press events
+        """
+        if self.desk.window.live_mode or self.desk.is_linking:
+            return  # Disable editing in live mode or when linking
+
+        if event.button() == Qt.LeftButton:
+            # Check if we're clicking on a control point
+            for i, point in enumerate(self.control_points):
+                # Create a hit area around the point
+                if abs(event.pos().x() - point[0]) <= 5 and abs(event.pos().y() - point[1]) <= 5:
+                    self.dragging_point_index = i
+                    return
+        elif event.button() == Qt.RightButton:
+            removed = False
+            for i, point in enumerate(self.control_points):
+                if abs(event.pos().x() - point[0]) <= 5 and abs(event.pos().y() - point[1]) <= 5:  # Click on a control point
+                    # Remove the control point
+                    self.control_points.pop(i)
+                    self.update()
+                    removed = True
+                    break
+            if not removed:
+                # Add a new control point at the mouse position
+                control_point = [event.pos().x(), event.pos().y()]
+                self.control_points.append(control_point)
+                self.update()
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event) -> None:  # noqa: N802
+        """
+        Handle mouse move events for dragging control points
+        """
+        if self.dragging_point_index is not None:
+            # Update the position of the dragged control point
+            self.control_points[self.dragging_point_index] = [event.pos().x(), event.pos().y()]
+            self.update()  # Redraw the wire
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event) -> None:  # noqa: N802
+        """
+        Handle mouse release events
+        """
+        if event.button() == Qt.LeftButton and self.dragging_point_index is not None:
+            self.dragging_point_index = None
+        super().mouseReleaseEvent(event)
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
         """
