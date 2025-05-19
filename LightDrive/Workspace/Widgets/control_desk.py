@@ -1,6 +1,6 @@
 from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController, DeskWire
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
-from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtGui import QShortcut, QKeySequence, QColor
 from PySide6.QtCore import Signal
 import uuid
 
@@ -103,8 +103,11 @@ class ControlDesk(QGraphicsView):
                 self.scene.addItem(controller)
                 self.scene_items.append(controller)
             elif item["type"] == "wire":
+                base_colors = item.get("color", None)
+                wire_color = QColor.fromRgbF(base_colors[0], base_colors[1], base_colors[2], base_colors[3])
                 wire = DeskWire(self, uuid=item.get("uuid", None), start_item_uuid=item.get("start_item_uuid", None),
-                                end_item_uuid=item.get("end_item_uuid", None), control_points=item.get("control_points", []))
+                                end_item_uuid=item.get("end_item_uuid", None), control_points=item.get("control_points", []),
+                                color=wire_color)
                 self.scene.addItem(wire)
                 self.scene_items.append(wire)
         self.regenerate_hotkeys()
@@ -166,7 +169,8 @@ class ControlDesk(QGraphicsView):
                     "uuid": item.uuid,
                     "start_item_uuid": item.start_item_uuid,
                     "end_item_uuid": item.end_item_uuid,
-                    "control_points": item.control_points
+                    "control_points": item.control_points,
+                    "color": item.color.getRgbF(),
                 })
         return desk_configuration
 

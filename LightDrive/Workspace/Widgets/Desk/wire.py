@@ -1,8 +1,8 @@
 from .abstract_desk_item import AbstractDeskItem
 from Functions.ui import clear_field
-from PySide6.QtWidgets import QDialog, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QPushButton
+from PySide6.QtWidgets import QDialog, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QPushButton, QColorDialog
 from PySide6.QtCore import Qt, QFile, QPoint, QRectF
-from PySide6.QtGui import QPainter, QPen, QPainterPath, QPainterPathStroker
+from PySide6.QtGui import QPainter, QPen, QPainterPath, QPainterPathStroker, QColor
 from PySide6.QtUiTools import QUiLoader
 
 class FixedPointDisplay(QWidget):
@@ -66,7 +66,7 @@ class ControlPointDisplay(QWidget):
         self.config_dlg.move_control_point(self.control_point, "down")
 
 class DeskWireConfig(QDialog):
-    def __init__(self, window, start_item_uuid: str, end_item_uuid: str, control_points: list[list[int]]) -> None:
+    def __init__(self, window, start_item_uuid: str, end_item_uuid: str, control_points: list[list[int]], color: QColor) -> None:
         """
         Create a dialog for configuring a wire
         :param window: The main window
@@ -79,6 +79,7 @@ class DeskWireConfig(QDialog):
         self.start_item_uuid = start_item_uuid
         self.end_item_uuid = end_item_uuid
         self.control_points = control_points
+        self.color = color
 
         self.setWindowTitle("LightDrive - Wire Properties")
 
@@ -92,6 +93,7 @@ class DeskWireConfig(QDialog):
         # Add buttons
         self.ui.button_box.accepted.connect(self.accept)
         self.ui.button_box.rejected.connect(self.reject)
+        self.ui.change_color_btn.clicked.connect(self.change_color)
 
         # Add control points
         self.refill_control_point_display()
@@ -133,8 +135,20 @@ class DeskWireConfig(QDialog):
         self.refill_control_point_display()
         self.window.control_desk_view.update_wires()
 
+    def change_color(self) -> None:
+        """
+        Change the color of the wire
+        """
+        color = QColorDialog.getColor(initial=self.color)
+        if color.isValid():
+            self.color = color
+            self.window.control_desk_view.update_wires()
+        else:
+            self.color = QColor(0, 0, 0)  # Default black color
+            self.window.control_desk_view.update_wires()
+
 class DeskWire(AbstractDeskItem):
-    def __init__(self, desk, uuid: str, start_item_uuid: str, end_item_uuid: str, control_points: list[list[int]] = None) -> None:
+    def __init__(self, desk, uuid: str, start_item_uuid: str, end_item_uuid: str, control_points: list[list[int]] = None, color: QColor = None) -> None:
         """
         Create a wire
         :param desk: The control desk
@@ -150,6 +164,9 @@ class DeskWire(AbstractDeskItem):
         if not control_points:
             control_points = []
         self.control_points = control_points
+        if not color:
+            color = QColor(0, 0, 0)
+        self.color = color
         self.dragging_point_index = None
 
         self.setZValue(-100)
@@ -197,7 +214,7 @@ class DeskWire(AbstractDeskItem):
         return path.boundingRect().adjusted(-5, -5, 5, 5)
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setPen(QPen(Qt.black, 2))
+        painter.setPen(QPen(self.color, 2))
         path = self.get_painter_path()
         painter.drawPath(path)
 
@@ -255,7 +272,8 @@ class DeskWire(AbstractDeskItem):
         """
         if self.desk.window.live_mode or self.desk.is_linking:
             return  # Disable editing in live mode or when linking
-        config_dlg = DeskWireConfig(window=self.desk.window, start_item_uuid=self.start_item_uuid, end_item_uuid=self.end_item_uuid, control_points=self.control_points)
+        config_dlg = DeskWireConfig(window=self.desk.window, start_item_uuid=self.start_item_uuid, end_item_uuid=self.end_item_uuid, control_points=self.control_points, color=self.color)
         if config_dlg.exec():
             self.control_points = config_dlg.control_points
+            self.color = config_dlg.color
         super().mouseDoubleClickEvent(event)
