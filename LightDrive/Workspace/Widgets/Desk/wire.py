@@ -142,10 +142,9 @@ class DeskWireConfig(QDialog):
         color = QColorDialog.getColor(initial=self.color)
         if color.isValid():
             self.color = color
-            self.window.control_desk_view.update_wires()
         else:
             self.color = QColor(0, 0, 0)  # Default black color
-            self.window.control_desk_view.update_wires()
+        self.window.control_desk_view.update_wires()
 
 class DeskWire(AbstractDeskItem):
     def __init__(self, desk, uuid: str, start_item_uuid: str, end_item_uuid: str, control_points: list[list[int]] = None, color: QColor = None) -> None:
