@@ -252,6 +252,7 @@ class DeskWire(AbstractDeskItem):
         Handle mouse move events for dragging control points
         """
         if self.dragging_point_index is not None:
+            self.prepareGeometryChange()
             # Update the position of the dragged control point
             self.control_points[self.dragging_point_index] = [event.pos().x(), event.pos().y()]
             self.update()  # Redraw the wire
