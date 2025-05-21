@@ -1,6 +1,6 @@
-from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController
+from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController, DeskWire
 from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
-from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtGui import QShortcut, QKeySequence, QColor
 from PySide6.QtCore import Signal
 import uuid
 
@@ -20,6 +20,7 @@ class ControlDesk(QGraphicsView):
         self.scene_items = []
         self.available_hotkeys = []
         self.is_linking = None
+        self.linking_source_uuid = None
 
     def add_controller(self) -> None:
         """
@@ -101,6 +102,14 @@ class ControlDesk(QGraphicsView):
                                             uuid=item.get("uuid", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None))
                 self.scene.addItem(controller)
                 self.scene_items.append(controller)
+            elif item["type"] == "wire":
+                base_colors = item.get("color", None)
+                wire_color = QColor.fromRgbF(base_colors[0], base_colors[1], base_colors[2], base_colors[3])
+                wire = DeskWire(self, uuid=item.get("uuid", None), start_item_uuid=item.get("start_item_uuid", None),
+                                end_item_uuid=item.get("end_item_uuid", None), control_points=item.get("control_points", []),
+                                color=wire_color)
+                self.scene.addItem(wire)
+                self.scene_items.append(wire)
         self.regenerate_hotkeys()
 
     def get_desk_configuration(self) -> list:
@@ -154,6 +163,15 @@ class ControlDesk(QGraphicsView):
                     "width": item.width,
                     "height": item.height
                 })
+            elif isinstance(item, DeskWire):
+                desk_configuration.append({
+                    "type": "wire",
+                    "uuid": item.uuid,
+                    "start_item_uuid": item.start_item_uuid,
+                    "end_item_uuid": item.end_item_uuid,
+                    "control_points": item.control_points,
+                    "color": item.color.getRgbF(),
+                })
         return desk_configuration
 
     def get_item_with_uuid(self, uuid: str) -> object | None:
@@ -205,13 +223,15 @@ class ControlDesk(QGraphicsView):
                 if item.pressed:
                     item.clicked()
 
-    def link_desk_item(self, target_type: str) -> None:
+    def link_desk_item(self, target_type: str, source_uuid: str) -> None:
         """
         Activate linking mode for a specific item type.
         :param target_type: The type of item to link to (e.g. "controller", "button")
+        :param source_uuid: The UUID of the source item
         :return: None
         """
         self.is_linking = target_type
+        self.linking_source_uuid = source_uuid
         self.window.statusBar().showMessage(f"Linking mode activated. Click on a {target_type} to link it.")
 
     def complete_linking(self, result: str) -> None:
@@ -222,3 +242,32 @@ class ControlDesk(QGraphicsView):
         self.is_linking = None
         self.linking_completed.emit(result)
         self.window.statusBar().clearMessage()
+        wire = DeskWire(self, uuid=str(uuid.uuid4()),
+                        start_item_uuid=self.linking_source_uuid,
+                        end_item_uuid=result)
+        self.linking_source_uuid = None
+        self.scene.addItem(wire)
+        self.scene_items.append(wire)
+
+    def update_wires(self) -> None:
+        """
+        Update the wires on the control desk
+        :return: None
+        """
+        for item in self.scene_items:
+            if isinstance(item, DeskWire):
+                item.update()
+
+    def remove_wire(self, start_item_uuid: str, end_item_uuid: str) -> None:
+        """
+        Remove a wire from the control desk
+        :param start_item_uuid: The UUID of the start item
+        :param end_item_uuid: The UUID of the end item
+        :return: None
+        """
+        for item in self.scene_items:
+            if isinstance(item, DeskWire):
+                if item.start_item_uuid == start_item_uuid and item.end_item_uuid == end_item_uuid:
+                    self.scene.removeItem(item)
+                    self.scene_items.remove(item)
+                    break

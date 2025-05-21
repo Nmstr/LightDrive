@@ -1,4 +1,4 @@
-from .abstract_desk_item import AbstractDeskItem
+from .extended_abstract_desk_item import ExtendedAbstractDeskItem
 from PySide6.QtWidgets import QGraphicsItem, QDialog, QVBoxLayout
 from PySide6.QtGui import QPen, QKeySequence, QPainter, QStaticText
 from PySide6.QtUiTools import QUiLoader
@@ -7,10 +7,11 @@ from PySide6.QtCore import QFile, Qt, QKeyCombination, QTimer, Signal
 class DeskButtonConfig(QDialog):
     configuration_completed = Signal(dict)
 
-    def __init__(self, window, label: str, linked_controller_uuid: str, hotkey: str, mode: str, mode_duration: int) -> None:
+    def __init__(self, window, uuid: str, label: str, linked_controller_uuid: str, hotkey: str, mode: str, mode_duration: int) -> None:
         """
         Create a dialog for configuring a button
         :param window: The main window
+        :param uuid: The UUID of the button
         :param label: The label of the button
         :param linked_controller_uuid: The UUID of the linked controller
         :param hotkey: The hotkey of the button
@@ -19,6 +20,7 @@ class DeskButtonConfig(QDialog):
         """
         super().__init__()
         self.window = window
+        self.uuid = uuid
         self.label = label
         self.linked_controller_uuid = linked_controller_uuid
         self.mode = mode
@@ -65,14 +67,16 @@ class DeskButtonConfig(QDialog):
         """
         self.setVisible(False)
         self.window.control_desk_view.linking_completed.connect(self.on_linking_completed)
-        self.window.control_desk_view.link_desk_item("controller")
+        self.window.control_desk_view.link_desk_item("controller", self.uuid)
 
     def unlink_controller(self) -> None:
         """
         Unlinks the controller from the button
         :return: None
         """
-        self.linked_controller_uuid = None
+        if self.linked_controller_uuid:
+            self.window.control_desk_view.remove_wire(self.uuid, self.linked_controller_uuid)
+            self.linked_controller_uuid = None
         self.ui.controller_edit.clear()
 
     def on_linking_completed(self, result: str) -> None:
@@ -81,8 +85,15 @@ class DeskButtonConfig(QDialog):
         :param result: The UUID of the linked controller
         """
         self.window.control_desk_view.linking_completed.disconnect(self.on_linking_completed)
+
+        # Remove existing wire (if it exists)
+        if self.linked_controller_uuid:
+            self.window.control_desk_view.remove_wire(self.uuid, self.linked_controller_uuid)
+
+        # Set new controller UUID
         self.linked_controller_uuid = result
         self.ui.controller_edit.setText(result)
+
         self.setVisible(True)
 
     def start_key_capture(self) -> None:
@@ -141,7 +152,7 @@ class DeskButtonConfig(QDialog):
         elif mode == "flash":
             self.ui.flash_duration_spin.setEnabled(True)
 
-class DeskButton(AbstractDeskItem):
+class DeskButton(ExtendedAbstractDeskItem):
     def __init__(self, desk, x: int, y: int, width: int, height: int,
                 label: str = "Button", linked_controller_uuid: str = None, uuid: str = None,
                 hotkey: str = None, mode: str = "toggle", mode_duration: int = 0) -> None:
@@ -218,7 +229,7 @@ class DeskButton(AbstractDeskItem):
         """
         if self.desk.window.live_mode or self.desk.is_linking:
             return  # Disable editing in live mode or when linking
-        config_dlg = DeskButtonConfig(window=self.desk.window, label=self.label,
+        config_dlg = DeskButtonConfig(window=self.desk.window, uuid=self.uuid, label=self.label,
                                       linked_controller_uuid=self.linked_controller_uuid, hotkey=self.hotkey,
                                       mode = self.mode, mode_duration = self.mode_duration)
         config_dlg.configuration_completed.connect(self.apply_configuration)

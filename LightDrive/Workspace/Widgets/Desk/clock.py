@@ -1,4 +1,4 @@
-from .abstract_desk_item import AbstractDeskItem
+from .extended_abstract_desk_item import ExtendedAbstractDeskItem
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QSpinBox, QLabel
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPainter, QStaticText, QPen
@@ -30,7 +30,7 @@ class DeskClockConfig(QDialog):
         layout.addWidget(self.button_box)
         self.setLayout(layout)
 
-class DeskClock(AbstractDeskItem):
+class DeskClock(ExtendedAbstractDeskItem):
     def __init__(self, desk, x: int, y: int, width: int, height: int, uuid: str, polling_rate: int) -> None:
         """
         Create a label object
