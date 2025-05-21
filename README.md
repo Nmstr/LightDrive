@@ -21,6 +21,7 @@ large number of lights.
 - 🚧 Fixtures
   - 🚧 Creation of custom fixtures
   - ❌ Large selection of pre-defined fixtures
+  - ❌ ILDA laser Support
 - 🚧 Snippets
   - ✅ Scenes
   - ✅ Sequences
@@ -32,23 +33,25 @@ large number of lights.
   - ✅ Sound Resources
   - 🚧 Shows
 - 🚧 Console (Live individual channel control)
-- ❌ Show Creator (Fully timed light shows to music)
 - 🚧 Control Desk (Virtual lighting console)
+  - 🚧 Controllers
   - ✅ Buttons
   - ❌ Faders
   - ❌ Knobs
   - ❌ Sound Triggers
   - ✅ Labels
   - ✅ Clocks
-  - 🚧 Hotkeys
 - ❌ Control Terminal (CLI for controlling lights)
-- ❌ Laser Support
-- 🚧 Dmx Output
+- 🚧 I/O
   - ✅ ArtNet Output
-  - ❌ Other Output Protocols
+  - ❌ OLA Output
+  - ❌ MiDi Input
 - ✅ Workspace
   - ✅ Save
   - ✅ Open
+- 🚧 Settings
+  - ✅ Theme
+  - ❌ Other settings
 - 🚧 Visualizer
   - 🚧 Fixtures
     - ✅ Fixture Placement / Rotation
