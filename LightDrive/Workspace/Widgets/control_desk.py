@@ -257,3 +257,17 @@ class ControlDesk(QGraphicsView):
         for item in self.scene_items:
             if isinstance(item, DeskWire):
                 item.update()
+
+    def remove_wire(self, start_item_uuid: str, end_item_uuid: str) -> None:
+        """
+        Remove a wire from the control desk
+        :param start_item_uuid: The UUID of the start item
+        :param end_item_uuid: The UUID of the end item
+        :return: None
+        """
+        for item in self.scene_items:
+            if isinstance(item, DeskWire):
+                if item.start_item_uuid == start_item_uuid and item.end_item_uuid == end_item_uuid:
+                    self.scene.removeItem(item)
+                    self.scene_items.remove(item)
+                    break

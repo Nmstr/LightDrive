@@ -74,7 +74,9 @@ class DeskButtonConfig(QDialog):
         Unlinks the controller from the button
         :return: None
         """
-        self.linked_controller_uuid = None
+        if self.linked_controller_uuid:
+            self.window.control_desk_view.remove_wire(self.uuid, self.linked_controller_uuid)
+            self.linked_controller_uuid = None
         self.ui.controller_edit.clear()
 
     def on_linking_completed(self, result: str) -> None:
@@ -83,8 +85,15 @@ class DeskButtonConfig(QDialog):
         :param result: The UUID of the linked controller
         """
         self.window.control_desk_view.linking_completed.disconnect(self.on_linking_completed)
+
+        # Remove existing wire (if it exists)
+        if self.linked_controller_uuid:
+            self.window.control_desk_view.remove_wire(self.uuid, self.linked_controller_uuid)
+
+        # Set new controller UUID
         self.linked_controller_uuid = result
         self.ui.controller_edit.setText(result)
+
         self.setVisible(True)
 
     def start_key_capture(self) -> None:
