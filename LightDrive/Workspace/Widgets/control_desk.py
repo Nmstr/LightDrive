@@ -1,10 +1,11 @@
+from Workspace.Widgets.generic_item_view import GenericItemView
 from Workspace.Widgets.Desk import DeskButton, DeskLabel, DeskClock, DeskController, DeskWire
-from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
+from PySide6.QtWidgets import QMainWindow
 from PySide6.QtGui import QShortcut, QKeySequence, QColor
 from PySide6.QtCore import Signal
 import uuid
 
-class ControlDesk(QGraphicsView):
+class ControlDesk(GenericItemView):
     linking_completed = Signal(object)
 
     def __init__(self, window: QMainWindow) -> None:
@@ -13,11 +14,6 @@ class ControlDesk(QGraphicsView):
         :param window: The main window
         """
         super().__init__(window)
-        self.window = window
-        self.scene = QGraphicsScene(window)
-        self.setScene(self.scene)
-        self.setSceneRect(0, 0, 1920, 1080)
-        self.scene_items = []
         self.available_hotkeys = []
         self.is_linking = None
         self.linking_source_uuid = None
@@ -173,17 +169,6 @@ class ControlDesk(QGraphicsView):
                     "color": item.color.getRgbF(),
                 })
         return desk_configuration
-
-    def get_item_with_uuid(self, uuid: str) -> object | None:
-        """
-        Get the item with the given UUID
-        :param uuid: The UUID of the item to get
-        :return: The item with the given UUID
-        """
-        for item in self.scene_items:
-            if item.uuid == uuid:
-                return item
-        return None
 
     def regenerate_hotkeys(self) -> None:
         """
