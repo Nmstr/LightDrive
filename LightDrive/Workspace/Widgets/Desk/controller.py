@@ -1,10 +1,39 @@
 from .extended_abstract_desk_item import ExtendedAbstractDeskItem
+from .ControllerProcessor.input_item import InputItem
 from Backend.output import OutputSnippet
 from Backend.snippets import SequenceOutputSnippet, TwoDEfxOutputSnippet
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QDialogButtonBox, QMainWindow, \
+                               QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt
+import uuid
+
+class ControllerProcessor(QGraphicsView):
+    def __init__(self, window: QMainWindow) -> None:
+        """
+        Create the controller processor view
+        :param window: The main window
+        """
+        super().__init__(window)
+        self.window = window
+        self.scene = QGraphicsScene(window)
+        self.setScene(self.scene)
+        self.setSceneRect(0, 0, 1920, 1080)
+        self.scene_items = []
+        self.is_linking = False
+        self.add_input_item()
+
+    def add_input_item(self) -> None:
+        """
+        Add an input item to the processor view
+        """
+        button = InputItem(self, 0, 0, 100, 100, uuid=str(uuid.uuid4()))
+        self.scene.addItem(button)
+        self.scene_items.append(button)
+
+    def update_wires(self) -> None:
+        pass
 
 class SnippetLinkingSelection(QDialog):
     def __init__(self, window) -> None:
@@ -64,6 +93,10 @@ class DeskControllerConfig(QDialog):
         self.ui = loader.load(ui_file, self)
         ui_file.close()
         self.setGeometry(self.ui.geometry())
+
+        # Load the processor view
+        self.processor_view = ControllerProcessor(self.window)
+        self.ui.controller_processor_content_frame.layout().addWidget(self.processor_view)
 
         # Add buttons
         self.ui.button_box.accepted.connect(self.accept)
