@@ -17,7 +17,7 @@ class ControllerProcessor(GenericItemView):
         """
         Add a boolean input item to the processor view
         """
-        button = BooleanInputItem(self, 0, 0, 100, 100, uuid=str(uuid.uuid4()), input_state=1)
+        button = BooleanInputItem(self, 0, 0, 100, 100, uuid=str(uuid.uuid4()), input_state=0)
         self.scene.addItem(button)
         self.scene_items.append(button)
 
