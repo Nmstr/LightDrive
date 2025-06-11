@@ -47,7 +47,7 @@ class SnippetLinkingSelection(QDialog):
         add_items(root, self.snippet_tree)
 
 class DeskControllerConfig(QDialog):
-    def __init__(self, window, linked_snippet_uuid: str) -> None:
+    def __init__(self, window, linked_snippet_uuid: str, configuration: list) -> None:
         """
         Create a dialog for configuring a controller
         :param window: The main window
@@ -56,6 +56,7 @@ class DeskControllerConfig(QDialog):
         super().__init__(window)
         self.window = window
         self.linked_snippet_uuid = linked_snippet_uuid
+        self.configuration = configuration
 
         self.setWindowTitle("LightDrive - Controller Properties")
 
@@ -68,6 +69,7 @@ class DeskControllerConfig(QDialog):
 
         # Load the processor view
         self.processor_view = ControllerProcessor(self.window)
+        self.processor_view.load_processor_configuration(self.configuration)
         self.ui.controller_processor_content_frame.layout().addWidget(self.processor_view)
 
         # Add buttons
@@ -104,7 +106,7 @@ class DeskControllerConfig(QDialog):
         self.ui.snippet_edit.clear()
 
 class DeskController(ExtendedAbstractDeskItem):
-    def __init__(self, desk, x: int, y: int, width: int, height: int, uuid: str, linked_snippet_uuid: str = None) -> None:
+    def __init__(self, desk, x: int, y: int, width: int, height: int, uuid: str, linked_snippet_uuid: str = None, configuration: list = None) -> None:
         """
         Create a desk controller
         :param desk: The control desk
@@ -118,6 +120,7 @@ class DeskController(ExtendedAbstractDeskItem):
         super().__init__(desk, x, y, width, height, uuid)
         self.desk = desk
         self.linked_snippet_uuid = linked_snippet_uuid
+        self.configuration = configuration if configuration else []
         self.output_snippet = None
 
     def activate(self) -> None:
@@ -160,7 +163,8 @@ class DeskController(ExtendedAbstractDeskItem):
         """
         if self.desk.window.live_mode or self.desk.is_linking:
             return  # Disable editing in live mode or when linking
-        config_dlg = DeskControllerConfig(window=self.desk.window, linked_snippet_uuid=self.linked_snippet_uuid)
+        config_dlg = DeskControllerConfig(window=self.desk.window, linked_snippet_uuid=self.linked_snippet_uuid, configuration=self.configuration)
         if config_dlg.exec():
             self.linked_snippet_uuid = config_dlg.linked_snippet_uuid
+            self.configuration = config_dlg.processor_view.get_processor_configuration()
         super().mouseDoubleClickEvent(event)

@@ -95,7 +95,8 @@ class ControlDesk(GenericItemView):
                 self.scene_items.append(clock)
             elif item["type"] == "controller":
                 controller = DeskController(self, item["x"], item["y"], item["width"], item["height"],
-                                            uuid=item.get("uuid", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None))
+                                            uuid=item.get("uuid", None), linked_snippet_uuid=item.get("linked_snippet_uuid", None),
+                                            configuration=item.get("configuration", []))
                 self.scene.addItem(controller)
                 self.scene_items.append(controller)
             elif item["type"] == "wire":
@@ -157,7 +158,8 @@ class ControlDesk(GenericItemView):
                     "x": item.x(),
                     "y": item.y(),
                     "width": item.width,
-                    "height": item.height
+                    "height": item.height,
+                    "configuration": item.configuration
                 })
             elif isinstance(item, DeskWire):
                 desk_configuration.append({
