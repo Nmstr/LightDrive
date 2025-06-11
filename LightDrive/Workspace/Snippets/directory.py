@@ -11,7 +11,7 @@ class DirectoryAddChildrenDialog(QDialog):
         Create a dialog for selecting children of directory
         :param window: The main window
         """
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Add Children To Directory")
         self.window = window
 
@@ -50,7 +50,7 @@ class DirectoryRemoveChildrenDialog(QDialog):
         Create a dialog for selecting children of directory
         :param window: The main window
         """
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Remove Children From Directory")
         self.window = window
         self.dir_entry = dir_entry

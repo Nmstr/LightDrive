@@ -74,7 +74,7 @@ class DeskWireConfig(QDialog):
         :param end_item_uuid: The UUID of the end item
         :param control_points: The control points of the wire
         """
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.start_item_uuid = start_item_uuid
         self.end_item_uuid = end_item_uuid

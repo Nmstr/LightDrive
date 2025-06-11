@@ -7,7 +7,7 @@ import os
 
 class AddFixtureDialog(QDialog):
     def __init__(self, window) -> None:
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.current_selected_fixture_item = None
         self.channel_data = None

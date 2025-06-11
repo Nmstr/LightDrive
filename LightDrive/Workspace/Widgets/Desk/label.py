@@ -10,7 +10,7 @@ class DeskLabelConfig(QDialog):
         :param window: The main window
         :param text: The text of the label
         """
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.text = text
 

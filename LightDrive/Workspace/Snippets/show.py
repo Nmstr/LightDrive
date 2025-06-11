@@ -13,7 +13,7 @@ class AddSoundResourceDialog(QDialog):
         Create a dialog for selecting a sound resource
         :param window: The main window
         """
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Select Sound Resource For Show")
         self.window = window
 
@@ -46,7 +46,7 @@ class ShowAddSnippetsDialog(QDialog):
         Create a dialog for adding snippets to a show
         :param window: The main window
         """
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Add Snippet To Show")
         self.window = window
 

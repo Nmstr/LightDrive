@@ -4,12 +4,13 @@ from PySide6.QtCore import Qt, QFile
 from PySide6.QtUiTools import QUiLoader
 
 class UniverseConfigurationDialog(QDialog):
-    def __init__(self, universe_data: dict) -> None:
+    def __init__(self, window, universe_data: dict) -> None:
         """
         Creates the universe configuration dialog.
+        :param window: The main window
         :param universe_data: The current data of the universe
         """
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("Universe Configuration")
 
         # Load the UI file
@@ -17,6 +18,7 @@ class UniverseConfigurationDialog(QDialog):
         ui_file = QFile("Workspace/Widgets/universe_configuration.ui")
         self.ui = loader.load(ui_file, self)
         ui_file.close()
+        self.setGeometry(self.ui.geometry())
 
         # Load the ArtNet configuration
         artnet_config = universe_data.get("ArtNet")
@@ -91,7 +93,7 @@ class UniverseEntry(QWidget):
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):  # noqa: N802
         universe_data = self.workspace_window.dmx_output.get_universe_configuration(self.universe_uuid)
-        dlg = UniverseConfigurationDialog(universe_data)
+        dlg = UniverseConfigurationDialog(self.workspace_window, universe_data)
 
         if dlg.exec_():
             self.workspace_window.dmx_output.configure_artnet(universe_uuid = self.universe_uuid,

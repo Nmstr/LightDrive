@@ -17,7 +17,7 @@ class SequenceAddSceneDialog(QDialog):
     def __init__(self, window) -> None:
         self.window = window
         self.selected_scenes = None
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Add Scene to Sequence")
 
         layout = QVBoxLayout()

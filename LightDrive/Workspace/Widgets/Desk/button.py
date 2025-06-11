@@ -18,7 +18,7 @@ class DeskButtonConfig(QDialog):
         :param mode: The mode of the button (toggle, flash)
         :param mode_duration: The duration of the flash mode
         """
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.uuid = uuid
         self.label = label

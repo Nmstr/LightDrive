@@ -11,7 +11,7 @@ class DeskClockConfig(QDialog):
         :param window: The main window
         :param polling_rate: The rate at which the clock updates
         """
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.polling_rate = polling_rate
 

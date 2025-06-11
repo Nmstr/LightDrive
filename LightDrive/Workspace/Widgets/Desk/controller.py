@@ -13,7 +13,7 @@ class SnippetLinkingSelection(QDialog):
         Create a dialog for selecting a snippet to link to
         :param window: The main window
         """
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Snippet Linking")
         self.window = window
 
@@ -53,7 +53,7 @@ class DeskControllerConfig(QDialog):
         :param window: The main window
         :param linked_snippet_uuid: The UUID of the linked snippet
         """
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.linked_snippet_uuid = linked_snippet_uuid
 

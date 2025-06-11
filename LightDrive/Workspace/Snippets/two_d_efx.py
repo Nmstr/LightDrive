@@ -30,7 +30,7 @@ class TwoDEfxAddFixtureDialog(QDialog):
         self.window = window
         self.added_fixtures = list(fixture_mappings.keys())
         self.selected_fixtures = None
-        super().__init__()
+        super().__init__(window)
         self.setWindowTitle("LightDrive - Add Fixture to 2D Efx")
 
         layout = QVBoxLayout()
@@ -79,7 +79,7 @@ class TwoDEfxAddFixtureDialog(QDialog):
 
 class TwoDEfxFixtureMappingDialog(QDialog):
     def __init__(self, window, fixture_uuid, two_d_efx_uuid) -> None:
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.fixture_uuid = fixture_uuid
         self.two_d_efx_snippet = self.window.snippet_manager.available_snippets.get(two_d_efx_uuid)

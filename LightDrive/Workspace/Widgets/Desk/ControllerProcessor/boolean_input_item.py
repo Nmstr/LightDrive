@@ -16,7 +16,7 @@ class BooleanInputItemConfig(QDialog):
         :param window: The main window
         :param input_state: The current state of the input
         """
-        super().__init__()
+        super().__init__(window)
         self.window = window
         self.input_state = input_state
 
