@@ -65,6 +65,8 @@ class Workspace(QMainWindow):
         config = configparser.ConfigParser()
         config.read(os.getenv("XDG_CONFIG_HOME", default=os.path.expanduser("~/.config")) + "/LightDrive/settings.ini")
         app.setStyle(config.get("Settings", "theme", fallback="Breeze"))
+        palette = app.style().standardPalette()
+        app.setPalette(palette)
 
         # Load the UI file
         loader = QUiLoader()
