@@ -4,3 +4,4 @@ __pycache__
 site
 .godot
 .visualizer_build
+resource_rc.py

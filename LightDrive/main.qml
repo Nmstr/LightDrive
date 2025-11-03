@@ -10,5 +10,11 @@ ApplicationWindow {
     Rectangle {
         anchors.fill: parent
         color: "#303030"
+
+        Header {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
     }
 }

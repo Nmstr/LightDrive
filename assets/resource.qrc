@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="console_page.svg">icons/console_page.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="control_desk_page.svg">icons/control_desk_page.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="fixture_page.svg">icons/fixture_page.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="io_page.svg">icons/io_page.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="snippet_page.svg">icons/snippet_page.svg</file>
+    </qresource>
+</RCC>

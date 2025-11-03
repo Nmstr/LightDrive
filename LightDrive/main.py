@@ -1,3 +1,4 @@
+import resource_rc  # noqa: F401
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 import sys
