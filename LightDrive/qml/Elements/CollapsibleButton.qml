@@ -6,6 +6,7 @@ Rectangle {
     color: "#424243"
     required property string iconSource
     required property string labelText
+    required property int destinationIndex
 
     Row {
         id: contentRow
@@ -47,6 +48,9 @@ Rectangle {
         }
         onExited: {
             label.width = 0
+        }
+        onClicked: {
+            pageStack.currentIndex = destinationIndex;
         }
     }
 }

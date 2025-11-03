@@ -1,4 +1,5 @@
 import QtQuick
+import Elements 1.0
 
 Rectangle {
     id: header
@@ -16,22 +17,27 @@ Rectangle {
         CollapsibleButton {
             iconSource: "qrc:/icons/fixture_page.svg"
             labelText: "Fixtures"
+            destinationIndex: 0
         }
         CollapsibleButton {
             iconSource: "qrc:/icons/snippet_page.svg"
             labelText: "Snippets"
+            destinationIndex: 1
         }
         CollapsibleButton {
             iconSource: "qrc:/icons/console_page.svg"
             labelText: "Console"
+            destinationIndex: 2
         }
         CollapsibleButton {
             iconSource: "qrc:/icons/control_desk_page.svg"
             labelText: "Control Desk"
+            destinationIndex: 3
         }
         CollapsibleButton {
             iconSource: "qrc:/icons/io_page.svg"
             labelText: "I/O"
+            destinationIndex: 4
         }
     }
 }
