@@ -14,4 +14,10 @@
     <qresource prefix="/icons">
         <file alias="snippet_page.svg">icons/snippet_page.svg</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file alias="add.svg">icons/add.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="remove.svg">icons/remove.svg</file>
+    </qresource>
 </RCC>
