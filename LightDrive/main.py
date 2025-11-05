@@ -26,6 +26,12 @@ def build_snippet_model() -> QStandardItemModel:
         model.appendRow(snippet_item)
     return model
 
+def build_universe_selector_model() -> list[str]:
+    model = []
+    for u in range(1, 4):
+        model.append(f"Universe {u}")
+    return model
+
 def main() -> None:
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
@@ -34,6 +40,8 @@ def main() -> None:
     engine.rootContext().setContextProperty('fixturesModel', fixtures_model)
     snippet_model = build_snippet_model()
     engine.rootContext().setContextProperty('snippetModel', snippet_model)
+    universe_selector_model = build_universe_selector_model()
+    engine.rootContext().setContextProperty('universeSelectorModel', universe_selector_model)
 
     engine.addImportPath(QDir.currentPath() + "/qml")
     engine.load("qml/main.qml")

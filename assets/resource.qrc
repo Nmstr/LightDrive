@@ -52,4 +52,10 @@
     <qresource prefix="/icons">
         <file alias="sound_resource.svg">icons/sound_resource.svg</file>
     </qresource>
+
+    <!-- Specific Button Icons -->
+    <qresource prefix="/icons">
+        <file alias="channel_reset.svg">icons/channel_reset.svg</file>
+    </qresource>
+
 </RCC>
