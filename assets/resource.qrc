@@ -1,4 +1,5 @@
 <RCC>
+    <!-- Categories -->
     <qresource prefix="/icons">
         <file alias="console_page.svg">icons/console_page.svg</file>
     </qresource>
@@ -14,10 +15,41 @@
     <qresource prefix="/icons">
         <file alias="snippet_page.svg">icons/snippet_page.svg</file>
     </qresource>
+
+    <!-- Generic Icons -->
     <qresource prefix="/icons">
         <file alias="add.svg">icons/add.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="remove.svg">icons/remove.svg</file>
+    </qresource>
+
+    <!-- Snippet Icons -->
+    <qresource prefix="/icons">
+        <file alias="cue.svg">icons/cue.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="directory.svg">icons/directory.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="efx_2d.svg">icons/efx_2d.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="rgb_matrix.svg">icons/rgb_matrix.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="scene.svg">icons/scene.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="script.svg">icons/script.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="sequence.svg">icons/sequence.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="show.svg">icons/show.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="sound_resource.svg">icons/sound_resource.svg</file>
     </qresource>
 </RCC>
