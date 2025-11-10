@@ -28,7 +28,7 @@ Rectangle {
 
             ComboBox {
                 anchors.verticalCenter: parent.verticalCenter
-                model: universeSelectorModel
+                model: universeListModel
             }
         }
     }
@@ -45,7 +45,6 @@ Rectangle {
 
         ScrollView {
             width: parent.width
-            anchors.fill: praent
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
 
             ListView {
