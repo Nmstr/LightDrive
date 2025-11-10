@@ -58,4 +58,26 @@
         <file alias="channel_reset.svg">icons/channel_reset.svg</file>
     </qresource>
 
+    <!-- Specific Desk Related Icons -->
+    <qresource prefix="/icons">
+        <file alias="desk_button.svg">icons/desk_button.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="desk_clock.svg">icons/desk_clock.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="desk_fader.svg">icons/desk_fader.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="desk_knob.svg">icons/desk_knob.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="desk_label.svg">icons/desk_label.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="desk_sound_trigger.svg">icons/desk_sound_trigger.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="desk_subdesk.svg">icons/desk_subdesk.svg</file>
+    </qresource>
 </RCC>
