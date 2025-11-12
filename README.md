@@ -18,35 +18,35 @@ large number of lights.
 
 ✅ = Done, 🚧 = In Progress, ❌ = Not Started
 
-- ❌ Fixtures
+- 🚧 Fixtures
   - ❌ Creation of custom fixtures
   - ❌ Large selection of pre-defined fixtures
   - ❌ ILDA laser Support
-- ❌ Snippets
-  - ❌ Scenes
-  - ❌ Sequences
-  - ❌ Cues
-  - ❌ 2D Efx
+- 🚧 Snippets
+  - 🚧 Scenes
+  - 🚧 Sequences
+  - 🚧 Cues
+  - 🚧 2D Efx
   - ❌ RGB Matrix
-  - ❌ Scripts
-  - ❌ Directories
-  - ❌ Sound Resources
+  - 🚧 Scripts
+  - 🚧 Directories
+  - 🚧 Sound Resources
   - ❌ Shows
-- ❌ Console (Live individual channel control)
-- ❌ Control Desk (Virtual lighting console)
-  - ❌ Controllers
-  - ❌ Buttons
-  - ❌ Faders
-  - ❌ Knobs
+- 🚧 Console (Individual channel control)
+- 🚧 Control Desk (Virtual lighting console)
+  - 🚧 Buttons
+  - 🚧 Faders
+  - 🚧 Knobs
   - ❌ Sound Triggers
-  - ❌ Labels
-  - ❌ Clocks
+  - 🚧 Labels
+  - 🚧 Clocks
+  - ❌ Subdesks
 - ❌ Control Terminal (CLI for controlling lights)
-- ❌ I/O
+- 🚧 I/O
   - ❌ ArtNet Output
   - ❌ OLA Output
   - ❌ MiDi Input
-- ❌ Workspace
+- 🚧 Workspace
   - ❌ Save
   - ❌ Open
 - ❌ Settings
