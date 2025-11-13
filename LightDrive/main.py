@@ -1,6 +1,6 @@
 import resource_rc  # noqa: F401
 from data_structures import Workspace
-from data_models import build_fixtures_model, build_snippet_model, build_universe_list_model
+from data_models import DataModels
 from universe_handler import UniverseHandler
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
@@ -19,11 +19,12 @@ class LightDrive:
         engine.rootContext().setContextProperty("universeHandler", self.universe_handler)
 
         # Models
-        fixtures_model = build_fixtures_model()
+        self.data_models = DataModels()
+        fixtures_model = self.data_models.build_fixtures_model()
         engine.rootContext().setContextProperty("fixturesModel", fixtures_model)
-        snippet_model = build_snippet_model()
+        snippet_model = self.data_models.build_snippet_model()
         engine.rootContext().setContextProperty("snippetModel", snippet_model)
-        universe_list_model = build_universe_list_model()
+        universe_list_model = self.data_models.build_universe_list_model()
         engine.rootContext().setContextProperty("universeListModel", universe_list_model)
 
         engine.addImportPath(QDir.currentPath() + "/qml")
