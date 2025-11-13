@@ -21,7 +21,7 @@ Rectangle {
 
             IconButton {
                 iconSource: "qrc:/icons/add.svg"
-                onClicked: console.log("Add")
+                onClicked: universeHandler.add_universe()
             }
             IconButton {
                 iconSource: "qrc:/icons/remove.svg"
@@ -39,16 +39,16 @@ Rectangle {
             bottom: parent.bottom
             margins: 10
         }
-        model: universeListModel
+        model: universeModel
 
         delegate: Rectangle {
-            width: parent.width
+            width: universeList.width
             height: 25
             color: "#555555"
 
             Text {
                 anchors.centerIn: parent
-                text: modelData
+                text: model.display
                 color: "white"
                 font.pixelSize: 20
             }
