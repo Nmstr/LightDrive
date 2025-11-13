@@ -9,3 +9,4 @@ class UniverseHandler(QObject):
     @Slot()
     def add_universe(self):
         self.root.workspace.universes.append(Universe("Universe 1"))
+        self.root.data_models.build_universe_model()

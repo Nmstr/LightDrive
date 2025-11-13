@@ -23,6 +23,7 @@ class LightDrive:
         engine.rootContext().setContextProperty("fixturesModel", self.data_models.fixtures_model)
         engine.rootContext().setContextProperty("snippetModel", self.data_models.snippet_model)
         engine.rootContext().setContextProperty("universeListModel", self.data_models.universe_list_model)
+        engine.rootContext().setContextProperty("universeModel", self.data_models.universe_model)
 
         engine.addImportPath(QDir.currentPath() + "/qml")
         engine.load("qml/main.qml")

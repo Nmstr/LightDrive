@@ -3,22 +3,30 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem
 class DataModels:
     def __init__(self, root):
         self.root = root
-        self.fixtures_model = self.build_fixtures_model()
-        self.snippet_model = self.build_snippet_model()
-        self.universe_list_model = self.build_universe_list_model()
+        self.fixtures_model = QStandardItemModel()
+        self.build_fixtures_model()
+        self.snippet_model = QStandardItemModel()
+        self.build_snippet_model()
+        self.universe_list_model = []
+        self.build_universe_list_model()
+        self.universe_model = QStandardItemModel()
+        self.build_universe_model()
 
-    def build_fixtures_model(self) -> QStandardItemModel:
-        model = QStandardItemModel()
+    def build_fixtures_model(self) -> None:
+        model = self.fixtures_model
+        model.clear()
+
         model.setHorizontalHeaderLabels(["name"])
         for u in range(1, 4):
             universe_item = QStandardItem(f"Universe {u}")
             for f in range(1, 4):
                 universe_item.appendRow(QStandardItem(f"Fixture {f}"))
             model.appendRow(universe_item)
-        return model
 
-    def build_snippet_model(self) -> QStandardItemModel:
-        model = QStandardItemModel()
+    def build_snippet_model(self) -> None:
+        model = self.snippet_model
+        model.clear()
+
         model.setHorizontalHeaderLabels(["Name"])
         for s in range(1, 7):
             snippet_item = QStandardItem(f"Snippet {s}")
@@ -27,10 +35,18 @@ class DataModels:
                 for ss in range(1, 4):
                     snippet_item.appendRow(QStandardItem(f"Snippet {ss}"))
             model.appendRow(snippet_item)
-        return model
 
-    def build_universe_list_model(self) -> list[str]:
-        model = []
+    def build_universe_list_model(self) -> None:
+        model = self.universe_list_model  # Type: list[str]
+        model.clear()
+
         for universe in self.root.workspace.universes:
             model.append(universe.name)
-        return model
+
+    def build_universe_model(self) -> None:
+        model = self.universe_model
+        model.clear()
+
+        for universe in self.root.workspace.universes:
+            model.appendRow(QStandardItem(universe.name))
+        model.layoutChanged.emit()
