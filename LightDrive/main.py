@@ -19,13 +19,10 @@ class LightDrive:
         engine.rootContext().setContextProperty("universeHandler", self.universe_handler)
 
         # Models
-        self.data_models = DataModels()
-        fixtures_model = self.data_models.build_fixtures_model()
-        engine.rootContext().setContextProperty("fixturesModel", fixtures_model)
-        snippet_model = self.data_models.build_snippet_model()
-        engine.rootContext().setContextProperty("snippetModel", snippet_model)
-        universe_list_model = self.data_models.build_universe_list_model()
-        engine.rootContext().setContextProperty("universeListModel", universe_list_model)
+        self.data_models = DataModels(self)
+        engine.rootContext().setContextProperty("fixturesModel", self.data_models.fixtures_model)
+        engine.rootContext().setContextProperty("snippetModel", self.data_models.snippet_model)
+        engine.rootContext().setContextProperty("universeListModel", self.data_models.universe_list_model)
 
         engine.addImportPath(QDir.currentPath() + "/qml")
         engine.load("qml/main.qml")

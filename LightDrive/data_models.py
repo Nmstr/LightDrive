@@ -1,8 +1,11 @@
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 
 class DataModels:
-    def __init__(self):
-        pass
+    def __init__(self, root):
+        self.root = root
+        self.fixtures_model = self.build_fixtures_model()
+        self.snippet_model = self.build_snippet_model()
+        self.universe_list_model = self.build_universe_list_model()
 
     def build_fixtures_model(self) -> QStandardItemModel:
         model = QStandardItemModel()
