@@ -21,7 +21,7 @@ Rectangle {
 
             IconButton {
                 iconSource: "qrc:/icons/add.svg"
-                onClicked: console.log("Add")
+                onClicked: universeHandler.add_universe()
             }
             IconButton {
                 iconSource: "qrc:/icons/remove.svg"
