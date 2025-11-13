@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Elements
 
 Rectangle {
@@ -21,7 +22,7 @@ Rectangle {
 
             IconButton {
                 iconSource: "qrc:/icons/add.svg"
-                onClicked: universeHandler.add_universe()
+                onClicked: add_universe_dialog.open()
             }
             IconButton {
                 iconSource: "qrc:/icons/remove.svg"
@@ -51,6 +52,29 @@ Rectangle {
                 text: model.display
                 color: "white"
                 font.pixelSize: 20
+            }
+        }
+    }
+
+    Dialog {
+        id: add_universe_dialog
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        width: 300
+        height: 100
+        title: "Set Universe Name"
+        standardButtons: Dialog.Ok | Dialog.Cancel
+
+        onAccepted: {
+            universeHandler.add_universe(universe_name_input.text);
+            universe_name_input.clear();
+        }
+
+        Text {
+            TextField {
+                id: universe_name_input
+                placeholderText: "Universe Name"
+                width: 288
             }
         }
     }
