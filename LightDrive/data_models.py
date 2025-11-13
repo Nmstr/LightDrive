@@ -31,6 +31,6 @@ class DataModels:
 
     def build_universe_list_model(self) -> list[str]:
         model = []
-        for u in range(1, 4):
-            model.append(f"Universe {u}")
+        for universe in self.root.workspace.universes:
+            model.append(universe.name)
         return model
