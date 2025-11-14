@@ -56,25 +56,85 @@ Rectangle {
         }
     }
 
-    Dialog {
+    Popup {
         id: add_universe_dialog
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
-        width: 300
-        height: 100
-        title: "Set Universe Name"
-        standardButtons: Dialog.Ok | Dialog.Cancel
-
-        onAccepted: {
-            universeHandler.add_universe(universe_name_input.text);
-            universe_name_input.clear();
+        width: 400
+        height: 95
+        padding: 0
+        background: Rectangle {
+            color: "#4f4f4f"
         }
 
-        Text {
+        Column {
+            width: parent.width
+            spacing: 5
+
+            Rectangle {
+                id: topper
+                implicitWidth: parent.width
+                height: 30
+                color: "#2677ed"
+                Text {
+                    anchors.fill: parent
+                    anchors.margins: 5
+                    text: "Set Universe Name"
+                    font.pixelSize: 16
+                    color: "white"
+                }
+            }
+
             TextField {
                 id: universe_name_input
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                implicitWidth: parent.width - 10
                 placeholderText: "Universe Name"
-                width: 288
+                color: "white"
+                background: Rectangle {
+                    color: "#636363"
+                }
+            }
+
+            Row {
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                spacing: 5
+
+                Button {
+                    id: createButton
+                    text: "Create"
+                    background: Rectangle {
+                        color: createButton.down ? "#434343" : "#636363"
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            width: parent.width; height: 2
+                            color: "#2677ed"
+                        }
+                    }
+                    onClicked: {
+                        universeHandler.add_universe(universe_name_input.text);
+                        universe_name_input.clear();
+                        add_universe_dialog.close();
+                    }
+                }
+                Button {
+                    id: cancelButton
+                    text: "Cancel"
+                    background: Rectangle {
+                        color: cancelButton.down ? "#434343" : "#636363"
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            width: parent.width; height: 2
+                            color: "#ff3030"
+                        }
+                    }
+                    onClicked: {
+                        universe_name_input.clear();
+                        add_universe_dialog.close();
+                    }
+                }
             }
         }
     }
