@@ -26,7 +26,13 @@ Rectangle {
             }
             IconButton {
                 iconSource: "qrc:/icons/remove.svg"
-                onClicked: console.log("Remove")
+                onClicked: {
+                    if (universeList.curUuid) {
+                        universeHandler.remove_universe(universeList.curUuid);
+                        universeList.curUuid = "";
+                        universeList.curIndex = -1;
+                    }
+                }
             }
         }
     }
