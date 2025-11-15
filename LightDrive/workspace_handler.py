@@ -1,5 +1,8 @@
 from data_structures import Workspace
 from PySide6.QtCore import QObject, Slot
+from urllib.parse import urlparse
+import pathlib
+import pickle
 import os
 
 class WorkspaceHandler(QObject):
@@ -24,4 +27,8 @@ class WorkspaceHandler(QObject):
 
     @Slot(str)
     def save_as(self, workspace_path: str) -> None:
-        print("Save as: ", workspace_path)
+        workspace_path = urlparse(workspace_path).path
+        path = pathlib.Path(workspace_path)
+
+        with open(str(path), "wb") as file:
+            pickle.dump(self.root.workspace, file)

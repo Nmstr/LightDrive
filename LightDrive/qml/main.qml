@@ -1,6 +1,8 @@
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import Pages.FixturePage 1.0
 import Pages.SnippetPage 1.0
 import Pages.ConsolePage 1.0
@@ -73,7 +75,17 @@ ApplicationWindow {
                 TextIconButton {
                     iconSource: "qrc:/icons/save_as.svg"
                     labelText: "Save As"
+                    onClicked: saveAsFileDialog.open()
                 }
+            }
+
+            FileDialog {
+                id: saveAsFileDialog
+                currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+                fileMode: FileDialog.SaveFile
+                defaultSuffix: "ldw"
+                nameFilters: ["Workspace Files (*.ldw)", "All Files (*)"]
+                onAccepted: workspaceHandler.save_as(selectedFile)
             }
         }
     }
