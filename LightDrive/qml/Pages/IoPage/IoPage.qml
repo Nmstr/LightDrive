@@ -41,6 +41,8 @@ Rectangle {
             margins: 10
         }
         model: universeModel
+        property string curUuid
+        property int curIndex: -1
 
         delegate: Rectangle {
             width: universeList.width
@@ -52,6 +54,27 @@ Rectangle {
                 text: model.display
                 color: "white"
                 font.pixelSize: 20
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    if (universeList.curUuid === model.uuid) return;
+                    parent.color = "#444444";
+                }
+                onExited:  {
+                    if (universeList.curUuid === model.uuid) return;
+                    parent.color = "#555555";
+                }
+                onClicked: {
+                    let lastElement = universeList.itemAtIndex(universeList.curIndex);
+                    if (lastElement) lastElement.color = "#555555";
+                    parent.color = "#666666";
+                    universeList.curUuid = model.uuid;
+                    universeList.curIndex = model.index;
+                }
             }
         }
     }
