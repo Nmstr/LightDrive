@@ -1,4 +1,5 @@
 from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtCore import Qt, QByteArray
 
 class DataModels:
     def __init__(self, root):
@@ -10,6 +11,10 @@ class DataModels:
         self.universe_list_model = []
         self.build_universe_list_model()
         self.universe_model = QStandardItemModel()
+        self.universe_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"uuid"),
+        })
         self.build_universe_model()
 
     def build_fixtures_model(self) -> None:
@@ -48,5 +53,7 @@ class DataModels:
         model.clear()
 
         for universe in self.root.workspace.universes:
-            model.appendRow(QStandardItem(universe.name))
+            item = QStandardItem(universe.name)
+            item.setData(universe.uuid, Qt.UserRole)
+            model.appendRow(item)
         model.layoutChanged.emit()
