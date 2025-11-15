@@ -14,6 +14,9 @@ Rectangle {
         }
         spacing: 10
 
+        IconButton {
+            iconSource: "qrc:/icons/lightdrive.svg"
+        }
         CollapsibleButton {
             iconSource: "qrc:/icons/fixture_page.svg"
             labelText: "Fixtures"

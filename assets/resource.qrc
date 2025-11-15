@@ -80,4 +80,9 @@
     <qresource prefix="/icons">
         <file alias="desk_subdesk.svg">icons/desk_subdesk.svg</file>
     </qresource>
+
+    <!-- Other -->
+    <qresource prefix="/icons">
+        <file alias="lightdrive.svg">icons/lightdrive.svg</file>
+    </qresource>
 </RCC>
