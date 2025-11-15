@@ -6,6 +6,7 @@ import Pages.SnippetPage 1.0
 import Pages.ConsolePage 1.0
 import Pages.ControlDeskPage 1.0
 import Pages.IoPage 1.0
+import Elements
 
 ApplicationWindow {
     visible: true
@@ -38,6 +39,38 @@ ApplicationWindow {
             ConsolePage { }
             ControlDeskPage { }
             IoPage { }
+        }
+
+        Popup {
+            id: workspacePopout
+            x: 10
+            y: 50
+            width: 200
+            background: Rectangle {
+                color: "#2d2d2d"
+            }
+
+            Column {
+                anchors.fill: parent
+                spacing: 10
+
+                TextIconButton {
+                    iconSource: "qrc:/icons/new.svg"
+                    labelText: "New"
+                }
+                TextIconButton {
+                    iconSource: "qrc:/icons/open.svg"
+                    labelText: "Open"
+                }
+                TextIconButton {
+                    iconSource: "qrc:/icons/save.svg"
+                    labelText: "Save"
+                }
+                TextIconButton {
+                    iconSource: "qrc:/icons/save_as.svg"
+                    labelText: "Save As"
+                }
+            }
         }
     }
 }

@@ -81,6 +81,20 @@
         <file alias="desk_subdesk.svg">icons/desk_subdesk.svg</file>
     </qresource>
 
+    <!-- Workspace Icons -->
+    <qresource prefix="/icons">
+        <file alias="new.svg">icons/new.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="open.svg">icons/open.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="save.svg">icons/save.svg</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="save_as.svg">icons/save_as.svg</file>
+    </qresource>
+
     <!-- Other -->
     <qresource prefix="/icons">
         <file alias="lightdrive.svg">icons/lightdrive.svg</file>
