@@ -67,6 +67,7 @@ ApplicationWindow {
                 TextIconButton {
                     iconSource: "qrc:/icons/open.svg"
                     labelText: "Open"
+                    onClicked: openFileDialog.open()
                 }
                 TextIconButton {
                     iconSource: "qrc:/icons/save.svg"
@@ -86,6 +87,14 @@ ApplicationWindow {
                 defaultSuffix: "ldw"
                 nameFilters: ["Workspace Files (*.ldw)", "All Files (*)"]
                 onAccepted: workspaceHandler.save_as(selectedFile)
+            }
+            FileDialog {
+                id: openFileDialog
+                currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+                fileMode: FileDialog.OpenFile
+                defaultSuffix: "ldw"
+                nameFilters: ["Workspace Files (*.ldw)", "All Files (*)"]
+                onAccepted: workspaceHandler.open(selectedFile)
             }
         }
     }

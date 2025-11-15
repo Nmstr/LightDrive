@@ -3,7 +3,6 @@ from PySide6.QtCore import QObject, Slot
 from urllib.parse import urlparse
 import pathlib
 import pickle
-import os
 
 class WorkspaceHandler(QObject):
     def __init__(self, root):
@@ -17,9 +16,14 @@ class WorkspaceHandler(QObject):
 
     @Slot(str)
     def open(self, workspace_path: str) -> None:
-        print("Open: ", workspace_path)
-        if not os.path.isfile(workspace_path):
+        workspace_path = urlparse(workspace_path).path
+        path = pathlib.Path(workspace_path)
+        if not path.exists():
             return
+
+        with open(str(path), "rb") as file:
+            self.root.workspace = pickle.load(file)
+            self.root.data_models.build_all()
 
     @Slot()
     def save(self) -> None:
