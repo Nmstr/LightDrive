@@ -1,6 +1,7 @@
 import resource_rc  # noqa: F401
 from data_structures import Workspace
 from data_models import DataModels
+from workspace_handler import WorkspaceHandler
 from universe_handler import UniverseHandler
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
@@ -15,6 +16,8 @@ class LightDrive:
         engine = QQmlApplicationEngine()
 
         # Handlers
+        self.workspace_handler = WorkspaceHandler(self.workspace)
+        engine.rootContext().setContextProperty("workspaceHandler", self.workspace_handler)
         self.universe_handler = UniverseHandler(self)
         engine.rootContext().setContextProperty("universeHandler", self.universe_handler)
 
