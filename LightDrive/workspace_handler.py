@@ -1,3 +1,4 @@
+from data_structures import Workspace
 from PySide6.QtCore import QObject, Slot
 import os
 
@@ -8,7 +9,8 @@ class WorkspaceHandler(QObject):
 
     @Slot()
     def new(self) -> None:
-        print("New")
+        self.root.workspace = Workspace()
+        self.root.data_models.build_all()
 
     @Slot(str)
     def open(self, workspace_path: str) -> None:

@@ -57,6 +57,10 @@ ApplicationWindow {
                 TextIconButton {
                     iconSource: "qrc:/icons/new.svg"
                     labelText: "New"
+                    onClicked: {
+                        workspacePopout.close()
+                        workspaceHandler.new();
+                    }
                 }
                 TextIconButton {
                     iconSource: "qrc:/icons/open.svg"

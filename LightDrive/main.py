@@ -16,7 +16,7 @@ class LightDrive:
         engine = QQmlApplicationEngine()
 
         # Handlers
-        self.workspace_handler = WorkspaceHandler(self.workspace)
+        self.workspace_handler = WorkspaceHandler(self)
         engine.rootContext().setContextProperty("workspaceHandler", self.workspace_handler)
         self.universe_handler = UniverseHandler(self)
         engine.rootContext().setContextProperty("universeHandler", self.universe_handler)
