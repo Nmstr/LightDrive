@@ -17,6 +17,12 @@ class DataModels:
         })
         self.build_universe_model()
 
+    def build_all(self) -> None:
+        self.build_fixtures_model()
+        self.build_snippet_model()
+        self.build_universe_list_model()
+        self.build_universe_model()
+
     def build_fixtures_model(self) -> None:
         model = self.fixtures_model
         model.clear()
