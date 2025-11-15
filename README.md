@@ -7,9 +7,7 @@
 
 </div>
 
-LightDrive is a lighting control system for dmx lights. It is designed to be easy to use and to be able to control a
-large number of lights.
-
+LightDrive is a lighting control system for dmx lights.
 
 > [!IMPORTANT]
 > LightDrive is currently under heavy development.
@@ -46,9 +44,9 @@ large number of lights.
   - ❌ ArtNet Output
   - ❌ OLA Output
   - ❌ MiDi Input
-- 🚧 Workspace
-  - ❌ Save
-  - ❌ Open
+- ✅ Workspace
+  - ✅ Save
+  - ✅ Open
 - ❌ Settings
   - ❌ Theme
   - ❌ Other settings
