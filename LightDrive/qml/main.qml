@@ -60,7 +60,7 @@ ApplicationWindow {
                     iconSource: "qrc:/icons/new.svg"
                     labelText: "New"
                     onClicked: {
-                        workspacePopout.close()
+                        workspacePopout.close();
                         workspaceHandler.new();
                     }
                 }
@@ -72,6 +72,10 @@ ApplicationWindow {
                 TextIconButton {
                     iconSource: "qrc:/icons/save.svg"
                     labelText: "Save"
+                    onClicked: {
+                        workspacePopout.close();
+                        workspaceHandler.save();
+                    }
                 }
                 TextIconButton {
                     iconSource: "qrc:/icons/save_as.svg"

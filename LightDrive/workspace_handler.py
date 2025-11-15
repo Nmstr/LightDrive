@@ -8,6 +8,7 @@ class WorkspaceHandler(QObject):
     def __init__(self, root):
         super().__init__()
         self.root = root
+        self.current_workspace_path = None
 
     @Slot()
     def new(self) -> None:
@@ -25,9 +26,15 @@ class WorkspaceHandler(QObject):
             self.root.workspace = pickle.load(file)
             self.root.data_models.build_all()
 
+        self.current_workspace_path = path
+
     @Slot()
     def save(self) -> None:
-        print("Save")
+        if not self.current_workspace_path:
+            return
+
+        with open(str(self.current_workspace_path), "wb") as file:
+            pickle.dump(self.root.workspace, file)
 
     @Slot(str)
     def save_as(self, workspace_path: str) -> None:
@@ -36,3 +43,5 @@ class WorkspaceHandler(QObject):
 
         with open(str(path), "wb") as file:
             pickle.dump(self.root.workspace, file)
+
+        self.current_workspace_path = path
