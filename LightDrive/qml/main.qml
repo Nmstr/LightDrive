@@ -73,8 +73,8 @@ ApplicationWindow {
                     iconSource: "qrc:/icons/save.svg"
                     labelText: "Save"
                     onClicked: {
-                        workspacePopout.close();
                         workspaceHandler.save();
+                        workspacePopout.close();
                     }
                 }
                 TextIconButton {
@@ -100,6 +100,14 @@ ApplicationWindow {
                 nameFilters: ["Workspace Files (*.ldw)", "All Files (*)"]
                 onAccepted: workspaceHandler.open(selectedFile)
             }
+        }
+    }
+
+    Connections {
+        target: workspaceHandler
+
+        function onPromptSaveAs() {
+            saveAsFileDialog.open();
         }
     }
 }
