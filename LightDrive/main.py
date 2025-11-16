@@ -6,10 +6,11 @@ from universe_handler import UniverseHandler
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QDir
+import argparse
 import sys
 
 class LightDrive:
-    def __init__(self):
+    def __init__(self, default_workspace: str):
         self.workspace = Workspace()
 
         app = QGuiApplication(sys.argv)
@@ -31,10 +32,16 @@ class LightDrive:
         engine.addImportPath(QDir.currentPath() + "/qml")
         engine.load("qml/main.qml")
 
+        if default_workspace:
+            self.workspace_handler.open(default_workspace)
+
         if not engine.rootObjects():
             sys.exit(-1)
         sys.exit(app.exec())
 
 if __name__ == "__main__":
-    LightDrive()
+    parser = argparse.ArgumentParser(description="LightDrive")
+    parser.add_argument("-w", "--workspace", help="Open a workspace on launch")
+    args = parser.parse_args()
 
+    LightDrive(args.workspace)
