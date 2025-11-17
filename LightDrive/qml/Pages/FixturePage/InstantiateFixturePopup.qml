@@ -41,7 +41,7 @@ Popup {
             id: availableFixtureTree
             width: (parent.width - parent.spacing) / 2
             height: parent.height
-            model: fixturesModel
+            model: fixtureBlueprintModel
             clip: true
 
             delegate: TreeViewDelegate {

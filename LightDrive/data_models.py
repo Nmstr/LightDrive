@@ -16,6 +16,8 @@ class DataModels:
             Qt.UserRole: QByteArray(b"uuid"),
         })
         self.build_universe_model()
+        self.fixture_blueprint_model = QStandardItemModel()
+        self.build_fixture_blueprint_model()
 
     def build_all(self) -> None:
         self.build_fixtures_model()
@@ -63,3 +65,14 @@ class DataModels:
             item.setData(universe.uuid, Qt.UserRole)
             model.appendRow(item)
         model.layoutChanged.emit()
+
+    def build_fixture_blueprint_model(self) -> None:
+        model = self.fixture_blueprint_model
+        model.clear()
+
+        model.setHorizontalHeaderLabels(["name"])
+        for m in range(1, 3):
+            manufacturer_item = QStandardItem(f"Manufacturer {m}")
+            for f in range(1, 3):
+                manufacturer_item.appendRow(QStandardItem(f"Fixture {f}"))
+            model.appendRow(manufacturer_item)
