@@ -43,11 +43,13 @@ Popup {
             width: (parent.width - parent.spacing) / 2
             height: parent.height
             model: fixtureBlueprintModel
+            selectionModel: ItemSelectionModel {}
             clip: true
 
             delegate: Rectangle {
                 implicitWidth: fixtureBlueprintTree.width
                 implicitHeight: 20
+                color: row === fixtureBlueprintTree.currentRow ? "#662677ed" : "#636363"
 
                 Text {
                     leftPadding: 10 + 20 * fixtureBlueprintTree.depth(model.index)
@@ -58,6 +60,8 @@ Popup {
                     anchors.fill: parent
 
                     onClicked: {
+                        let index = fixtureBlueprintTree.index(row, 0);
+                        fixtureBlueprintTree.selectionModel.setCurrentIndex(index, ItemSelectionModel.NoUpdate);
                         fixtureBlueprintTree.toggleExpanded(model.index);
                     }
                 }
