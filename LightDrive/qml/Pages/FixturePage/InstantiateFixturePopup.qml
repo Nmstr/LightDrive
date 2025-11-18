@@ -62,6 +62,8 @@ Popup {
                     onClicked: {
                         let index = fixtureBlueprintTree.index(row, 0);
                         fixtureBlueprintTree.selectionModel.setCurrentIndex(index, ItemSelectionModel.NoUpdate);
+                    }
+                    onDoubleClicked: {
                         fixtureBlueprintTree.toggleExpanded(model.index);
                     }
                 }
