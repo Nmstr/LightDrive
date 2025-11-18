@@ -8,6 +8,7 @@ Popup {
     width: parent.width - 150
     height: parent.height - 150
     padding: 0
+    dim: true
     background: Rectangle {
         color: "#4f4f4f"
     }
