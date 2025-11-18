@@ -39,18 +39,18 @@ Popup {
         spacing: 10
 
         TreeView {
-            id: availableFixtureTree
+            id: fixtureBlueprintTree
             width: (parent.width - parent.spacing) / 2
             height: parent.height
             model: fixtureBlueprintModel
             clip: true
 
             delegate: Rectangle {
-                implicitWidth: availableFixtureTree.width
+                implicitWidth: fixtureBlueprintTree.width
                 implicitHeight: 20
 
                 Text {
-                    leftPadding: 10 + 20 * availableFixtureTree.depth(model.index)
+                    leftPadding: 10 + 20 * fixtureBlueprintTree.depth(model.index)
                     text: model.display
                 }
 
@@ -58,12 +58,12 @@ Popup {
                     anchors.fill: parent
 
                     onClicked: {
-                        availableFixtureTree.toggleExpanded(model.index);
+                        fixtureBlueprintTree.toggleExpanded(model.index);
                     }
                 }
 
                 Component.onCompleted: {
-                    availableFixtureTree.expand(model.index);
+                    fixtureBlueprintTree.expand(model.index);
                 }
             }
         }
