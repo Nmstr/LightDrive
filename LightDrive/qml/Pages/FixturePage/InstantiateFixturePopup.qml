@@ -45,13 +45,23 @@ Popup {
             model: fixtureBlueprintModel
             clip: true
 
-            delegate: TreeViewDelegate {
+            delegate: Rectangle {
                 implicitWidth: availableFixtureTree.width
-                text: model.display
-                leftPadding: 30 + 20 * availableFixtureTree.depth(model.index)
-                onClicked: {
-                    availableFixtureTree.toggleExpanded(model.index);
+                implicitHeight: 20
+
+                Text {
+                    leftPadding: 10 + 20 * availableFixtureTree.depth(model.index)
+                    text: model.display
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        availableFixtureTree.toggleExpanded(model.index);
+                    }
+                }
+
                 Component.onCompleted: {
                     availableFixtureTree.expand(model.index);
                 }
