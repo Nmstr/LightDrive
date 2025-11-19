@@ -3,6 +3,7 @@ from data_structures import Workspace
 from data_models import DataModels
 from workspace_handler import WorkspaceHandler
 from universe_handler import UniverseHandler
+from fixture_handler import FixtureHandler
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QDir
@@ -21,6 +22,8 @@ class LightDrive:
         engine.rootContext().setContextProperty("workspaceHandler", self.workspace_handler)
         self.universe_handler = UniverseHandler(self)
         engine.rootContext().setContextProperty("universeHandler", self.universe_handler)
+        self.fixture_handler = FixtureHandler(self)
+        engine.rootContext().setContextProperty("fixtureHandler", self.fixture_handler)
 
         # Models
         self.data_models = DataModels(self)

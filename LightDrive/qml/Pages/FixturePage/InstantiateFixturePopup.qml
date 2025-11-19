@@ -45,6 +45,7 @@ Popup {
             model: fixtureBlueprintModel
             selectionModel: ItemSelectionModel {}
             clip: true
+            property string selectedBlueprintPath
 
             delegate: Rectangle {
                 implicitWidth: fixtureBlueprintTree.width
@@ -71,6 +72,7 @@ Popup {
 
                         // Load selected fixture
                         if (fixtureBlueprintTree.depth(model.index)) {
+                            fixtureBlueprintTree.selectedBlueprintPath = model.blueprint_path
                             fixtureNameInput.text = model.display
                         }
                     }
@@ -210,6 +212,7 @@ Popup {
                 font.pointSize: 14
             }
             onClicked: {
+                fixtureHandler.instantiate(fixtureNameInput.text, universeCombo.currentValue, addressSpin.value, fixtureBlueprintTree.selectedBlueprintPath)
                 cleanup();
             }
         }

@@ -95,4 +95,5 @@ class DataModels:
                 manufacturer_entry = manufacturer_item
 
             blueprint_item = QStandardItem(blueprint_data["name"])
+            blueprint_item.setData(str(blueprint_file), Qt.UserRole)
             manufacturer_entry.appendRow(blueprint_item)
