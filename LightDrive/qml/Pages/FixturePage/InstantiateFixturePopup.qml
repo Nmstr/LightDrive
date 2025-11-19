@@ -65,6 +65,11 @@ Popup {
                     }
                     onDoubleClicked: {
                         fixtureBlueprintTree.toggleExpanded(model.index);
+
+                        // Load selected fixture
+                        if (fixtureBlueprintTree.depth(model.index)) {
+                            fixtureNameInput.text = model.display
+                        }
                     }
                 }
 
