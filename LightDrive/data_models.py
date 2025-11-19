@@ -1,5 +1,8 @@
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Qt, QByteArray
+import pathlib
+import json
+import os
 
 class DataModels:
     def __init__(self, root):
@@ -17,6 +20,10 @@ class DataModels:
         })
         self.build_universe_model()
         self.fixture_blueprint_model = QStandardItemModel()
+        self.fixture_blueprint_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"blueprint_path"),
+        })
         self.build_fixture_blueprint_model()
 
     def build_all(self) -> None:
@@ -70,9 +77,22 @@ class DataModels:
         model = self.fixture_blueprint_model
         model.clear()
 
-        model.setHorizontalHeaderLabels(["name"])
-        for m in range(1, 3):
-            manufacturer_item = QStandardItem(f"Manufacturer {m}")
-            for f in range(1, 3):
-                manufacturer_item.appendRow(QStandardItem(f"Fixture {f}"))
-            model.appendRow(manufacturer_item)
+        blueprint_path = pathlib.Path(os.getenv("XDG_CONFIG_HOME", default=os.path.expanduser("~/.config")), "LightDrive", "fixture_blueprints")
+        blueprint_files = list(pathlib.Path(blueprint_path).rglob("*.json"))
+
+        for blueprint_file in blueprint_files:
+            with open(str(blueprint_file), "r") as file:
+                blueprint_data = json.load(file)
+
+            manufacturer_entries = model.findItems(blueprint_data["manufacturer"], Qt.MatchExactly, 0)
+            manufacturer_entry = None
+            if len(manufacturer_entries) > 0:
+                manufacturer_entry = manufacturer_entries[0]
+
+            if not manufacturer_entry:
+                manufacturer_item = QStandardItem(blueprint_data["manufacturer"])
+                model.appendRow(manufacturer_item)
+                manufacturer_entry = manufacturer_item
+
+            blueprint_item = QStandardItem(blueprint_data["name"])
+            manufacturer_entry.appendRow(blueprint_item)
