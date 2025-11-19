@@ -115,11 +115,45 @@ Popup {
             ComboBox {
                 id: universeCombo
                 model: universeModel
+                textRole: "display"
+                valueRole: "uuid"
                 anchors {
                     top: fixtureNameInfo.bottom
                     left: universeSelectorInfo.right
                     leftMargin: 10
                     right: parent.right
+                }
+
+                contentItem: Text {
+                    text: parent.displayText
+                    color: "white"
+                    font.pixelSize: 16
+                }
+
+                background: Rectangle {
+                    implicitWidth: parent.width
+                    color: "#636363"
+                }
+
+                delegate: ItemDelegate {
+                    width: parent.width
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#636363"
+
+                        Text {
+                            id: universeComboEntryLabel
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: model.display
+                            color: "white"
+                            font.pixelSize: 16
+                        }
+
+                        HoverHandler {
+                            onHoveredChanged: parent.color = hovered ? "#444444" : "#555555"
+                        }
+                    }
                 }
             }
 
