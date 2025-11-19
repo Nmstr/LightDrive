@@ -48,12 +48,15 @@ Popup {
 
             delegate: Rectangle {
                 implicitWidth: fixtureBlueprintTree.width
-                implicitHeight: 20
+                implicitHeight: 25
                 color: row === fixtureBlueprintTree.currentRow ? "#662677ed" : "#636363"
 
                 Text {
+                    anchors.verticalCenter: parent.verticalCenter
                     leftPadding: 10 + 20 * fixtureBlueprintTree.depth(model.index)
                     text: model.display
+                    color: "white"
+                    font.pointSize: 16
                 }
 
                 MouseArea {
@@ -87,7 +90,7 @@ Popup {
                 id: fixtureNameInfo
                 text: "Fixture Name:"
                 color: "white"
-                font.pointSize: 14
+                font.pointSize: 16
             }
 
             TextField {
@@ -99,6 +102,7 @@ Popup {
                 }
                 placeholderText: "Fixture Name"
                 color: "white"
+                font.pointSize: 16
                 background: Rectangle {
                     color: "#636363"
                 }
@@ -106,10 +110,10 @@ Popup {
 
             Text {
                 id: universeSelectorInfo
-                anchors.top: fixtureNameInfo.bottom
+                anchors.top: fixtureNameInput.bottom
                 text: "Universe:"
                 color: "white"
-                font.pointSize: 14
+                font.pointSize: 16
             }
 
             ComboBox {
@@ -118,10 +122,11 @@ Popup {
                 textRole: "display"
                 valueRole: "uuid"
                 anchors {
-                    top: fixtureNameInfo.bottom
+                    top: fixtureNameInput.bottom
                     left: universeSelectorInfo.right
                     leftMargin: 10
                     right: parent.right
+                    verticalCenter: universeSelectorInfo.verticalCenter
                 }
 
                 contentItem: Text {
@@ -162,7 +167,7 @@ Popup {
                 anchors.top: universeSelectorInfo.bottom
                 text: "Address:"
                 color: "white"
-                font.pointSize: 14
+                font.pointSize: 16
             }
 
             SpinBox {
