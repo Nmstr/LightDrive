@@ -10,7 +10,6 @@ class FixtureHandler(QObject):
 
     @Slot(str, str, int, str)
     def instantiate(self, name: str, universe_uuid: str, address: int, blueprint_path: str) -> None:
-        print(name, universe_uuid, address, blueprint_path)
         if not name or not universe_uuid or not address or not blueprint_path:
             return
 
