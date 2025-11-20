@@ -39,7 +39,6 @@ LightDrive is a lighting control system for dmx lights.
   - 🚧 Labels
   - 🚧 Clocks
   - ❌ Subdesks
-- ❌ Control Terminal (CLI for controlling lights)
 - 🚧 I/O
   - ❌ ArtNet Output
   - ❌ OLA Output
