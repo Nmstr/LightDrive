@@ -22,7 +22,7 @@ Rectangle {
 
             IconButton {
                 iconSource: "qrc:/icons/add.svg"
-                onClicked: console.log("Add")
+                onClicked: instantiateFixturePopup.open()
             }
             IconButton {
                 iconSource: "qrc:/icons/remove.svg"
@@ -53,5 +53,9 @@ Rectangle {
                 fixtureTree.expand(model.index);
             }
         }
+    }
+
+    InstantiateFixturePopup {
+        id: instantiateFixturePopup
     }
 }

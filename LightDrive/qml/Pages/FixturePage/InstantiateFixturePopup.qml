@@ -1,0 +1,246 @@
+import QtQuick
+import QtQuick.Controls
+
+Popup {
+    id: instantiateFixturePopup
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
+    width: parent.width - 150
+    height: parent.height - 150
+    padding: 0
+    dim: true
+    background: Rectangle {
+        color: "#4f4f4f"
+    }
+
+    Rectangle {
+        id: topper
+        implicitWidth: parent.width
+        height: 30
+        color: "#2677ed"
+        Text {
+            anchors.fill: parent
+            anchors.leftMargin: 10
+            anchors.topMargin: 5
+            text: "Instantiate Fixture"
+            font.pixelSize: 16
+            color: "white"
+        }
+    }
+
+    Row {
+        anchors {
+            top: topper.bottom
+            left: parent.left
+            right: parent.right
+            bottom: footer.bottom
+            margins: 10
+        }
+        spacing: 10
+
+        TreeView {
+            id: fixtureBlueprintTree
+            width: (parent.width - parent.spacing) / 2
+            height: parent.height
+            model: fixtureBlueprintModel
+            selectionModel: ItemSelectionModel {}
+            clip: true
+            property string selectedBlueprintPath
+
+            delegate: Rectangle {
+                implicitWidth: fixtureBlueprintTree.width
+                implicitHeight: 25
+                color: row === fixtureBlueprintTree.currentRow ? "#662677ed" : "#636363"
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    leftPadding: 10 + 20 * fixtureBlueprintTree.depth(model.index)
+                    text: model.display
+                    color: "white"
+                    font.pointSize: 16
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        let index = fixtureBlueprintTree.index(row, 0);
+                        fixtureBlueprintTree.selectionModel.setCurrentIndex(index, ItemSelectionModel.NoUpdate);
+                    }
+                    onDoubleClicked: {
+                        fixtureBlueprintTree.toggleExpanded(model.index);
+
+                        // Load selected fixture
+                        if (fixtureBlueprintTree.depth(model.index)) {
+                            fixtureBlueprintTree.selectedBlueprintPath = model.blueprint_path
+                            fixtureNameInput.text = model.display
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    fixtureBlueprintTree.expand(model.index);
+                }
+            }
+        }
+
+        Item {
+            width: (parent.width - parent.spacing) / 2
+            height: parent.height
+
+            Text {
+                id: fixtureNameInfo
+                text: "Fixture Name:"
+                color: "white"
+                font.pointSize: 16
+            }
+
+            TextField {
+                id: fixtureNameInput
+                anchors {
+                    left: fixtureNameInfo.right
+                    leftMargin: 10
+                    right: parent.right
+                }
+                placeholderText: "Fixture Name"
+                color: "white"
+                font.pointSize: 16
+                background: Rectangle {
+                    color: "#636363"
+                }
+            }
+
+            Text {
+                id: universeSelectorInfo
+                anchors.top: fixtureNameInput.bottom
+                text: "Universe:"
+                color: "white"
+                font.pointSize: 16
+            }
+
+            ComboBox {
+                id: universeCombo
+                model: universeModel
+                textRole: "display"
+                valueRole: "uuid"
+                anchors {
+                    top: fixtureNameInput.bottom
+                    left: universeSelectorInfo.right
+                    leftMargin: 10
+                    right: parent.right
+                    verticalCenter: universeSelectorInfo.verticalCenter
+                }
+
+                contentItem: Text {
+                    text: parent.displayText
+                    color: "white"
+                    font.pixelSize: 16
+                }
+
+                background: Rectangle {
+                    implicitWidth: parent.width
+                    color: "#636363"
+                }
+
+                delegate: ItemDelegate {
+                    width: parent.width
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#636363"
+
+                        Text {
+                            id: universeComboEntryLabel
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: model.display
+                            color: "white"
+                            font.pixelSize: 16
+                        }
+
+                        HoverHandler {
+                            onHoveredChanged: parent.color = hovered ? "#444444" : "#555555"
+                        }
+                    }
+                }
+            }
+
+            Text {
+                id: addressSelectorInfo
+                anchors.top: universeSelectorInfo.bottom
+                text: "Address:"
+                color: "white"
+                font.pointSize: 16
+            }
+
+            SpinBox {
+                id: addressSpin
+                anchors {
+                    top: universeSelectorInfo.bottom
+                    left: addressSelectorInfo.right
+                    leftMargin: 10
+                    right: parent.right
+                }
+                from: 1
+                to: 512
+                editable: true
+            }
+        }
+    }
+
+    Row {
+        id: footer
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            margins: 10
+        }
+        spacing: 10
+
+        Button {
+            id: instantiateButton
+            background: Rectangle {
+                color: instantiateButton.down ? "#434343" : "#636363"
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    width: parent.width; height: 2
+                    color: "#2677ed"
+                }
+            }
+            contentItem: Text {
+                text: "Instantiate"
+                color: "white"
+                font.pointSize: 14
+            }
+            onClicked: {
+                fixtureHandler.instantiate(fixtureNameInput.text, universeCombo.currentValue, addressSpin.value, fixtureBlueprintTree.selectedBlueprintPath)
+                cleanup();
+            }
+        }
+        Button {
+            id: cancelButton
+            background: Rectangle {
+                color: cancelButton.down ? "#434343" : "#636363"
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    width: parent.width; height: 2
+                    color: "#ff3030"
+                }
+            }
+            contentItem: Text {
+                text: "Cancel"
+                color: "white"
+                font.pointSize: 14
+            }
+            onClicked: {
+                cleanup()
+            }
+        }
+    }
+
+    function cleanup () {
+        fixtureNameInput.clear();
+        universeCombo.currentIndex = 0;
+        addressSpin.value = 1;
+        instantiateFixturePopup.close();
+    }
+}

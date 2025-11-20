@@ -1,5 +1,8 @@
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Qt, QByteArray
+import pathlib
+import json
+import os
 
 class DataModels:
     def __init__(self, root):
@@ -16,6 +19,12 @@ class DataModels:
             Qt.UserRole: QByteArray(b"uuid"),
         })
         self.build_universe_model()
+        self.fixture_blueprint_model = QStandardItemModel()
+        self.fixture_blueprint_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"blueprint_path"),
+        })
+        self.build_fixture_blueprint_model()
 
     def build_all(self) -> None:
         self.build_fixtures_model()
@@ -63,3 +72,28 @@ class DataModels:
             item.setData(universe.uuid, Qt.UserRole)
             model.appendRow(item)
         model.layoutChanged.emit()
+
+    def build_fixture_blueprint_model(self) -> None:
+        model = self.fixture_blueprint_model
+        model.clear()
+
+        blueprint_path = pathlib.Path(os.getenv("XDG_CONFIG_HOME", default=os.path.expanduser("~/.config")), "LightDrive", "fixture_blueprints")
+        blueprint_files = list(pathlib.Path(blueprint_path).rglob("*.json"))
+
+        for blueprint_file in blueprint_files:
+            with open(str(blueprint_file), "r") as file:
+                blueprint_data = json.load(file)
+
+            manufacturer_entries = model.findItems(blueprint_data["manufacturer"], Qt.MatchExactly, 0)
+            manufacturer_entry = None
+            if len(manufacturer_entries) > 0:
+                manufacturer_entry = manufacturer_entries[0]
+
+            if not manufacturer_entry:
+                manufacturer_item = QStandardItem(blueprint_data["manufacturer"])
+                model.appendRow(manufacturer_item)
+                manufacturer_entry = manufacturer_item
+
+            blueprint_item = QStandardItem(blueprint_data["name"])
+            blueprint_item.setData(str(blueprint_file), Qt.UserRole)
+            manufacturer_entry.appendRow(blueprint_item)
