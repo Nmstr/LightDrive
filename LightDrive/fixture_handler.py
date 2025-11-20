@@ -23,3 +23,4 @@ class FixtureHandler(QObject):
         fixture = Fixture(name=name, universe_uuid=universe_uuid, address=address,
                           type=blue_data.get("type", "unknown"), manufacturer=blue_data.get("manufacturer", "Unknown"), channels=channels)
         self.root.workspace.fixtures.append(fixture)
+        self.root.data_models.build_fixtures_model()
