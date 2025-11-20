@@ -36,11 +36,19 @@ class DataModels:
         model = self.fixtures_model
         model.clear()
 
-        model.setHorizontalHeaderLabels(["name"])
-        for u in range(1, 4):
-            universe_item = QStandardItem(f"Universe {u}")
-            for f in range(1, 4):
-                universe_item.appendRow(QStandardItem(f"Fixture {f}"))
+        universe_items = {}
+        for universe in self.root.workspace.universes:
+            universe_item = QStandardItem(universe.name)
+            universe_items[universe.uuid] = universe_item
+
+        for fixture in self.root.workspace.fixtures:
+            fixture_item = QStandardItem(fixture.name)
+
+            for universe_uuid, universe_item in universe_items.items():  # Append fixture to correct universe
+                if universe_uuid == fixture.universe_uuid:
+                    universe_item.appendRow(fixture_item)
+
+        for universe_item in universe_items.values():
             model.appendRow(universe_item)
 
     def build_snippet_model(self) -> None:

@@ -16,11 +16,11 @@ class Channel:
 @dataclass
 class Fixture:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
+    name: str
     universe_uuid: str  # UUID of the universe this fixture is a part of
-    position: int  # Position in the universe
+    address: int
 
     type: str
-    name: str
     manufacturer: str
     channels: list[Channel]
     description: str = field(default="")

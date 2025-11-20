@@ -17,8 +17,8 @@ LightDrive is a lighting control system for dmx lights.
 ✅ = Done, 🚧 = In Progress, ❌ = Not Started
 
 - 🚧 Fixtures
-  - ❌ Creation of custom fixtures
-  - ❌ Large selection of pre-defined fixtures
+  - ✅ Adding of fixtures
+  - 🚧 Creation of custom fixtures
   - ❌ ILDA laser Support
 - 🚧 Snippets
   - 🚧 Scenes
