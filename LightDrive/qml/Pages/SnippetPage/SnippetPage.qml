@@ -94,6 +94,7 @@ Rectangle {
             width: parent.width / 2
             height: parent.height
 
+            NoSnippet {}  // When no snippet is selected
             CueSnippet {}
             SceneSnippet {}
             SequenceSnippet {}
