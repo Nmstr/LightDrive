@@ -4,11 +4,12 @@ from PySide6.QtCore import QObject, Slot, Signal
 
 snippet_stack_mappings = {
     None: 0,
-    SceneSnippet: 1,
+    SceneSnippet: 2,
 }
 
 class SnippetHandler(QObject):
     openSnippet = Signal(int)  # noqa: N815
+    loadScene = Signal(str)  # noqa: N815
 
     def __init__(self, root):
         super().__init__()
@@ -32,3 +33,4 @@ class SnippetHandler(QObject):
             case SceneSnippet():
                 stack_index = snippet_stack_mappings.get(type(target))
                 self.openSnippet.emit(stack_index)
+                self.scene_subhandler.load(target)

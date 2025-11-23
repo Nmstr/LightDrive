@@ -11,3 +11,9 @@ class SceneSubhandler(QObject):
         self.root.workspace.snippets.append(SceneSnippet("Scene"))
         self.root.data_models.build_snippet_model()
 
+    def load(self, snippet: SceneSnippet) -> None:
+        if not snippet:
+            return
+
+        self.root.snippet_handler.loadScene.emit(snippet.name)
+

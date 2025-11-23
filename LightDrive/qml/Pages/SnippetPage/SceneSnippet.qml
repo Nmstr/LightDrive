@@ -24,8 +24,17 @@ Rectangle {
             }
 
             TextField {
-                placeholderText: "Snippet Name"
+                id: sceneNameInput
+                placeholderText: "Scene Name"
             }
+        }
+    }
+
+    Connections {
+        target: snippetHandler
+
+        function onLoadScene(name) {
+            sceneNameInput.text = name
         }
     }
 }
