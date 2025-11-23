@@ -55,14 +55,10 @@ class DataModels:
         model = self.snippet_model
         model.clear()
 
-        model.setHorizontalHeaderLabels(["Name"])
-        for s in range(1, 7):
-            snippet_item = QStandardItem(f"Snippet {s}")
-            if s == 3:
-                snippet_item.setText("Directory 1")
-                for ss in range(1, 4):
-                    snippet_item.appendRow(QStandardItem(f"Snippet {ss}"))
-            model.appendRow(snippet_item)
+        for snippet in self.root.workspace.snippets:
+            item = QStandardItem(snippet.name)
+            model.appendRow(item)
+        # TODO: implement snippet hierarchy
 
     def build_universe_list_model(self) -> None:
         model = self.universe_list_model  # Type: list[str]

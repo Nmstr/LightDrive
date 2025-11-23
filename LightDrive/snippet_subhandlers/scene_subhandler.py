@@ -9,4 +9,5 @@ class SceneSubhandler(QObject):
     @Slot()
     def add(self):
         self.root.workspace.snippets.append(SceneSnippet("Scene"))
+        self.root.data_models.build_snippet_model()
 
