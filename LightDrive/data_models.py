@@ -10,6 +10,10 @@ class DataModels:
         self.fixtures_model = QStandardItemModel()
         self.build_fixtures_model()
         self.snippet_model = QStandardItemModel()
+        self.snippet_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"uuid"),
+        })
         self.build_snippet_model()
         self.universe_list_model = []
         self.build_universe_list_model()
@@ -57,6 +61,7 @@ class DataModels:
 
         for snippet in self.root.workspace.snippets:
             item = QStandardItem(snippet.name)
+            item.setData(snippet.uuid, Qt.UserRole)
             model.appendRow(item)
         # TODO: implement snippet hierarchy
 

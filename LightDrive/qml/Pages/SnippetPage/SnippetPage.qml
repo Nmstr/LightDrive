@@ -83,6 +83,9 @@ Rectangle {
                 onClicked: {
                     snippetTree.toggleExpanded(model.index);
                 }
+                onDoubleClicked: {
+                    snippetHandler.open_snippet(model.uuid)
+                }
                 Component.onCompleted: {
                     snippetTree.expand(model.index);
                 }
@@ -104,6 +107,14 @@ Rectangle {
             DirectorySnippet {}
             SoundResourceSnippet {}
             ShowSnippet {}
+        }
+    }
+
+    Connections {
+        target: snippetHandler
+
+        function onOpenSnippet(stackIndex) {
+            snippetStack.currentIndex = stackIndex;
         }
     }
 }

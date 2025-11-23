@@ -3,7 +3,7 @@ name = "LightDrive"
 version = "0.0.0-dev"
 description = "Create Your Own Light Shows"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
     { name="Namester (Nmstr)", email="publicNamester@gmail.com" }
 ]
