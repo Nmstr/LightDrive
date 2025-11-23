@@ -1,3 +1,4 @@
+from data_structures import SceneSnippet
 from PySide6.QtCore import QObject, Slot
 
 class SceneSubhandler(QObject):
@@ -7,4 +8,5 @@ class SceneSubhandler(QObject):
 
     @Slot()
     def add(self):
-        print("add scene")
+        self.root.workspace.snippets.append(SceneSnippet("Scene"))
+
