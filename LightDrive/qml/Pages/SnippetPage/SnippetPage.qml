@@ -27,7 +27,7 @@ Rectangle {
             }
             IconButton {
                 iconSource: "qrc:/icons/scene.svg"
-                onClicked: console.log("Scene")
+                onClicked: snippetHandler.get_scene_subhandler().add()
             }
             IconButton {
                 iconSource: "qrc:/icons/sequence.svg"
