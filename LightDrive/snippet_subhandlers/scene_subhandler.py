@@ -15,5 +15,8 @@ class SceneSubhandler(QObject):
         if not snippet:
             return
 
-        self.root.snippet_handler.loadScene.emit(snippet.name)
+        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name)
 
+    @Slot(str, str)
+    def add_fixture(self, snippet_uuid: str, fixture_uuid: str) -> None:
+        print(snippet_uuid, fixture_uuid)

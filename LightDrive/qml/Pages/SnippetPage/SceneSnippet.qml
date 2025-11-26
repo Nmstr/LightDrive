@@ -4,7 +4,9 @@ import QtQuick.Layouts
 import Elements
 
 Rectangle {
+    id: sceneSnippetRoot
     color: "transparent"
+    property string sceneUuid
 
     Rectangle {
         id: configTopper
@@ -67,7 +69,7 @@ Rectangle {
                 TextIconButton {
                     iconSource: "qrc:/icons/add.svg"
                     labelText: "Add Fixture"
-                    onClicked: console.log("Add Fixture")
+                    onClicked: addFixturePopup.open();
                 }
                 TextIconButton {
                     iconSource: "qrc:/icons/remove.svg"
@@ -158,10 +160,97 @@ Rectangle {
         }
     }
 
+    Popup {
+        id: addFixturePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        width: parent.width - 150
+        height: parent.height - 150
+        padding: 0
+        dim: true
+        background: Rectangle {
+            color: "#4f4f4f"
+        }
+
+        Rectangle {
+            id: topper
+            implicitWidth: parent.width
+            height: 30
+            color: "#2677ed"
+            Text {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.topMargin: 5
+                text: "Add Fixture"
+                font.pixelSize: 16
+                color: "white"
+            }
+        }
+
+        TreeView {
+            id: fixtureTree
+            anchors {
+                top: topper.bottom
+                left: parent.left
+                right: parent.right
+                bottom: footer.top
+            }
+            model: fixturesModel
+            clip: true
+
+            delegate: TreeViewDelegate {
+                implicitWidth: fixtureTree.width
+                text: model.display
+                leftPadding: 30 + 20 * fixtureTree.depth(model.index)
+                onClicked: {
+                    fixtureTree.toggleExpanded(model.index);
+                }
+                onDoubleClicked: {
+                    if (fixtureTree.depth(model.index) === 1) {
+                        snippetHandler.get_scene_subhandler().add_fixture(sceneSnippetRoot.sceneUuid, model.uuid);
+                        addFixturePopup.close();
+                    }
+                }
+                Component.onCompleted: {
+                    fixtureTree.expand(model.index);
+                }
+            }
+        }
+
+        Row {
+            id: footer
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10
+            }
+            spacing: 10
+
+            Button {
+                id: cancelButton
+                background: Rectangle {
+                    color: cancelButton.down ? "#434343" : "#636363"
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        width: parent.width; height: 2
+                        color: "#ff3030"
+                    }
+                }
+                contentItem: Text {
+                    text: "Cancel"
+                    color: "white"
+                    font.pointSize: 14
+                }
+                onClicked: addFixturePopup.close();
+            }
+        }
+    }
+
     Connections {
         target: snippetHandler
 
-        function onLoadScene(name) {
+        function onLoadScene(uuid, name) {
+            sceneSnippetRoot.sceneUuid = uuid
             sceneNameInput.text = name
         }
     }

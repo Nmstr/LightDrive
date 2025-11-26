@@ -8,6 +8,10 @@ class DataModels:
     def __init__(self, root):
         self.root = root
         self.fixtures_model = QStandardItemModel()
+        self.fixtures_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"uuid"),
+        })
         self.build_fixtures_model()
         self.snippet_model = QStandardItemModel()
         self.snippet_model.setItemRoleNames({
@@ -47,6 +51,7 @@ class DataModels:
 
         for fixture in self.root.workspace.fixtures:
             fixture_item = QStandardItem(fixture.name)
+            fixture_item.setData(fixture.uuid, Qt.UserRole)
 
             for universe_uuid, universe_item in universe_items.items():  # Append fixture to correct universe
                 if universe_uuid == fixture.universe_uuid:
