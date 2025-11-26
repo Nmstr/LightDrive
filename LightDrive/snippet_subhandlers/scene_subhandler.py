@@ -32,6 +32,10 @@ class SceneSubhandler(QObject):
         else:
             return
 
+        for fixture_uuid, _ in snippet.channel_values.items():
+            if fixture_uuid == fixture.uuid:
+                return  # Fixture already added
+
         # Add fixture to scene
         snippet.channel_values[fixture.uuid] = []
         for channel in fixture.channels:
