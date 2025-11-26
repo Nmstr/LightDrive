@@ -1,4 +1,4 @@
-from data_structures import SceneSnippet
+from data_structures import SceneSnippet, SceneChannelEntry
 from PySide6.QtCore import QObject, Slot
 
 class SceneSubhandler(QObject):
@@ -19,4 +19,20 @@ class SceneSubhandler(QObject):
 
     @Slot(str, str)
     def add_fixture(self, snippet_uuid: str, fixture_uuid: str) -> None:
-        print(snippet_uuid, fixture_uuid)
+        for snippet in self.root.workspace.snippets:  # Get snippet
+            if snippet.uuid == snippet_uuid:
+                snippet = snippet
+                break
+        else:
+            return
+        for fixture in self.root.workspace.fixtures:  # Get fixture
+            if fixture.uuid == fixture_uuid:
+                fixture = fixture
+                break
+        else:
+            return
+
+        # Add fixture to scene
+        snippet.channel_values[fixture.uuid] = []
+        for channel in fixture.channels:
+            snippet.channel_values[fixture.uuid].append(SceneChannelEntry())
