@@ -102,12 +102,12 @@ Rectangle {
                     spacing: 100
 
                     TextIconButton {
-                        iconSource: "qrc:/icons/add.svg"
+                        iconSource: "qrc:/icons/copy.svg"
                         labelText: "Copy"
                         onClicked: console.log("Copy")
                     }
                     TextIconButton {
-                        iconSource: "qrc:/icons/remove.svg"
+                        iconSource: "qrc:/icons/paste.svg"
                         labelText: "Paste"
                         onClicked: console.log("Paste")
                     }
