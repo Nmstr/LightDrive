@@ -112,18 +112,6 @@ Rectangle {
                     }
                 }
 
-                ListModel {
-                    id: sceneContentModel
-                    ListElement {
-                        address: 1
-                    }
-                    ListElement {
-                        address: 2
-                    }
-                    ListElement {
-                        address: 3
-                    }
-                }
                 ListView {
                     anchors {
                         top: fixtureTabButtonRow.bottom
@@ -132,7 +120,7 @@ Rectangle {
                         bottom: parent.bottom
                     }
                     orientation: ListView.Horizontal
-                    model: sceneContentModel
+                    model: channelsModel
                     clip: true
                     spacing: 10
 
@@ -146,12 +134,14 @@ Rectangle {
                             CheckBox {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 id: channelCheckBox
+                                checkState: model.active
                             }
                             SpinBox {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 id: channelSpinBox
                                 from: 0
                                 to: 255
+                                value: model.value
                                 editable: true
                                 onValueModified: channelFader.value = value;
                             }
@@ -160,13 +150,14 @@ Rectangle {
                                 id: channelFader
                                 from: 0
                                 to: 255
+                                value: model.value
                                 orientation: Qt.Vertical
                                 onMoved: channelSpinBox.value = value;
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 id: channelAddress
-                                text: model.address
+                                text: index
                                 color: "white"
                             }
                         }
