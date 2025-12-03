@@ -64,6 +64,7 @@ Rectangle {
             id: sceneConfigTab
             color: "#444444"
             Row {
+                id: sceneConfigTabButtonRow
                 anchors {
                     top: parent.top
                     left: parent.left
@@ -81,6 +82,21 @@ Rectangle {
                     iconSource: "qrc:/icons/remove.svg"
                     labelText: "Remove Fixture"
                     onClicked: console.log("Remove Fixture")
+                }
+            }
+            ListView {
+                anchors {
+                    top: sceneConfigTabButtonRow.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    margins: 10
+                }
+                model: fixtureTabRepeater.model
+                delegate: Text {
+                    text: model.display
+                    color: "white"
+                    font.pixelSize: 20
                 }
             }
         }
