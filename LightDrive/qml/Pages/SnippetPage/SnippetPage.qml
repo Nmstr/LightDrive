@@ -27,7 +27,7 @@ Rectangle {
             }
             IconButton {
                 iconSource: "qrc:/icons/scene.svg"
-                onClicked: console.log("Scene")
+                onClicked: snippetHandler.get_scene_subhandler().add()
             }
             IconButton {
                 iconSource: "qrc:/icons/sequence.svg"
@@ -83,6 +83,9 @@ Rectangle {
                 onClicked: {
                     snippetTree.toggleExpanded(model.index);
                 }
+                onDoubleClicked: {
+                    snippetHandler.open_snippet(model.uuid)
+                }
                 Component.onCompleted: {
                     snippetTree.expand(model.index);
                 }
@@ -94,6 +97,7 @@ Rectangle {
             width: parent.width / 2
             height: parent.height
 
+            NoSnippet {}  // When no snippet is selected
             CueSnippet {}
             SceneSnippet {}
             SequenceSnippet {}
@@ -103,6 +107,14 @@ Rectangle {
             DirectorySnippet {}
             SoundResourceSnippet {}
             ShowSnippet {}
+        }
+    }
+
+    Connections {
+        target: snippetHandler
+
+        function onOpenSnippet(stackIndex) {
+            snippetStack.currentIndex = stackIndex;
         }
     }
 }

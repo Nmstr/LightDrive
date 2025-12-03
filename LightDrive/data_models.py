@@ -8,8 +8,16 @@ class DataModels:
     def __init__(self, root):
         self.root = root
         self.fixtures_model = QStandardItemModel()
+        self.fixtures_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"uuid"),
+        })
         self.build_fixtures_model()
         self.snippet_model = QStandardItemModel()
+        self.snippet_model.setItemRoleNames({
+            Qt.DisplayRole: QByteArray(b"display"),
+            Qt.UserRole: QByteArray(b"uuid"),
+        })
         self.build_snippet_model()
         self.universe_list_model = []
         self.build_universe_list_model()
@@ -43,6 +51,7 @@ class DataModels:
 
         for fixture in self.root.workspace.fixtures:
             fixture_item = QStandardItem(fixture.name)
+            fixture_item.setData(fixture.uuid, Qt.UserRole)
 
             for universe_uuid, universe_item in universe_items.items():  # Append fixture to correct universe
                 if universe_uuid == fixture.universe_uuid:
@@ -55,14 +64,11 @@ class DataModels:
         model = self.snippet_model
         model.clear()
 
-        model.setHorizontalHeaderLabels(["Name"])
-        for s in range(1, 7):
-            snippet_item = QStandardItem(f"Snippet {s}")
-            if s == 3:
-                snippet_item.setText("Directory 1")
-                for ss in range(1, 4):
-                    snippet_item.appendRow(QStandardItem(f"Snippet {ss}"))
-            model.appendRow(snippet_item)
+        for snippet in self.root.workspace.snippets:
+            item = QStandardItem(snippet.name)
+            item.setData(snippet.uuid, Qt.UserRole)
+            model.appendRow(item)
+        # TODO: implement snippet hierarchy
 
     def build_universe_list_model(self) -> None:
         model = self.universe_list_model  # Type: list[str]
