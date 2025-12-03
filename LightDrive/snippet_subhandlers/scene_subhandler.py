@@ -1,4 +1,5 @@
 from data_structures import SceneSnippet, SceneChannelEntry
+from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import QObject, Slot
 
 class SceneSubhandler(QObject):
@@ -15,7 +16,20 @@ class SceneSubhandler(QObject):
         if not snippet:
             return
 
-        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name)
+        channel_model = QStandardItemModel()
+        for fixture_uuid, channels in snippet.channel_values.items():
+            # Get fixture
+            for fixture in self.root.workspace.fixtures:
+                if fixture.uuid == fixture_uuid:
+                    fixture = fixture
+                    break
+            else:
+                return
+
+            fixture_item = QStandardItem(fixture.name)
+            channel_model.appendRow(fixture_item)
+
+        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name, channel_model)
 
     @Slot(str, str)
     def add_fixture(self, snippet_uuid: str, fixture_uuid: str) -> None:

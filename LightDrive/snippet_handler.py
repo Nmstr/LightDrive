@@ -9,7 +9,7 @@ snippet_stack_mappings = {
 
 class SnippetHandler(QObject):
     openSnippet = Signal(int)  # noqa: N815
-    loadScene = Signal(str, str)  # noqa: N815
+    loadScene = Signal(str, str, "QVariant")  # noqa: N815
 
     def __init__(self, root):
         super().__init__()

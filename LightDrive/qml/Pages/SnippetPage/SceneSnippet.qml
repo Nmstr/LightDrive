@@ -43,8 +43,13 @@ Rectangle {
         TabButton {
             text: "Scene Configuration"
         }
-        TabButton {
-            text: "Fixture 1"
+        Repeater {
+            id: sceneFixtureTabRepeater
+            model: undefined
+
+            TabButton {
+                text: model.display
+            }
         }
     }
 
@@ -78,81 +83,92 @@ Rectangle {
                 }
             }
         }
-        Rectangle {
-            id: fixtureTab
-            color: "#444444"
-            Row {
-                id: fixtureTabButtonRow
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                }
-                height: 40
-                spacing: 100
+        Repeater {
+            id: fixtureTabRepeater
+            model: undefined
 
-                TextIconButton {
-                    iconSource: "qrc:/icons/add.svg"
-                    labelText: "Copy"
-                    onClicked: console.log("Copy")
-                }
-                TextIconButton {
-                    iconSource: "qrc:/icons/remove.svg"
-                    labelText: "Paste"
-                    onClicked: console.log("Paste")
-                }
-            }
+            Rectangle {
+                id: fixtureTab
+                color: "#444444"
+                Row {
+                    id: fixtureTabButtonRow
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        right: parent.right
+                    }
+                    height: 40
+                    spacing: 100
 
-            ListModel {
-                id: sceneContentModel
-                ListElement {address: 1}
-                ListElement {address: 2}
-                ListElement {address: 3}
-            }
-            ListView {
-                anchors {
-                    top: fixtureTabButtonRow.bottom
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
+                    TextIconButton {
+                        iconSource: "qrc:/icons/add.svg"
+                        labelText: "Copy"
+                        onClicked: console.log("Copy")
+                    }
+                    TextIconButton {
+                        iconSource: "qrc:/icons/remove.svg"
+                        labelText: "Paste"
+                        onClicked: console.log("Paste")
+                    }
                 }
-                orientation: ListView.Horizontal
-                model: sceneContentModel
-                clip: true
-                spacing: 10
 
-                delegate: Rectangle {
-                    implicitWidth: channelColumn.width
-                    implicitHeight: channelColumn.height
-                    color: "transparent"
+                ListModel {
+                    id: sceneContentModel
+                    ListElement {
+                        address: 1
+                    }
+                    ListElement {
+                        address: 2
+                    }
+                    ListElement {
+                        address: 3
+                    }
+                }
+                ListView {
+                    anchors {
+                        top: fixtureTabButtonRow.bottom
+                        left: parent.left
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    orientation: ListView.Horizontal
+                    model: sceneContentModel
+                    clip: true
+                    spacing: 10
 
-                    Column {
-                        id: channelColumn
-                        CheckBox {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            id: channelCheckBox
-                        }
-                        SpinBox {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            id: channelSpinBox
-                            from: 0
-                            to: 255
-                            editable: true
-                            onValueModified: channelFader.value = value;
-                        }
-                        Slider {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            id: channelFader
-                            from: 0
-                            to: 255
-                            orientation: Qt.Vertical
-                            onMoved: channelSpinBox.value = value;
-                        }
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            id: channelAddress
-                            text: model.address
-                            color: "white"
+                    delegate: Rectangle {
+                        implicitWidth: channelColumn.width
+                        implicitHeight: channelColumn.height
+                        color: "transparent"
+
+                        Column {
+                            id: channelColumn
+                            CheckBox {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                id: channelCheckBox
+                            }
+                            SpinBox {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                id: channelSpinBox
+                                from: 0
+                                to: 255
+                                editable: true
+                                onValueModified: channelFader.value = value;
+                            }
+                            Slider {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                id: channelFader
+                                from: 0
+                                to: 255
+                                orientation: Qt.Vertical
+                                onMoved: channelSpinBox.value = value;
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                id: channelAddress
+                                text: model.address
+                                color: "white"
+                            }
                         }
                     }
                 }
@@ -249,9 +265,11 @@ Rectangle {
     Connections {
         target: snippetHandler
 
-        function onLoadScene(uuid, name) {
-            sceneSnippetRoot.sceneUuid = uuid
-            sceneNameInput.text = name
+        function onLoadScene(uuid, name, channelModel) {
+            sceneSnippetRoot.sceneUuid = uuid;
+            sceneNameInput.text = name;
+            fixtureTabRepeater.model = channelModel;
+            sceneFixtureTabRepeater.model = channelModel;
         }
     }
 }
