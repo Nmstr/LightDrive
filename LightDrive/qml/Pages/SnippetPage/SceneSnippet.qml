@@ -89,6 +89,7 @@ Rectangle {
 
             Rectangle {
                 id: fixtureTab
+                property string fixtureUuid: model.uuid
                 color: "#444444"
                 Row {
                     id: fixtureTabButtonRow
@@ -135,6 +136,7 @@ Rectangle {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 id: channelCheckBox
                                 checkState: model.active
+                                onToggled: snippetHandler.get_scene_subhandler().set_active(sceneUuid, fixtureUuid, index, checkState)
                             }
                             SpinBox {
                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -142,6 +144,7 @@ Rectangle {
                                 from: 0
                                 to: 255
                                 value: model.value
+                                enabled: channelCheckBox.checkState
                                 editable: true
                                 onValueModified: channelFader.value = value;
                             }
@@ -151,6 +154,7 @@ Rectangle {
                                 from: 0
                                 to: 255
                                 value: model.value
+                                enabled: channelCheckBox.checkState
                                 orientation: Qt.Vertical
                                 onMoved: channelSpinBox.value = value;
                             }

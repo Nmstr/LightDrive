@@ -91,3 +91,21 @@ class SceneSubhandler(QObject):
         snippet.channel_values[fixture.uuid] = []
         for channel in fixture.channels:
             snippet.channel_values[fixture.uuid].append(SceneChannelEntry())
+
+    @Slot(str, str, int, bool)
+    def set_active(self, scene_uuid: str, fixture_uuid: str, channel: int, active: bool) -> None:
+        for snippet in self.root.workspace.snippets:  # Find scene
+            if snippet.uuid == scene_uuid:
+                scene = snippet
+                break
+        else:
+            return
+
+        channels = scene.channel_values.get(fixture_uuid, None)
+        if not channels:
+            return
+        channel_data = channels[channel] if len(channels) > channel else None
+        if not channel_data:
+            return
+
+        channel_data.active = active
