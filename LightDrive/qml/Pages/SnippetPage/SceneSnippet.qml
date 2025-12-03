@@ -31,6 +31,7 @@ Rectangle {
             TextField {
                 id: sceneNameInput
                 placeholderText: "Scene Name"
+                onEditingFinished: snippetHandler.set_snippet_name(sceneUuid, text)
             }
         }
     }

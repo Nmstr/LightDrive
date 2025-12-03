@@ -34,3 +34,11 @@ class SnippetHandler(QObject):
                 stack_index = snippet_stack_mappings.get(type(target))
                 self.openSnippet.emit(stack_index)
                 self.scene_subhandler.load(target)
+
+    @Slot(str, str)
+    def set_snippet_name(self, snippet_uuid: str, name: str) -> None:
+        for snippet in self.root.workspace.snippets:
+            if snippet.uuid == snippet_uuid:
+                snippet.name = name
+                self.root.data_models.build_snippet_model()
+                break
