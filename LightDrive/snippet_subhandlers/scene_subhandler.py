@@ -109,3 +109,21 @@ class SceneSubhandler(QObject):
             return
 
         channel_data.active = active
+
+    @Slot(str, str, int, int)
+    def set_value(self, scene_uuid: str, fixture_uuid: str, channel: int, value: int) -> None:
+        for snippet in self.root.workspace.snippets:
+            if snippet.uuid == scene_uuid:  # Find scene
+                scene = snippet
+                break
+        else:
+            return
+
+        channels = scene.channel_values.get(fixture_uuid, None)
+        if not channels:
+            return
+        channel_data = channels[channel] if len(channels) > channel else None
+        if not channel_data:
+            return
+
+        channel_data.value = value

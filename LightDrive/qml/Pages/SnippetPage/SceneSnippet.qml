@@ -146,7 +146,10 @@ Rectangle {
                                 value: model.value
                                 enabled: channelCheckBox.checkState
                                 editable: true
-                                onValueModified: channelFader.value = value;
+                                onValueModified: {
+                                    channelFader.value = value;
+                                    snippetHandler.get_scene_subhandler().set_value(sceneUuid, fixtureUuid, index, value)
+                                }
                             }
                             Slider {
                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -156,7 +159,10 @@ Rectangle {
                                 value: model.value
                                 enabled: channelCheckBox.checkState
                                 orientation: Qt.Vertical
-                                onMoved: channelSpinBox.value = value;
+                                onMoved: {
+                                    channelSpinBox.value = value;
+                                    snippetHandler.get_scene_subhandler().set_value(sceneUuid, fixtureUuid, index, value)
+                                }
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
