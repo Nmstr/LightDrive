@@ -1,5 +1,5 @@
 from snippet_subhandlers import scene_subhandler, sequence_subhandler
-from data_structures import SceneSnippet, SequenceSnippet
+from data_structures import GenericSnippet, SceneSnippet, SequenceSnippet
 from PySide6.QtCore import QObject, Slot, Signal
 
 snippet_stack_mappings = {
@@ -17,7 +17,7 @@ class SnippetHandler(QObject):
         super().__init__()
         self.root = root
         self.scene_subhandler = scene_subhandler.SceneSubhandler(self.root)
-        self.sequence_subhandler = sequence_subhandler.SequenceSubhandler(self.root)
+        self.sequence_subhandler = sequence_subhandler.SequenceSubhandler(self.root, self)
 
     @Slot(result=QObject)
     def get_scene_subhandler(self) -> scene_subhandler.SceneSubhandler:
@@ -26,6 +26,12 @@ class SnippetHandler(QObject):
     @Slot(result=QObject)
     def get_sequence_subhandler(self) -> sequence_subhandler.SequenceSubhandler:
         return self.sequence_subhandler
+
+    def get_snippet(self, snippet_uuid: str) -> GenericSnippet | None:
+        for snippet in self.root.workspace.snippets:
+            if snippet.uuid == snippet_uuid:
+                return snippet
+        return None
 
     @Slot(str)
     def open_snippet(self, uuid: str) -> None:

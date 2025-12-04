@@ -43,7 +43,7 @@ Rectangle {
                 TextIconButton {
                     iconSource: "qrc:/icons/add.svg"
                     labelText: "Add Scene"
-                    onClicked: console.log("add scene")
+                    onClicked: addScenePopup.open();
                 }
                 TextIconButton {
                     iconSource: "qrc:/icons/remove.svg"
@@ -78,6 +78,90 @@ Rectangle {
         function onLoadSequence(uuid, name, sequenceModel) {
             sequenceNameInput.text = name
             sequenceSnippetRoot.sequenceUuid = uuid
+        }
+    }
+
+    Popup {
+        id: addScenePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        width: parent.width - 150
+        height: parent.height - 150
+        padding: 0
+        dim: true
+        background: Rectangle {
+            color: "#4f4f4f"
+        }
+
+        Rectangle {
+            id: popupTopper
+            implicitWidth: parent.width
+            height: 30
+            color: "#2677ed"
+            Text {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.topMargin: 5
+                text: "Add Scene"
+                font.pixelSize: 16
+                color: "white"
+            }
+        }
+
+        TreeView {
+            id: snippetTree
+            anchors {
+                top: popupTopper.bottom
+                left: parent.left
+                right: parent.right
+                bottom: footer.top
+            }
+            model: snippetModel
+            clip: true
+
+            delegate: TreeViewDelegate {
+                implicitWidth: snippetTree.width
+                text: model.display
+                leftPadding: 30 + 20 * snippetTree.depth(model.index)
+                onClicked: {
+                    snippetTree.toggleExpanded(model.index);
+                }
+                onDoubleClicked: {
+                    snippetHandler.get_sequence_subhandler().add_scene(sequenceSnippetRoot.sequenceUuid, model.uuid);
+                    addScenePopup.close();
+                }
+            }
+            Component.onCompleted: {
+                snippetTree.expand(model.index);
+            }
+        }
+
+        Row {
+            id: footer
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10
+            }
+            spacing: 10
+
+            Button {
+                id: cancelButton
+                background: Rectangle {
+                    color: cancelButton.down ? "#434343" : "#636363"
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        width: parent.width; height: 2
+                        color: "#ff3030"
+                    }
+                }
+                contentItem: Text {
+                    text: "Cancel"
+                    color: "white"
+                    font.pointSize: 14
+                }
+                onClicked: addScenePopup.close();
+            }
         }
     }
 }
