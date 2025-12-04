@@ -30,8 +30,8 @@ class ChannelModel(QAbstractListModel):
         }
 
 class SceneSubhandler(QObject):
-    def __init__(self, root):
-        super().__init__()
+    def __init__(self, root, parent):
+        super().__init__(parent)
         self.root = root
 
     @Slot()
