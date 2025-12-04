@@ -64,12 +64,21 @@ Rectangle {
         }
         model: undefined
 
+        header: Rectangle {
+            width: parent.width
+            height: childrenRect.height
+
+            Text {
+                text: "Scene Name\tFade In\tDuration\tFade Out"
+            }
+        }
+
         delegate: Rectangle {
             width: parent.width
             height: childrenRect.height
 
             Text {
-                text: model.display
+                text: model.display + "\t" + model.fadeIn + "ms\t" + model.duration + "ms\t" + model.fadeOut + "ms"
             }
         }
     }
