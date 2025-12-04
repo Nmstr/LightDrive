@@ -16,7 +16,7 @@ class SnippetHandler(QObject):
     def __init__(self, root):
         super().__init__()
         self.root = root
-        self.scene_subhandler = scene_subhandler.SceneSubhandler(self.root)
+        self.scene_subhandler = scene_subhandler.SceneSubhandler(self.root, self)
         self.sequence_subhandler = sequence_subhandler.SequenceSubhandler(self.root, self)
 
     @Slot(result=QObject)

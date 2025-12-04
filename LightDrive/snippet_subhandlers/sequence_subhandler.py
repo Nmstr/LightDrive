@@ -4,7 +4,7 @@ from PySide6.QtCore import QObject, Slot, Qt, QByteArray
 
 class SequenceSubhandler(QObject):
     def __init__(self, root, snippet_handler):
-        super().__init__()
+        super().__init__(snippet_handler)
         self.root = root
         self.snippet_handler = snippet_handler
 
