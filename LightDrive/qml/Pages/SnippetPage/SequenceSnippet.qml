@@ -55,19 +55,21 @@ Rectangle {
     }
 
     ListView {
+        id: sequenceSceneEntryListView
         anchors {
             top: topper.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
         }
-        model: 5
+        model: undefined
+
         delegate: Rectangle {
             width: parent.width
             height: childrenRect.height
 
             Text {
-                text: "Scene " + index
+                text: model.display
             }
         }
     }
@@ -76,8 +78,11 @@ Rectangle {
         target: snippetHandler
 
         function onLoadSequence(uuid, name, sequenceModel) {
-            sequenceNameInput.text = name
-            sequenceSnippetRoot.sequenceUuid = uuid
+            sequenceNameInput.text = name;
+            sequenceSnippetRoot.sequenceUuid = uuid;
+            sequenceSceneEntryListView.model = undefined;  // This is required for the ListView the recognize a change in the model.
+                                                           // For some reason this is only _sometimes_ required... weird.
+            sequenceSceneEntryListView.model = sequenceModel;
         }
     }
 
