@@ -31,7 +31,7 @@ Rectangle {
             }
             IconButton {
                 iconSource: "qrc:/icons/sequence.svg"
-                onClicked: console.log("Sequence")
+                onClicked: snippetHandler.get_sequence_subhandler().add()
             }
             IconButton {
                 iconSource: "qrc:/icons/efx_2d.svg"

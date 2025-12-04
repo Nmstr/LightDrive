@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Controls
 
 Rectangle {
+    id: sequenceSnippetRoot
     color: "transparent"
+    property string sequenceUuid
 
     Rectangle {
         anchors {
@@ -24,8 +26,18 @@ Rectangle {
             }
 
             TextField {
-                placeholderText: "Snippet Name"
+                id: sequenceNameInput
+                placeholderText: "Sequence Name"
             }
+        }
+    }
+
+    Connections {
+        target: snippetHandler
+
+        function onLoadSequence(uuid, name, sequenceModel) {
+            sequenceNameInput.text = name
+            sequenceSnippetRoot.sequenceUuid = uuid
         }
     }
 }
