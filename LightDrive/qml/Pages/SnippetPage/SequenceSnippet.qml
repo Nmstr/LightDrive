@@ -35,6 +35,7 @@ Rectangle {
                 TextField {
                     id: sequenceNameInput
                     placeholderText: "Sequence Name"
+                    onEditingFinished: snippetHandler.set_snippet_name(sequenceUuid, text)
                 }
             }
             Row {
