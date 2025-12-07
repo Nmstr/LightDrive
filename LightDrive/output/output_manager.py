@@ -24,7 +24,13 @@ class OutputManager:
                 self.universes.remove(universe)
 
     def add_snippet(self, universe_uuid: str, priority: int, snippet: GenericOutputSnippet) -> None:
-        pass
+        for universe in self.universes:
+            if universe.uuid == universe_uuid:
+                universe.add_snippet(priority, snippet)
+                break
 
     def remove_snippet(self, universe_uuid: str, snippet: GenericOutputSnippet) -> None:
-        pass
+        for universe in self.universes:
+            if universe.uuid == universe_uuid:
+                universe.remove_snippet(snippet)
+                break
