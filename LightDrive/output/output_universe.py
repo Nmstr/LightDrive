@@ -20,7 +20,25 @@ class OutputUniverse:
         """
         Sends data from the snippets to all output backends.
         """
-        pass
+        done_queue = queue.PriorityQueue()
+        values = [0] * 256
+
+        # Build the output list
+        while not self.snippet_queue.empty():
+            priority, snippet = self.snippet_queue.get()
+
+            if snippet in self.pending_removal_snippets:  # Remove snippet
+                self.pending_removal_snippets.remove(snippet)
+                continue
+
+            done_queue.put((priority, snippet))
+            for channel, value in snippet.get_values().items():
+                values[channel] = value
+        self.snippet_queue = done_queue
+
+        # Send output list to output backends
+        for backend in self.output_backends:
+            backend.set_values(values)
 
     @property
     def uuid(self) -> str:

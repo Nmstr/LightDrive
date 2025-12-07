@@ -7,8 +7,7 @@ class SceneOutputSnippet(GenericOutputSnippet):
         super().__init__(root)
 
     def get_values(self) -> dict[int, int]:
-        values = dict.fromkeys(range(256), 0)
-
+        values = {}
         for fixture_uuid, channels in self.scene_data.channel_values.items():
             fixture = self._get_fixture(fixture_uuid)
             for i, channel in enumerate(channels):
