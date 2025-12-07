@@ -23,10 +23,10 @@ class OutputManager:
             if universe.uuid not in [universe.uuid for universe in self.root.workspace.universes]:
                 self.universes.remove(universe)
 
-    def add_snippet(self, universe_uuid: str, priority: int, snippet: GenericOutputSnippet) -> None:
+    def add_snippet(self, universe_uuid: str, snippet: GenericOutputSnippet) -> None:
         for universe in self.universes:
             if universe.uuid == universe_uuid:
-                universe.add_snippet(priority, snippet)
+                universe.add_snippet(snippet)
                 break
 
     def remove_snippet(self, universe_uuid: str, snippet: GenericOutputSnippet) -> None:

@@ -10,8 +10,8 @@ class OutputUniverse:
         self.pending_removal_snippets: list[GenericOutputSnippet] = []
         self.output_backends: list[GenericOutputBackend] = []
 
-    def add_snippet(self, priority: int, snippet: GenericOutputSnippet) -> None:
-        self.snippet_queue.put((priority, snippet))
+    def add_snippet(self, snippet: GenericOutputSnippet) -> None:
+        self.snippet_queue.put(snippet)
 
     def remove_snippet(self, snippet: GenericOutputSnippet) -> None:
         self.pending_removal_snippets.append(snippet)
@@ -25,13 +25,13 @@ class OutputUniverse:
 
         # Build the output list
         while not self.snippet_queue.empty():
-            priority, snippet = self.snippet_queue.get()
+            snippet = self.snippet_queue.get()
 
             if snippet in self.pending_removal_snippets:  # Remove snippet
                 self.pending_removal_snippets.remove(snippet)
                 continue
 
-            done_queue.put((priority, snippet))
+            done_queue.put(snippet)
             for channel, value in snippet.get_values().items():
                 values[channel] = value
         self.snippet_queue = done_queue

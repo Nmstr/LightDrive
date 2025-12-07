@@ -2,9 +2,9 @@ from data_structures import SceneSnippet
 from output.output_snippets.generic_output_snippet import GenericOutputSnippet
 
 class SceneOutputSnippet(GenericOutputSnippet):
-    def __init__(self, root, scene_data: SceneSnippet) -> None:
+    def __init__(self, root, priority: int, scene_data: SceneSnippet) -> None:
         self.scene_data = scene_data
-        super().__init__(root)
+        super().__init__(root, priority)
 
     def get_values(self) -> dict[int, int]:
         values = {}
