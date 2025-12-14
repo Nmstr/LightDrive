@@ -1,4 +1,4 @@
-from output.output_backends.generic_output_backend import GenericOutputBackend#
+from output.output_backends.generic_output_backend import GenericOutputBackend
 import threading
 import socket
 import json
