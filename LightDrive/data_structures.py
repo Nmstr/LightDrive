@@ -2,9 +2,15 @@ from dataclasses import dataclass, field
 import uuid
 
 @dataclass
+class UniverseTcpBackend:
+    target_ip: str = field(default="localhost", init=False)
+    port: int = field(default=8080, init=False)
+
+@dataclass
 class Universe:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
     name: str
+    backends: list = field(default_factory=list, init=False)
 
 
 @dataclass
