@@ -40,7 +40,8 @@ Rectangle {
                 icon.source: "qrc:/icons/direct_snippet_output.svg"
                 checkable: true
                 onToggled: {
-                    console.log("Show " +  outputButton.checked);<
+                    console.log("Show " +  outputButton.checked);
+                    snippetHandler.get_scene_subhandler().output_scene(sceneUuid);
                 }
             }
         }

@@ -18,6 +18,7 @@ class SnippetHandler(QObject):
         self.root = root
         self.scene_subhandler = scene_subhandler.SceneSubhandler(self.root, self)
         self.sequence_subhandler = sequence_subhandler.SequenceSubhandler(self.root, self)
+        self.output_snippets = {}  # { snippet_uuid: output_snippet }
 
     @Slot(result=QObject)
     def get_scene_subhandler(self) -> scene_subhandler.SceneSubhandler:
