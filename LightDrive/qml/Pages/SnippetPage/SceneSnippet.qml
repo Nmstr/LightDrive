@@ -33,6 +33,16 @@ Rectangle {
                 placeholderText: "Scene Name"
                 onEditingFinished: snippetHandler.set_snippet_name(sceneUuid, text)
             }
+
+            Button {
+                id: outputButton
+                text: "Show"
+                icon.source: "qrc:/icons/direct_snippet_output.svg"
+                checkable: true
+                onToggled: {
+                    console.log("Show " +  outputButton.checked);<
+                }
+            }
         }
     }
 

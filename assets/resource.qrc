@@ -53,6 +53,11 @@
         <file alias="sound_resource.svg">icons/sound_resource.svg</file>
     </qresource>
 
+    <!-- Snippet Specific Icons -->
+    <qresource prefix="/icons">
+        <file alias="direct_snippet_output.svg">icons/direct_snippet_output.svg</file>
+    </qresource>
+
     <!-- Scene Specific Icons -->
     <qresource prefix="/icons">
         <file alias="copy.svg">icons/copy.svg</file>
