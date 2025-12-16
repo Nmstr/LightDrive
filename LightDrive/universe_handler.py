@@ -62,6 +62,7 @@ class UniverseHandler(QObject):
         universe_data.tcp_backend.target_ip = target_ip
         universe_data.tcp_backend.port = port
         universe_data.tcp_backend.hz = hz
+        self.root.output_manager.build_output_universes()
 
     @Slot(str, result=list)  # See reason for type above
     def get_tcp_backend_configuration(self, universe_uuid: str) -> list:

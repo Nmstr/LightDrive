@@ -19,9 +19,12 @@ class OutputManager:
         """
         Create the output universes as required.
         """
+        for universe in self.universes:  # Update all backends of all existing universes
+            universe.update_backends()
+
         for universe in self.root.workspace.universes:  # Add all universes
             if universe.uuid in [universe.uuid for universe in self.universes]:
-                continue  # Universe already exists (here we don't force rebuild to preserve running snippets)
+                continue  # Universe already exists
 
             # Add the universe
             output_universe = OutputUniverse(universe)
