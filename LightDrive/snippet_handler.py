@@ -28,6 +28,15 @@ class SnippetHandler(QObject):
     def get_sequence_subhandler(self) -> sequence_subhandler.SequenceSubhandler:
         return self.sequence_subhandler
 
+    @Slot(str)
+    def remove_output_snippet(self, snippet_uuid: str) -> None:
+        output_snippet = self.output_snippets.get(snippet_uuid)
+        if not output_snippet:
+            return
+        self.root.output_manager.remove_snippet(output_snippet)
+        self.output_snippets.pop(snippet_uuid)
+        self.root.output_manager.tick_output()
+
     def get_snippet(self, snippet_uuid: str) -> GenericSnippet | None:
         for snippet in self.root.workspace.snippets:
             if snippet.uuid == snippet_uuid:
