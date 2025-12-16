@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 Popup {
+    property string currentUuid;
     id: configureUniversePopup
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
@@ -101,6 +102,7 @@ Popup {
                 font.pointSize: 14
             }
             onClicked: {
+                universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text)
                 cleanup();
             }
         }
@@ -126,8 +128,10 @@ Popup {
     }
 
     function cleanup () {
-        tcpTargetIpInput.text = "127.0.0.1"
-        tcpPortInput.text = "7500"
+        tcpTargetIpInput.text = "127.0.0.1";
+        tcpPortInput.text = "7500";
+        tcpBackendCheckbox.checkState = false;
+        currentUuid = "";
         configureUniversePopup.close();
     }
 }

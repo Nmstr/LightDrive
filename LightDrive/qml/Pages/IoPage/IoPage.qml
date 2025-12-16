@@ -82,6 +82,7 @@ Rectangle {
                     universeList.curIndex = model.index;
                 }
                 onDoubleClicked: {
+                    configureUniversePopup.currentUuid = model.uuid;
                     configureUniversePopup.open();
                 }
             }

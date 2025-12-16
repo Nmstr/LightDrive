@@ -2,9 +2,13 @@ from dataclasses import dataclass, field
 import uuid
 
 @dataclass
-class UniverseTcpBackend:
-    target_ip: str = field(default="localhost", init=False)
-    port: int = field(default=8080, init=False)
+class UniverseGenericBackend:
+    enabled: bool = field(default=False, init=False)
+
+@dataclass
+class UniverseTcpBackend(UniverseGenericBackend):
+    target_ip: str = field(default="127.0.0.1", init=False)
+    port: int = field(default=7500, init=False)
 
 @dataclass
 class Universe:
