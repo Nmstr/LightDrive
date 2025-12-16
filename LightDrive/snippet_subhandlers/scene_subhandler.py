@@ -88,7 +88,6 @@ class SceneSubhandler(QObject):
         output_snippet = SceneOutputSnippet(self.root, 0, scene)
         self.root.snippet_handler.output_snippets[scene_uuid] = output_snippet
         self.root.output_manager.add_snippet(output_snippet)
-        self.root.output_manager.tick_output()
 
     @Slot(str, str)
     def add_fixture(self, snippet_uuid: str, fixture_uuid: str) -> None:

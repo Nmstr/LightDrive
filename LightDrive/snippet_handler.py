@@ -35,7 +35,6 @@ class SnippetHandler(QObject):
             return
         self.root.output_manager.remove_snippet(output_snippet)
         self.output_snippets.pop(snippet_uuid)
-        self.root.output_manager.tick_output()
 
     def get_snippet(self, snippet_uuid: str) -> GenericSnippet | None:
         for snippet in self.root.workspace.snippets:
