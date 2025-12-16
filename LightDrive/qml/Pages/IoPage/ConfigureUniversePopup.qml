@@ -127,10 +127,18 @@ Popup {
         }
     }
 
-    function cleanup () {
+    function loadData(universeUuid) {
+        currentUuid = universeUuid;
+        let tcpBackendData = universeHandler.get_tcp_backend_configuration(currentUuid);
+        tcpBackendCheckbox.checkState = tcpBackendData[0];
+        tcpTargetIpInput.text = tcpBackendData[1];
+        tcpPortInput.text = tcpBackendData[2];
+    }
+
+    function cleanup() {
+        tcpBackendCheckbox.checkState = false;
         tcpTargetIpInput.text = "127.0.0.1";
         tcpPortInput.text = "7500";
-        tcpBackendCheckbox.checkState = false;
         currentUuid = "";
         configureUniversePopup.close();
     }

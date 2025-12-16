@@ -37,3 +37,13 @@ class UniverseHandler(QObject):
         universe_data.tcp_backend.enabled = enabled
         universe_data.tcp_backend.target_ip = target_ip
         universe_data.tcp_backend.port = port
+
+    @Slot(str, result=list)  # Return is a list instead of tuple because of qml types
+    def get_tcp_backend_configuration(self, universe_uuid: str) -> list:
+        if not universe_uuid:
+            return []
+        for universe in self.root.workspace.universes:
+            if universe.uuid == universe_uuid:
+                return [universe.tcp_backend.enabled, universe.tcp_backend.target_ip, universe.tcp_backend.port]
+        else:
+            return []
