@@ -23,7 +23,7 @@ class UniverseHandler(QObject):
                 break
         self.root.data_models.build_universe_model()
 
-    @Slot(str, str, bool)
+    @Slot(str, str, int)
     def configure_universe(self, universe_uuid: str, name: str, hz: int) -> None:
         if not universe_uuid:
             return
