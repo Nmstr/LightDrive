@@ -14,6 +14,7 @@ class UniverseTcpBackend(UniverseGenericBackend):
 class Universe:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
     name: str
+    hz: int = field(default=30, init=False)
     tcp_backend: UniverseTcpBackend = field(default_factory=UniverseTcpBackend, init=False)
 
 

@@ -129,6 +129,8 @@ Popup {
 
     function loadData(universeUuid) {
         currentUuid = universeUuid;
+        let universeData = universeHandler.get_universe_configuration(currentUuid);
+        console.log(universeData)
         let tcpBackendData = universeHandler.get_tcp_backend_configuration(currentUuid);
         tcpBackendCheckbox.checkState = tcpBackendData[0];
         tcpTargetIpInput.text = tcpBackendData[1];
