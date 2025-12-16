@@ -16,6 +16,7 @@ class OutputManager:
 
             # Add the universe
             output_universe = OutputUniverse(universe)
+            output_universe.build_backends()
             self.universes.append(output_universe)
 
         # Remove universes that don't exist anymore
