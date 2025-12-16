@@ -12,7 +12,8 @@ class OutputUniverse:
         if self._universe_data.tcp_backend.enabled:
             target_ip = self._universe_data.tcp_backend.target_ip
             port = self._universe_data.tcp_backend.port
-            tcp_backend = TcpBackend(target_ip, port)
+            hz = self._universe_data.tcp_backend.hz
+            tcp_backend = TcpBackend(target_ip, port, hz)
             self.output_backends.append(tcp_backend)
 
     def tick_output(self, values: list[int]) -> None:
