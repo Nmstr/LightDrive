@@ -163,6 +163,8 @@ Popup {
     }
 
     function cleanup() {
+        universeNameInput.text = "";
+        universeHzSpin.value = 30;
         tcpBackendCheckbox.checkState = false;
         tcpTargetIpInput.text = "127.0.0.1";
         tcpPortInput.text = "7500";
