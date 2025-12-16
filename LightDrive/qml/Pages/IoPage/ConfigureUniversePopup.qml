@@ -52,17 +52,6 @@ Popup {
                 placeholderText: "Universe Name"
                 text: ""
             }
-            Text {
-                text: "Hz:"
-                color: "white"
-            }
-            SpinBox {
-                id: universeHzSpin
-                from: 0
-                to: 1000
-                stepSize: 1
-                editable: true
-            }
         }
         Row {
             CheckBox {
@@ -126,7 +115,7 @@ Popup {
                 font.pointSize: 14
             }
             onClicked: {
-                universeHandler.configure_universe(currentUuid, universeNameInput.text, universeHzSpin.value);
+                universeHandler.configure_universe(currentUuid, universeNameInput.text);
                 universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text);
                 cleanup();
             }
@@ -156,7 +145,6 @@ Popup {
         currentUuid = universeUuid;
         let universeData = universeHandler.get_universe_configuration(currentUuid);
         universeNameInput.text = universeData[0];
-        universeHzSpin.value = universeData[1];
         let tcpBackendData = universeHandler.get_tcp_backend_configuration(currentUuid);
         tcpBackendCheckbox.checkState = tcpBackendData[0];
         tcpTargetIpInput.text = tcpBackendData[1];
@@ -165,10 +153,11 @@ Popup {
 
     function cleanup() {
         universeNameInput.text = "";
-        universeHzSpin.value = 30;
+
         tcpBackendCheckbox.checkState = false;
         tcpTargetIpInput.text = "127.0.0.1";
         tcpPortInput.text = "7500";
+
         currentUuid = "";
         configureUniversePopup.close();
     }
