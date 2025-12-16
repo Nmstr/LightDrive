@@ -8,7 +8,7 @@ class GenericOutputSnippet(ABC):
         self._priority = priority
 
     @abstractmethod
-    def get_values(self) -> dict[int, int]:  # { channel_number: value }
+    def get_values(self) -> dict[str, dict[int, int]]:  # { universe_uuid: { channel_number: value } }
         pass
 
     def _get_fixture(self, fixture_uuid: str) -> Fixture | None:
