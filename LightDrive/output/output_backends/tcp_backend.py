@@ -10,7 +10,10 @@ class TcpBackend(GenericOutputBackend):
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.bind(('localhost', 8080))
+        try:
+            self.socket.bind(('localhost', 8080))
+        except OSError:
+            print("Failed to bind to port")
         self.socket.listen()
 
         self.accept_thread = threading.Thread(target=self.accept_connection)
