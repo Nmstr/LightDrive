@@ -1,4 +1,4 @@
-from data_structures import Universe, UniverseTcpBackend
+from data_structures import Universe
 from PySide6.QtCore import QObject, Slot
 
 class UniverseHandler(QObject):
@@ -34,14 +34,6 @@ class UniverseHandler(QObject):
         else:
             return
 
-        # Create the backend if it does not exist
-        if UniverseTcpBackend() not in universe_data.backends:
-            universe_data.backends.append(UniverseTcpBackend())
-
-        # Configure the backend
-        for backend in universe_data.backends:
-            if backend == UniverseTcpBackend():
-                backend.enabled = enabled
-                backend.target_ip = target_ip
-                backend.port = port
-                break
+        universe_data.tcp_backend.enabled = enabled
+        universe_data.tcp_backend.target_ip = target_ip
+        universe_data.tcp_backend.port = port
