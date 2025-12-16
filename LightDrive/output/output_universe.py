@@ -1,4 +1,4 @@
-from data_structures import Universe, UniverseTcpBackend
+from data_structures import Universe
 from output.output_snippets.generic_output_snippet import GenericOutputSnippet
 from output.output_backends.generic_output_backend import GenericOutputBackend
 from output.output_backends.tcp_backend import TcpBackend
@@ -13,11 +13,11 @@ class OutputUniverse:
 
     def build_backends(self):
         self.output_backends = []
-        for backend in self._universe_data.backends:
-            match backend:
-                case UniverseTcpBackend():
-                    backend = TcpBackend()
-            self.output_backends.append(backend)
+        if self._universe_data.tcp_backend.enabled:
+            target_ip = self._universe_data.tcp_backend.target_ip
+            port = self._universe_data.tcp_backend.port
+            tcp_backend = TcpBackend(target_ip, port)
+            self.output_backends.append(tcp_backend)
 
     def add_snippet(self, snippet: GenericOutputSnippet) -> None:
         self.snippet_queue.put(snippet)

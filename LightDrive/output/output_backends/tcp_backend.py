@@ -4,14 +4,16 @@ import socket
 import json
 
 class TcpBackend(GenericOutputBackend):
-    def __init__(self):
+    def __init__(self, target_ip: str, port: int):
         super().__init__()
+        self.target_ip = target_ip
+        self.port = port
         self.connections = []
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
-            self.socket.bind(('localhost', 8080))
+            self.socket.bind((self.target_ip, self.port))
         except OSError:
             print("Failed to bind to port")
         self.socket.listen()
