@@ -9,6 +9,7 @@ class UniverseGenericBackend:
 class UniverseTcpBackend(UniverseGenericBackend):
     target_ip: str = field(default="127.0.0.1", init=False)
     port: int = field(default=7500, init=False)
+    hz: int = field(default=30, init=False)
 
 @dataclass
 class Universe:

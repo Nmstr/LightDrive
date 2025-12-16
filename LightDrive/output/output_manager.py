@@ -1,5 +1,6 @@
 from output.output_snippets.generic_output_snippet import GenericOutputSnippet
 from output.output_universe import OutputUniverse
+from PySide6.QtCore import QTimer
 import queue
 
 class OutputManager:
@@ -9,13 +10,21 @@ class OutputManager:
         self.pending_removal_snippets: list[GenericOutputSnippet] = []
         self.universes: list[OutputUniverse] = []
 
+        self.update_timer = QTimer()
+        self.update_timer.setInterval(10)
+        self.update_timer.timeout.connect(lambda: self.update_universes())
+        self.update_timer.start()
+
     def build_output_universes(self) -> None:
         """
         Create the output universes as required.
         """
+        for universe in self.universes:  # Update all backends of all existing universes
+            universe.update_backends()
+
         for universe in self.root.workspace.universes:  # Add all universes
             if universe.uuid in [universe.uuid for universe in self.universes]:
-                continue  # Universe already exists (here we don't force rebuild to preserve running snippets)
+                continue  # Universe already exists
 
             # Add the universe
             output_universe = OutputUniverse(universe)
@@ -33,9 +42,9 @@ class OutputManager:
     def remove_snippet(self, snippet: GenericOutputSnippet) -> None:
         self.pending_removal_snippets.append(snippet)
 
-    def tick_output(self) -> None:
+    def update_universes(self) -> None:
         """
-        Sends data from the snippets to all output backends.
+        Updates all the universes with up-to-date values
         """
         done_queue = queue.PriorityQueue()
         values: dict[str, list[int]] = {}

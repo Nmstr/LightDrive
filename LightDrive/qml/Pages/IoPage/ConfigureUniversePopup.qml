@@ -40,6 +40,19 @@ Popup {
         }
         spacing: 10
 
+        GridLayout {
+            columns: 2
+
+            Text {
+                text: "Name:"
+                color: "white"
+            }
+            TextField {
+                id: universeNameInput
+                placeholderText: "Universe Name"
+                text: ""
+            }
+        }
         Row {
             CheckBox {
                 anchors.verticalCenter: parent.verticalCenter
@@ -74,6 +87,17 @@ Popup {
                 placeholderText: "7500"
                 text: "7500"
             }
+            Text {
+                text: "Hz:"
+                color: "white"
+            }
+            SpinBox {
+                id: tcpHzSpin
+                from: 0
+                to: 255
+                stepSize: 1
+                editable: true
+            }
         }
     }
 
@@ -102,7 +126,8 @@ Popup {
                 font.pointSize: 14
             }
             onClicked: {
-                universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text)
+                universeHandler.configure_universe(currentUuid, universeNameInput.text);
+                universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text, tcpHzSpin.value);
                 cleanup();
             }
         }
@@ -129,16 +154,25 @@ Popup {
 
     function loadData(universeUuid) {
         currentUuid = universeUuid;
+
+        let universeData = universeHandler.get_universe_configuration(currentUuid);
+        universeNameInput.text = universeData[0];
+
         let tcpBackendData = universeHandler.get_tcp_backend_configuration(currentUuid);
         tcpBackendCheckbox.checkState = tcpBackendData[0];
         tcpTargetIpInput.text = tcpBackendData[1];
         tcpPortInput.text = tcpBackendData[2];
+        tcpHzSpin.value = tcpBackendData[3];
     }
 
     function cleanup() {
+        universeNameInput.text = "";
+
         tcpBackendCheckbox.checkState = false;
         tcpTargetIpInput.text = "127.0.0.1";
         tcpPortInput.text = "7500";
+        tcpHzSpin.value = 30
+
         currentUuid = "";
         configureUniversePopup.close();
     }
