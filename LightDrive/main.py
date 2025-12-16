@@ -1,6 +1,7 @@
 import resource_rc  # noqa: F401
 from data_structures import Workspace
 from data_models import DataModels
+from output.output_manager import OutputManager
 from workspace_handler import WorkspaceHandler
 from universe_handler import UniverseHandler
 from fixture_handler import FixtureHandler
@@ -35,6 +36,8 @@ class LightDrive:
         self.engine.rootContext().setContextProperty("universeListModel", self.data_models.universe_list_model)
         self.engine.rootContext().setContextProperty("universeModel", self.data_models.universe_model)
         self.engine.rootContext().setContextProperty("fixtureBlueprintModel", self.data_models.fixture_blueprint_model)
+
+        self.output_manager = OutputManager(self)
 
         self.engine.addImportPath(QDir.currentPath() + "/qml")
         self.engine.load("qml/main.qml")

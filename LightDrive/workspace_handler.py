@@ -28,6 +28,7 @@ class WorkspaceHandler(QObject):
         with open(str(path), "rb") as file:
             self.root.workspace = pickle.load(file)
             self.root.data_models.build_all()
+            self.root.output_manager.build_output_universes()
 
         self.current_workspace_path = path
 

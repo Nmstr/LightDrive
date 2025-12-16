@@ -1,6 +1,7 @@
 from data_structures import Universe
 from output.output_snippets.generic_output_snippet import GenericOutputSnippet
 from output.output_backends.generic_output_backend import GenericOutputBackend
+from output.output_backends.tcp_backend import TcpBackend
 import queue
 
 class OutputUniverse:
@@ -9,6 +10,14 @@ class OutputUniverse:
         self.snippet_queue = queue.PriorityQueue()
         self.pending_removal_snippets: list[GenericOutputSnippet] = []
         self.output_backends: list[GenericOutputBackend] = []
+
+    def build_backends(self):
+        self.output_backends = []
+        if self._universe_data.tcp_backend.enabled:
+            target_ip = self._universe_data.tcp_backend.target_ip
+            port = self._universe_data.tcp_backend.port
+            tcp_backend = TcpBackend(target_ip, port)
+            self.output_backends.append(tcp_backend)
 
     def add_snippet(self, snippet: GenericOutputSnippet) -> None:
         self.snippet_queue.put(snippet)
