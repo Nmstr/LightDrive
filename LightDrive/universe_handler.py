@@ -46,8 +46,8 @@ class UniverseHandler(QObject):
         else:
             return []
 
-    @Slot(str, bool, str, int)
-    def configure_tcp_backend(self, universe_uuid: str, enabled: bool, target_ip: str, port: int) -> None:
+    @Slot(str, bool, str, int, int)
+    def configure_tcp_backend(self, universe_uuid: str, enabled: bool, target_ip: str, port: int, hz: int) -> None:
         if not universe_uuid:
             return
         for universe in self.root.workspace.universes:
@@ -60,6 +60,7 @@ class UniverseHandler(QObject):
         universe_data.tcp_backend.enabled = enabled
         universe_data.tcp_backend.target_ip = target_ip
         universe_data.tcp_backend.port = port
+        universe_data.tcp_backend.hz = hz
 
     @Slot(str, result=list)  # See reason for type above
     def get_tcp_backend_configuration(self, universe_uuid: str) -> list:
@@ -67,6 +68,6 @@ class UniverseHandler(QObject):
             return []
         for universe in self.root.workspace.universes:
             if universe.uuid == universe_uuid:
-                return [universe.tcp_backend.enabled, universe.tcp_backend.target_ip, universe.tcp_backend.port]
+                return [universe.tcp_backend.enabled, universe.tcp_backend.target_ip, universe.tcp_backend.port, universe.tcp_backend.hz]
         else:
             return []
