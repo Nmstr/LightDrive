@@ -33,6 +33,20 @@ Rectangle {
                 placeholderText: "Scene Name"
                 onEditingFinished: snippetHandler.set_snippet_name(sceneUuid, text)
             }
+
+            Button {
+                id: outputButton
+                text: "Show"
+                icon.source: "qrc:/icons/direct_snippet_output.svg"
+                checkable: true
+                onToggled: {
+                    if (outputButton.checked) {
+                        snippetHandler.get_scene_subhandler().output_scene(sceneUuid);
+                    } else {
+                        snippetHandler.remove_output_snippet(sceneUuid);
+                    }
+                }
+            }
         }
     }
 
@@ -283,9 +297,10 @@ Rectangle {
     Connections {
         target: snippetHandler
 
-        function onLoadScene(uuid, name, channelModel) {
+        function onLoadScene(uuid, name, showing, channelModel) {
             sceneSnippetRoot.sceneUuid = uuid;
             sceneNameInput.text = name;
+            outputButton.checked = showing;
             fixtureTabRepeater.model = channelModel;
             sceneFixtureTabRepeater.model = channelModel;
         }

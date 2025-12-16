@@ -1,4 +1,5 @@
 from data_structures import SceneSnippet, SceneChannelEntry
+from output.output_snippets.scene_output_snippet import SceneOutputSnippet
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import QObject, Slot, Qt, QByteArray, QAbstractListModel, QModelIndex
 
@@ -66,7 +67,28 @@ class SceneSubhandler(QObject):
 
             scene_model.appendRow(fixture_item)
 
-        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name, scene_model)
+        for output_snippet_uuid in self.root.snippet_handler.output_snippets:
+            if output_snippet_uuid == snippet.uuid:
+                showing = True
+                break
+        else:
+            showing = False
+
+        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name, showing, scene_model)
+
+    @Slot(str)
+    def output_scene(self, scene_uuid: str) -> None:
+        for snippet in self.root.workspace.snippets:
+            if snippet.uuid == scene_uuid:
+                scene = snippet
+                break
+        else:
+            return
+
+        output_snippet = SceneOutputSnippet(self.root, 0, scene)
+        self.root.snippet_handler.output_snippets[scene_uuid] = output_snippet
+        self.root.output_manager.add_snippet(output_snippet)
+        self.root.output_manager.tick_output()
 
     @Slot(str, str)
     def add_fixture(self, snippet_uuid: str, fixture_uuid: str) -> None:

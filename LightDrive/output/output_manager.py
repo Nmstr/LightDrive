@@ -1,9 +1,12 @@
 from output.output_snippets.generic_output_snippet import GenericOutputSnippet
 from output.output_universe import OutputUniverse
+import queue
 
 class OutputManager:
     def __init__(self, root):
         self.root = root
+        self.snippet_queue = queue.PriorityQueue()
+        self.pending_removal_snippets: list[GenericOutputSnippet] = []
         self.universes: list[OutputUniverse] = []
 
     def build_output_universes(self) -> None:
@@ -24,14 +27,36 @@ class OutputManager:
             if universe.uuid not in [universe.uuid for universe in self.root.workspace.universes]:
                 self.universes.remove(universe)
 
-    def add_snippet(self, universe_uuid: str, snippet: GenericOutputSnippet) -> None:
-        for universe in self.universes:
-            if universe.uuid == universe_uuid:
-                universe.add_snippet(snippet)
-                break
+    def add_snippet(self, snippet: GenericOutputSnippet) -> None:
+        self.snippet_queue.put(snippet)
 
-    def remove_snippet(self, universe_uuid: str, snippet: GenericOutputSnippet) -> None:
+    def remove_snippet(self, snippet: GenericOutputSnippet) -> None:
+        self.pending_removal_snippets.append(snippet)
+
+    def tick_output(self) -> None:
+        """
+        Sends data from the snippets to all output backends.
+        """
+        done_queue = queue.PriorityQueue()
+        values: dict[str, list[int]] = {}
         for universe in self.universes:
-            if universe.uuid == universe_uuid:
-                universe.remove_snippet(snippet)
-                break
+            values[universe.uuid] = [0] * 512
+
+        # Build the output list
+        while not self.snippet_queue.empty():
+            snippet = self.snippet_queue.get()
+
+            if snippet in self.pending_removal_snippets:  # Remove snippet
+                self.pending_removal_snippets.remove(snippet)
+                continue
+
+            done_queue.put(snippet)
+            for universe_uuid, universe_values in snippet.get_values().items():
+                for channel, value in universe_values.items():
+                    values[universe_uuid][channel] = value
+        self.snippet_queue = done_queue
+
+        # Send output list to output backends
+        for universe in self.universes:
+            if universe.uuid in values:
+                universe.tick_output(values[universe.uuid])
