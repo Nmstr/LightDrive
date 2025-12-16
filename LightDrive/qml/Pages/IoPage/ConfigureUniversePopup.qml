@@ -126,7 +126,8 @@ Popup {
                 font.pointSize: 14
             }
             onClicked: {
-                universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text)
+                universeHandler.configure_universe(currentUuid, universeNameInput.text, universeHzSpin.value);
+                universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text);
                 cleanup();
             }
         }

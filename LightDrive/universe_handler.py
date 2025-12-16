@@ -23,6 +23,20 @@ class UniverseHandler(QObject):
                 break
         self.root.data_models.build_universe_model()
 
+    @Slot(str, str, bool)
+    def configure_universe(self, universe_uuid: str, name: str, hz: int) -> None:
+        if not universe_uuid:
+            return
+        for universe in self.root.workspace.universes:
+            if universe.uuid == universe_uuid:
+                universe_data = universe
+                break
+        else:
+            return
+
+        universe_data.name = name
+        universe_data.hz = hz
+
     @Slot(str, result=list)  # Return is a list instead of a tuple because of qml types
     def get_universe_configuration(self, universe_uuid: str) -> list:
         if not universe_uuid:
