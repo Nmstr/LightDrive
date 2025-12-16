@@ -67,7 +67,14 @@ class SceneSubhandler(QObject):
 
             scene_model.appendRow(fixture_item)
 
-        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name, scene_model)
+        for output_snippet_uuid in self.root.snippet_handler.output_snippets:
+            if output_snippet_uuid == snippet.uuid:
+                showing = True
+                break
+        else:
+            showing = False
+
+        self.root.snippet_handler.loadScene.emit(snippet.uuid, snippet.name, showing, scene_model)
 
     @Slot(str)
     def output_scene(self, scene_uuid: str) -> None:

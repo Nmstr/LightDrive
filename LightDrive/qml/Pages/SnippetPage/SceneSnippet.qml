@@ -297,9 +297,10 @@ Rectangle {
     Connections {
         target: snippetHandler
 
-        function onLoadScene(uuid, name, channelModel) {
+        function onLoadScene(uuid, name, showing, channelModel) {
             sceneSnippetRoot.sceneUuid = uuid;
             sceneNameInput.text = name;
+            outputButton.checked = showing;
             fixtureTabRepeater.model = channelModel;
             sceneFixtureTabRepeater.model = channelModel;
         }
