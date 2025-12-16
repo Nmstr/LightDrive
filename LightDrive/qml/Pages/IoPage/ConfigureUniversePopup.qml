@@ -40,6 +40,30 @@ Popup {
         }
         spacing: 10
 
+        GridLayout {
+            columns: 2
+
+            Text {
+                text: "Name:"
+                color: "white"
+            }
+            TextField {
+                id: universeNameInput
+                placeholderText: "Universe Name"
+                text: ""
+            }
+            Text {
+                text: "Hz:"
+                color: "white"
+            }
+            SpinBox {
+                id: universeHzSpin
+                from: 0
+                to: 1000
+                stepSize: 1
+                editable: true
+            }
+        }
         Row {
             CheckBox {
                 anchors.verticalCenter: parent.verticalCenter
