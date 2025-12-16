@@ -35,6 +35,7 @@ class UniverseHandler(QObject):
             return
 
         universe_data.name = name
+        self.root.data_models.build_universe_model()
 
     @Slot(str, result=list)  # Return is a list instead of a tuple because of qml types
     def get_universe_configuration(self, universe_uuid: str) -> list:
