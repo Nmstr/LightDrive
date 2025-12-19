@@ -1,3 +1,4 @@
+from output.output_snippets.sequence_output_snippet import SequenceOutputSnippet
 from data_structures import SequenceSnippet, SequenceSceneEntry, SceneSnippet
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import QObject, Slot, Qt, QByteArray
@@ -36,6 +37,16 @@ class SequenceSubhandler(QObject):
             sequence_model.appendRow(scene_item)
 
         self.root.snippet_handler.loadSequence.emit(snippet.uuid, snippet.name, sequence_model)
+
+    @Slot(str)
+    def output_sequence(self, sequence_uuid: str) -> None:
+        sequence = self.root.snippet_handler.get_snippet(sequence_uuid)
+        if not sequence:
+            return
+
+        output_snippet = SequenceOutputSnippet(self.root, 0, sequence)
+        self.root.snippet_handler.output_snippets[sequence_uuid] = output_snippet
+        self.root.output_manager.add_snippet(output_snippet)
 
     @Slot(str, str)
     def add_scene(self, sequence_uuid: str, scene_uuid: str) -> None:
