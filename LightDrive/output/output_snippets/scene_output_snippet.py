@@ -6,7 +6,12 @@ class SceneOutputSnippet(GenericOutputSnippet):
         self.scene_data = scene_data
         super().__init__(root, priority)
 
-    def get_values(self) -> dict[str, dict[int, int]]:
+    def get_values(self, time: int = -1) -> dict[str, dict[int, int]]:
+        """
+        Gets the values of the snippet at the current time in milliseconds.
+        :param time: The time gets disregarded in scenes.
+        :return: A dictionary containing the snippets values in the following format: " { universe_uuid: { channel_number: value } } ".
+        """
         values = {}
         for fixture_uuid, channels in self.scene_data.channel_values.items():
             fixture = self._get_fixture(fixture_uuid)

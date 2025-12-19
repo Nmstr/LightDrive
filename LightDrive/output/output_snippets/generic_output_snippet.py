@@ -8,7 +8,12 @@ class GenericOutputSnippet(ABC):
         self._priority = priority
 
     @abstractmethod
-    def get_values(self) -> dict[str, dict[int, int]]:  # { universe_uuid: { channel_number: value } }
+    def get_values(self, time: int = -1) -> dict[str, dict[int, int]]:
+        """
+        Gets the values of the snippet at the current time in milliseconds.
+        :param time: The current time in milliseconds. If the time is -1 (default), the snippet will manage its time automatically.
+        :return: A dictionary containing the snippets values in the following format: " { universe_uuid: { channel_number: value } } ".
+        """
         pass
 
     def _get_fixture(self, fixture_uuid: str) -> Fixture | None:
