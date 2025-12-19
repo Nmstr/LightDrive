@@ -47,7 +47,7 @@ Rectangle {
                         if (outputButton.checked) {
                             snippetHandler.get_sequence_subhandler().output_sequence(sequenceUuid);
                         } else {
-                            snippetHandler.remove_output_snippet(sceneUuid);
+                            snippetHandler.remove_output_snippet(sequenceUuid);
                         }
                     }
                 }
