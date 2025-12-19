@@ -1,11 +1,13 @@
 from data_structures import Fixture
 from abc import ABC, abstractmethod
+import uuid
 
 class GenericOutputSnippet(ABC):
     @abstractmethod
     def __init__(self, root, priority: int):
         self._root = root
         self._priority = priority
+        self._id = uuid.uuid4()
 
     @abstractmethod
     def get_values(self, time: int = -1) -> dict[str, dict[int, int]]:
@@ -29,7 +31,7 @@ class GenericOutputSnippet(ABC):
     def __eq__(self, other: "GenericOutputSnippet") -> bool:
         if not isinstance(other, GenericOutputSnippet):
             return False
-        return self.priority == other.priority
+        return isinstance(other, GenericOutputSnippet) and self._id == other._id
 
     def __ne__(self, other: "GenericOutputSnippet") -> bool:
         return not self.__eq__(other)
