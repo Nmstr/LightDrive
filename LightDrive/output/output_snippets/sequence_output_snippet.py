@@ -44,11 +44,11 @@ class SequenceOutputSnippet(GenericOutputSnippet):
             time = self.timer.elapsed()
 
             sequence_length = self._get_sequence_length()
-            while time > sequence_length:  # Remove reruns from time
+            while time >= sequence_length:  # Remove reruns from time
                 time -= sequence_length
 
         # Get element with the biggest time that is smaller than the provided time
-        scene_entry = max((entry for entry in self.scene_out_entries if entry.starting_time < time),
+        scene_entry = max((entry for entry in self.scene_out_entries if entry.starting_time <= time),
                           key=lambda entry: entry.starting_time)
 
         if scene_entry == self.scene_out_entries[-1]:  # Last element, end time needs to be checked
