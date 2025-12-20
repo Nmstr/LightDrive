@@ -37,6 +37,20 @@ Rectangle {
                     placeholderText: "Sequence Name"
                     onEditingFinished: snippetHandler.set_snippet_name(sequenceUuid, text)
                 }
+
+                Button {
+                    id: outputButton
+                    text: "Show"
+                    icon.source: "qrc:/icons/direct_snippet_output.svg"
+                    checkable: true
+                    onToggled: {
+                        if (outputButton.checked) {
+                            snippetHandler.get_sequence_subhandler().output_sequence(sequenceUuid);
+                        } else {
+                            snippetHandler.remove_output_snippet(sequenceUuid);
+                        }
+                    }
+                }
             }
             Row {
                 spacing: 125
