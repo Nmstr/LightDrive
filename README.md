@@ -31,7 +31,7 @@ LightDrive is a lighting control system for dmx lights.
   - 🚧 Sound Resources
   - ❌ Shows
 - 🚧 Console (Individual channel control)
-- 🚧 Control Desk (Virtual lighting console)
+- 🚧 Desk (Virtual lighting console)
   - 🚧 Buttons
   - 🚧 Faders
   - 🚧 Knobs

@@ -2,7 +2,7 @@ import QtQuick
 import Elements
 
 Rectangle {
-    id: controlDeskPage
+    id: deskPage
     color: "transparent"
 
     Rectangle {

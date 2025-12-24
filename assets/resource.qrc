@@ -4,7 +4,7 @@
         <file alias="console_page.svg">icons/console_page.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="control_desk_page.svg">icons/control_desk_page.svg</file>
+        <file alias="desk_page.svg">icons/desk_page.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="fixture_page.svg">icons/fixture_page.svg</file>

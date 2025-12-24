@@ -34,8 +34,8 @@ Rectangle {
             destinationIndex: 2
         }
         CollapsibleButton {
-            iconSource: "qrc:/icons/control_desk_page.svg"
-            labelText: "Control Desk"
+            iconSource: "qrc:/icons/desk_page.svg"
+            labelText: "Desk"
             destinationIndex: 3
         }
         CollapsibleButton {
