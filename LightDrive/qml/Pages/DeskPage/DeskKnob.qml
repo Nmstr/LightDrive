@@ -3,20 +3,15 @@ import QtQuick.Controls
 
 DeskBaseItem {
     width: knobCircle.width
-    height: valueText.height + knobCircle.height + knobLabel.height
+    height: valueText.height + knobCircle.height + 25
+
+    headerText: "Knob"
 
     content: Item {
         anchors.fill: parent
 
-        Text {
-            id: valueText
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "000"
-        }
-
         Rectangle {
             id: knobCircle
-            anchors.top: valueText.bottom
             width: 50
             height: 50
             color: "#303030"
@@ -58,10 +53,9 @@ DeskBaseItem {
         }
 
         Text {
-            id: knobLabel
+            id: valueText
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: knobCircle.bottom
-            text: "Knob"
+            text: "000"
         }
     }
 }

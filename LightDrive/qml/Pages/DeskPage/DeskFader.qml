@@ -2,21 +2,20 @@ import QtQuick
 import QtQuick.Controls
 
 DeskBaseItem {
-    width: faderColumn.implicitWidth
-    height: faderColumn.implicitHeight
+    id: faderItem
+    width: 40
+    height: 210
+
+    headerText: "Fader"
 
     content: Item {
         anchors.fill: parent
 
         Column {
             id: faderColumn
+            anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
 
-            Text {
-                id: valueText
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "000"
-            }
             Slider {
                 id: slider
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -27,8 +26,9 @@ DeskBaseItem {
                 onMoved: valueText.text = value
             }
             Text {
+                id: valueText
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Fader"
+                text: "000"
             }
         }
     }

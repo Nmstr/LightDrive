@@ -1,9 +1,7 @@
 import QtQuick
 
 DeskBaseItem {
-    Text {
-        text: "Subdesk"
-    }
+    headerText: "Subdesk"
 
     content: Item {
         anchors.fill: parent

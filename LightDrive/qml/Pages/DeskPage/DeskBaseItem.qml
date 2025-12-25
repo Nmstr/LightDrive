@@ -7,10 +7,30 @@ Rectangle {
     width: 100
     height: 100
 
+    required property string headerText
     property Item content
 
+    Rectangle {
+        id: itemHeader
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: 25
+
+        Text {
+            text: baseItem.headerText
+        }
+    }
+
     Item {
-        anchors.fill: parent
+        anchors {
+            top: itemHeader.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
         visible: content !== null
 
         Component.onCompleted: {
