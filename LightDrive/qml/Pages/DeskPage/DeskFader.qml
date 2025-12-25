@@ -7,6 +7,15 @@ DeskBaseItem {
     height: 210
 
     headerText: "Fader"
+    outputModel: faderOutputModel
+
+    ListModel {
+        id: faderOutputModel
+
+        ListElement {
+            type: "number"
+        }
+    }
 
     content: Item {
         anchors.fill: parent

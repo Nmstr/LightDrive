@@ -9,6 +9,7 @@ Rectangle {
 
     required property string headerText
     property ListModel inputModel
+    property ListModel outputModel
     property Item content
 
     Rectangle {
@@ -56,11 +57,35 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        id: itemOutputs
+        anchors.top: itemHeader.bottom
+        anchors.right: parent.right
+        width: outputItemColumn.implicitWidth
+
+        Column {
+            id: outputItemColumn
+            spacing: 5
+
+            Repeater {
+                model: baseItem.outputModel
+
+                Rectangle {
+                    width: 15
+                    height: 15
+                    radius: 180
+                    color: baseItem.getConnectorColor(model.type)
+                }
+            }
+        }
+    }
+
     function getConnectorColor(type) {
         if (type === "bool") {
             return "#3bd100";
+        } else if (type === "number") {
+            return "#009dff"
         }
-        return "#FF0000"
     }
 
     Item {

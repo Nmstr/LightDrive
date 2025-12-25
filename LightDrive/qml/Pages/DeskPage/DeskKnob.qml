@@ -6,6 +6,15 @@ DeskBaseItem {
     height: valueText.height + knobCircle.height + 25
 
     headerText: "Knob"
+    outputModel: knobOutputModel
+
+    ListModel {
+        id: knobOutputModel
+
+        ListElement {
+            type: "number"
+        }
+    }
 
     content: Item {
         anchors.fill: parent
