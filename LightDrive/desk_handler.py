@@ -23,6 +23,9 @@ class DeskContentModel(QAbstractListModel):
     # Clock roles
     # ModeRole already implemented in button
     TimerDurationRole = Qt.UserRole + 14
+    # Snippet Output roles
+    SnippetUuidRole = Qt.UserRole + 15
+    PriorityRole = Qt.UserRole + 16
 
     def __init__(self, parent=None, root=None):
         super().__init__(parent)
@@ -69,6 +72,10 @@ class DeskContentModel(QAbstractListModel):
             return item.inverted
         elif role == self.TimerDurationRole:
             return item.timerduration
+        elif role == self.SnippetUuidRole:
+            return item.snippet_uuid
+        elif role == self.PriorityRole:
+            return item.priority
         return None
 
     def roleNames(self):  # noqa: N802
@@ -88,6 +95,8 @@ class DeskContentModel(QAbstractListModel):
             self.StepSizeRole: b"stepSize",
             self.InvertedRole: b"inverted",
             self.TimerDurationRole: b"timerDuration",
+            self.SnippetUuidRole: b"snippetUuid",
+            self.PriorityRole: b"priority",
         }
 
 class DeskHandler(QObject):
