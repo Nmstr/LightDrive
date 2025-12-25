@@ -61,14 +61,41 @@ Rectangle {
         }
         color: "#555555"
 
+        property point drawingWireStart
+        property point drawingWireEnd
+
+        Canvas {
+            id: wireCanvas
+            anchors.fill: parent
+            onPaint: {
+                let ctx = getContext("2d");
+                ctx.reset();
+
+                if (desk.drawingWireStart !== desk.drawingWireEnd) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "#FF0000"
+                    ctx.moveTo(desk.drawingWireStart.x + 15, desk.drawingWireStart.y + 7.5);
+                    ctx.lineTo(desk.drawingWireEnd.x, desk.drawingWireEnd.y);
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
         MouseArea {
             anchors.fill: parent
             onPressed: (mouse) => {
                 let outputConnector = getOutputConnector(mouse.x, mouse.y);
                 if (!outputConnector) {
-                    return  // No connector was pressed
+                    return;  // No connector was pressed
                 }
-                console.log(outputConnector)
+                console.log(outputConnector);
+                let deskConnectorPos = desk.mapFromGlobal(outputConnector.mapToGlobal(outputConnector.x, outputConnector.y))
+                desk.drawingWireStart = Qt.point(deskConnectorPos.x, deskConnectorPos.y);
+            }
+            onPositionChanged: (mouse) => {
+                desk.drawingWireEnd = Qt.point(mouse.x, mouse.y);
+                wireCanvas.requestPaint();
             }
 
             function getOutputConnector(x, y): QQuickRectangle {
