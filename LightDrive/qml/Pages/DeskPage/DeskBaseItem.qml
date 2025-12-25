@@ -64,6 +64,8 @@ Rectangle {
         anchors.bottom: parent.bottom
         width: outputItemColumn.implicitWidth
 
+        property bool isOutputRect: true
+
         Column {
             id: outputItemColumn
             spacing: 5

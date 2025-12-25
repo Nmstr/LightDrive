@@ -106,11 +106,13 @@ Rectangle {
                     let deskItem = deskContentRepeater.itemAt(i).children[0];  // children[0] is because each DeskItem is wrapped in an Item
                     let localClickPos = deskItem.mapFromGlobal(globalClickPos);
                     if (deskItem.contains(localClickPos)) {  // current DeskItem is clicked DeskItem (else next in iteration)
-                        if (deskItem.childAt(localClickPos.x, localClickPos.y)) {  // There is smth at the clicked pos (hopefully the output bar)
-                            let outputConnectorCol = deskItem.childAt(localClickPos.x, localClickPos.y).children[0];  // Remove the Rectangle wrapping the Column containing the connectors
-                            let internalClickPos = outputConnectorCol.mapFromGlobal(globalClickPos);  // Local click pos inside the Column
-                            let clickedConnector = outputConnectorCol.childAt(internalClickPos.x, internalClickPos.y);  // Finally, the connector actually clicked
-                            return clickedConnector;
+                        if (deskItem.childAt(localClickPos.x, localClickPos.y)) {  // There is smth at the clicked pos
+                            if (deskItem.childAt(localClickPos.x, localClickPos.y).isOutputRect) {  // The clicked thing is the rect containing the connectors
+                                let outputConnectorCol = deskItem.childAt(localClickPos.x, localClickPos.y).children[0];  // Remove the Rectangle wrapping the Column containing the connectors
+                                let internalClickPos = outputConnectorCol.mapFromGlobal(globalClickPos);  // Local click pos inside the Column
+                                let clickedConnector = outputConnectorCol.childAt(internalClickPos.x, internalClickPos.y);  // Finally, the connector actually clicked
+                                return clickedConnector;
+                            }
                         }
                     }
                 }
