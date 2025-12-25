@@ -22,6 +22,16 @@ Rectangle {
         Text {
             text: baseItem.headerText
         }
+
+        MouseArea {
+            id: headerDrag
+            anchors.fill: parent
+            drag.target: baseItem
+            onPositionChanged: {
+                baseItem.x = Math.min(Math.max(baseItem.x, 0), desk.width - baseItem.width);
+                baseItem.y = Math.min(Math.max(baseItem.y, 0), desk.height - baseItem.height);
+            }
+        }
     }
 
     Item {
@@ -37,16 +47,6 @@ Rectangle {
             if (content) {
                 content.parent = this
             }
-        }
-    }
-
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        drag.target: parent
-        onPositionChanged: {
-            baseItem.x = Math.min(Math.max(baseItem.x, 0), desk.width - baseItem.width);
-            baseItem.y = Math.min(Math.max(baseItem.y, 0), desk.height - baseItem.height);
         }
     }
 }
