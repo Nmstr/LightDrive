@@ -40,8 +40,14 @@ Rectangle {
     Rectangle {
         id: itemInputs
         anchors.top: itemHeader.bottom
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        width: inputItemColumn.implicitWidth
+
+        property bool isInputRect: true
 
         Column {
+            id: inputItemColumn
             spacing: 5
 
             Repeater {

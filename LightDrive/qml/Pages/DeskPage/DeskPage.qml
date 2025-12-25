@@ -85,7 +85,7 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onPressed: (mouse) => {
-                let outputConnector = getOutputConnector(mouse.x, mouse.y);
+                let outputConnector = getConnector(mouse.x, mouse.y, "output");
                 if (!outputConnector) {
                     return;  // No connector was pressed
                 }
@@ -104,9 +104,15 @@ Rectangle {
                 desk.drawingWireStart = Qt.point(-12345, -12345)
                 desk.drawingWireEnd = Qt.point(-12345, -12345)
                 wireCanvas.requestPaint();
+
+                let inputConnector = getConnector(mouse.x, mouse.y, "input");
+                if (!inputConnector) {
+                    return;  // Mouse was not released above connector
+                }
+                console.log(inputConnector)
             }
 
-            function getOutputConnector(x, y): QQuickRectangle {
+            function getConnector(x, y, type): QQuickRectangle {
                 let globalClickPos = desk.mapToGlobal(x, y);
 
                 // This code is awful. I hate it. But it works.
@@ -115,11 +121,20 @@ Rectangle {
                     let localClickPos = deskItem.mapFromGlobal(globalClickPos);
                     if (deskItem.contains(localClickPos)) {  // current DeskItem is clicked DeskItem (else next in iteration)
                         if (deskItem.childAt(localClickPos.x, localClickPos.y)) {  // There is smth at the clicked pos
-                            if (deskItem.childAt(localClickPos.x, localClickPos.y).isOutputRect) {  // The clicked thing is the rect containing the connectors
-                                let outputConnectorCol = deskItem.childAt(localClickPos.x, localClickPos.y).children[0];  // Remove the Rectangle wrapping the Column containing the connectors
-                                let internalClickPos = outputConnectorCol.mapFromGlobal(globalClickPos);  // Local click pos inside the Column
-                                let clickedConnector = outputConnectorCol.childAt(internalClickPos.x, internalClickPos.y);  // Finally, the connector actually clicked
-                                return clickedConnector;
+                            if (type === "output") {  // Output connectors are requested
+                                if (deskItem.childAt(localClickPos.x, localClickPos.y).isOutputRect) {  // The clicked item is the rect containing the output connectors
+                                    let outputConnectorCol = deskItem.childAt(localClickPos.x, localClickPos.y).children[0];  // Remove the Rectangle wrapping the Column containing the connectors
+                                    let internalClickPos = outputConnectorCol.mapFromGlobal(globalClickPos);  // Local click pos inside the Column
+                                    let clickedConnector = outputConnectorCol.childAt(internalClickPos.x, internalClickPos.y);  // Finally, the connector actually clicked
+                                    return clickedConnector;
+                                }
+                            } else if (type === "input") {  // Input connectors are requested
+                                if (deskItem.childAt(localClickPos.x, localClickPos.y).isInputRect) {  // The clicked item is the rect containing the input connectors
+                                    let inputConnectorCol = deskItem.childAt(localClickPos.x, localClickPos.y).children[0];
+                                    let internalClickPos = inputConnectorCol.mapFromGlobal(globalClickPos);
+                                    let clickedConnector = inputConnectorCol.childAt(internalClickPos.x, internalClickPos.y);
+                                    return clickedConnector;
+                                }
                             }
                         }
                     }
