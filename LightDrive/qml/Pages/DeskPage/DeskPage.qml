@@ -63,7 +63,7 @@ Rectangle {
 
         DeskButton {x: 100; y: 100}
         DeskFader {x: 250; y: 100}
-        DeskKnob {x: 300; y: 100}
+        DeskKnob {x: 350; y: 100}
         DeskLabel {x: 100; y: 50}
         DeskClock {x: 250; y: 50}
         DeskSubdesk {x: 100; y: 250}

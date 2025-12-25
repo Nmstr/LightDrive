@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 DeskBaseItem {
-    width: knobCircle.width
+    width: knobCircle.width + 15
     height: valueText.height + knobCircle.height + 25
 
     headerText: "Knob"

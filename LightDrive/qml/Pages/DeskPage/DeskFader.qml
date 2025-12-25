@@ -3,7 +3,7 @@ import QtQuick.Controls
 
 DeskBaseItem {
     id: faderItem
-    width: 40
+    width: 55
     height: 210
 
     headerText: "Fader"

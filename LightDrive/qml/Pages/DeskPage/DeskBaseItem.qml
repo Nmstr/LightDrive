@@ -91,8 +91,8 @@ Rectangle {
     Item {
         anchors {
             top: itemHeader.bottom
-            left: parent.left
-            right: parent.right
+            left: itemInputs.right
+            right: itemOutputs.left
             bottom: parent.bottom
         }
         visible: content !== null
