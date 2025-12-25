@@ -1,7 +1,7 @@
 import QtQuick
 
 DeskBaseItem {
-    Text {
+    content: Text {
         text: "Button"
     }
 }
