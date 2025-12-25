@@ -54,6 +54,7 @@ DeskBaseItem {
 
         Text {
             id: valueText
+            anchors.top: knobCircle.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             text: "000"
         }
