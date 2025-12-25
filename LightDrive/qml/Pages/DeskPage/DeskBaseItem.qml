@@ -18,6 +18,7 @@ Rectangle {
             right: parent.right
         }
         height: 25
+        color: "#dddddd"
 
         Text {
             text: baseItem.headerText
