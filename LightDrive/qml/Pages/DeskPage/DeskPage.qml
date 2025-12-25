@@ -97,6 +97,11 @@ Rectangle {
                 desk.drawingWireEnd = Qt.point(mouse.x, mouse.y);
                 wireCanvas.requestPaint();
             }
+            onReleased: (mouse) => {
+                desk.drawingWireStart = Qt.point(0, 0)
+                desk.drawingWireEnd = Qt.point(0, 0)
+                wireCanvas.requestPaint();
+            }
 
             function getOutputConnector(x, y): QQuickRectangle {
                 let globalClickPos = desk.mapToGlobal(x, y);
