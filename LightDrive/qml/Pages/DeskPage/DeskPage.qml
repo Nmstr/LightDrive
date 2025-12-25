@@ -61,12 +61,77 @@ Rectangle {
         }
         color: "#555555"
 
-        DeskButton {x: 100; y: 100}
-        DeskFader {x: 250; y: 100}
-        DeskKnob {x: 350; y: 100}
-        DeskLabel {x: 100; y: 50}
-        DeskClock {x: 250; y: 50}
-        DeskSubdesk {x: 100; y: 250}
-        DeskSnippetOutput {x: 400; y: 250}
+        Item {
+            id: deskContent
+            anchors.fill: parent
+
+            Repeater {
+                model: deskContentModel
+
+                Item {
+                    visible: false
+
+                    Component.onCompleted: {
+                        if (model.itemType === "DeskButton") {
+                            let component = Qt.createComponent("DeskButton.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        } else if (model.itemType === "DeskFader") {
+                            let component = Qt.createComponent("DeskFader.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        } else if (model.itemType === "DeskKnob") {
+                            let component = Qt.createComponent("DeskKnob.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        } else if (model.itemType === "DeskLabel") {
+                            let component = Qt.createComponent("DeskLabel.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        } else if (model.itemType === "DeskClock") {
+                            let component = Qt.createComponent("DeskClock.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        } else if (model.itemType === "DeskSubdesk") {
+                            let component = Qt.createComponent("DeskSubdesk.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        } else if (model.itemType === "DeskSnippetOutput") {
+                            let component = Qt.createComponent("DeskSnippetOutput.qml");
+                            component.createObject(deskContent, {
+                                x: model.x,
+                                y: model.y,
+                                width: model.width,
+                                height: model.height
+                            });
+                        }
+                    }
+                }
+            }
+        }
     }
 }

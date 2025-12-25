@@ -165,10 +165,10 @@ class ShowSnippet(GenericSnippet):
 class GenericDeskItem:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
     name: str
-    x: int = field(default=0, init=False)
-    y: int = field(default=0, init=False)
-    width: int = field(default=0, init=False)
-    height: int = field(default=0, init=False)
+    x: int = field(default=0)
+    y: int = field(default=0)
+    width: int = field(default=100)
+    height: int = field(default=100)
 
 @dataclass
 class DeskButton(GenericDeskItem):
@@ -178,6 +178,8 @@ class DeskButton(GenericDeskItem):
 
 @dataclass
 class DeskFader(GenericDeskItem):
+    width: int = field(default=55)  # Override from default
+    height: int = field(default=210)  # Override from default
     display_style: str = field(default="value", init=False)  # Available: "value", "percentage"
     min: float = field(default=0.0, init=False)
     max: float = field(default=255.0, init=False)
@@ -186,6 +188,8 @@ class DeskFader(GenericDeskItem):
 
 @dataclass
 class DeskKnob(GenericDeskItem):
+    width: int = field(default=65)  # Override from default
+    height: int = field(default=95)  # Override from default
     display_style: str = field(default="value", init=False)  # Available: "value", "percentage"
     min: float = field(default=0.0, init=False)
     max: float = field(default=255.0, init=False)
@@ -197,10 +201,12 @@ class DeskSoundTrigger(GenericDeskItem):
 
 @dataclass
 class DeskLabel(GenericDeskItem):
+    height: int = field(default=25)  # Override from default
     pass  # No extra attributes, but separate class required because for type distinction
 
 @dataclass
 class DeskClock(GenericDeskItem):
+    height: int = field(default=25)  # Override from default
     mode: str = field(default="clock", init=False)  # Available: "clock", "timer", "stopwatch"
     timer_duration: float = field(default=0, init=False)
 

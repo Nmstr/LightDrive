@@ -1,6 +1,7 @@
 import resource_rc  # noqa: F401
 from data_structures import Workspace
 from data_models import DataModels
+from desk_handler import DeskHandler
 from output.output_manager import OutputManager
 from workspace_handler import WorkspaceHandler
 from universe_handler import UniverseHandler
@@ -28,6 +29,9 @@ class LightDrive:
         self.engine.rootContext().setContextProperty("fixtureHandler", self.fixture_handler)
         self.snippet_handler = SnippetHandler(self)
         self.engine.rootContext().setContextProperty("snippetHandler", self.snippet_handler)
+        self.desk_handler = DeskHandler(self)
+        self.engine.rootContext().setContextProperty("deskHandler", self.desk_handler)
+        self.engine.rootContext().setContextProperty("deskContentModel", self.desk_handler.desk_content_model)
 
         # Models
         self.data_models = DataModels(self)
