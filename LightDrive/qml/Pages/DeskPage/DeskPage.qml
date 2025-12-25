@@ -61,8 +61,8 @@ Rectangle {
         }
         color: "#555555"
 
-        property point drawingWireStart
-        property point drawingWireEnd
+        property point drawingWireStart: Qt.point(-12345, -12345)  // Impossible point by default
+        property point drawingWireEnd: Qt.point(-12345, -12345)
 
         Canvas {
             id: wireCanvas
@@ -94,12 +94,15 @@ Rectangle {
                 desk.drawingWireStart = Qt.point(deskConnectorPos.x, deskConnectorPos.y);
             }
             onPositionChanged: (mouse) => {
+                if (desk.drawingWireStart === Qt.point(-12345, -12345)) {
+                    return;  // Wire has no valid start point (not dragged from output)
+                }
                 desk.drawingWireEnd = Qt.point(mouse.x, mouse.y);
                 wireCanvas.requestPaint();
             }
             onReleased: (mouse) => {
-                desk.drawingWireStart = Qt.point(0, 0)
-                desk.drawingWireEnd = Qt.point(0, 0)
+                desk.drawingWireStart = Qt.point(-12345, -12345)
+                desk.drawingWireEnd = Qt.point(-12345, -12345)
                 wireCanvas.requestPaint();
             }
 
