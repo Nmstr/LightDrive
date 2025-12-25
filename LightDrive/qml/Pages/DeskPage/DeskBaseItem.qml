@@ -61,6 +61,7 @@ Rectangle {
         id: itemOutputs
         anchors.top: itemHeader.bottom
         anchors.right: parent.right
+        anchors.bottom: parent.bottom
         width: outputItemColumn.implicitWidth
 
         Column {
@@ -68,6 +69,7 @@ Rectangle {
             spacing: 5
 
             Repeater {
+                id: outputItemRepeater
                 model: baseItem.outputModel
 
                 Rectangle {

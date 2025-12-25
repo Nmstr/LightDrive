@@ -61,11 +61,41 @@ Rectangle {
         }
         color: "#555555"
 
+        MouseArea {
+            anchors.fill: parent
+            onPressed: (mouse) => {
+                let outputConnector = getOutputConnector(mouse.x, mouse.y);
+                if (!outputConnector) {
+                    return  // No connector was pressed
+                }
+                console.log(outputConnector)
+            }
+
+            function getOutputConnector(x, y): QQuickRectangle {
+                let globalClickPos = desk.mapToGlobal(x, y);
+
+                // This code is awful. I hate it. But it works.
+                for (let i = 0; i < deskContentRepeater.count; i++) {  // Iterate over elements in repeater
+                    let deskItem = deskContentRepeater.itemAt(i).children[0];  // children[0] is because each DeskItem is wrapped in an Item
+                    let localClickPos = deskItem.mapFromGlobal(globalClickPos);
+                    if (deskItem.contains(localClickPos)) {  // current DeskItem is clicked DeskItem (else next in iteration)
+                        if (deskItem.childAt(localClickPos.x, localClickPos.y)) {  // There is smth at the clicked pos (hopefully the output bar)
+                            let outputConnectorCol = deskItem.childAt(localClickPos.x, localClickPos.y).children[0];  // Remove the Rectangle wrapping the Column containing the connectors
+                            let internalClickPos = outputConnectorCol.mapFromGlobal(globalClickPos);  // Local click pos inside the Column
+                            let clickedConnector = outputConnectorCol.childAt(internalClickPos.x, internalClickPos.y);  // Finally, the connector actually clicked
+                            return clickedConnector;
+                        }
+                    }
+                }
+            }
+        }
+
         Item {
             id: deskContent
             anchors.fill: parent
 
             Repeater {
+                id: deskContentRepeater
                 model: deskContentModel
 
                 Item {
@@ -74,7 +104,7 @@ Rectangle {
                     Component.onCompleted: {
                         if (model.itemType === "DeskButton") {
                             let component = Qt.createComponent("DeskButton.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -82,7 +112,7 @@ Rectangle {
                             });
                         } else if (model.itemType === "DeskFader") {
                             let component = Qt.createComponent("DeskFader.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -90,7 +120,7 @@ Rectangle {
                             });
                         } else if (model.itemType === "DeskKnob") {
                             let component = Qt.createComponent("DeskKnob.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -98,7 +128,7 @@ Rectangle {
                             });
                         } else if (model.itemType === "DeskLabel") {
                             let component = Qt.createComponent("DeskLabel.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -106,7 +136,7 @@ Rectangle {
                             });
                         } else if (model.itemType === "DeskClock") {
                             let component = Qt.createComponent("DeskClock.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -114,7 +144,7 @@ Rectangle {
                             });
                         } else if (model.itemType === "DeskSubdesk") {
                             let component = Qt.createComponent("DeskSubdesk.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -122,13 +152,14 @@ Rectangle {
                             });
                         } else if (model.itemType === "DeskSnippetOutput") {
                             let component = Qt.createComponent("DeskSnippetOutput.qml");
-                            component.createObject(deskContent, {
+                            component.createObject(this, {
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
                                 height: model.height
                             });
                         }
+                        this.visible = true;
                     }
                 }
             }
