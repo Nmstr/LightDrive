@@ -67,5 +67,6 @@ Rectangle {
         DeskLabel {x: 100; y: 50}
         DeskClock {x: 250; y: 50}
         DeskSubdesk {x: 100; y: 250}
+        DeskSnippetOutput {x: 400; y: 250}
     }
 }
