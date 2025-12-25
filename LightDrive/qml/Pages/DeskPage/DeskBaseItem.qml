@@ -8,6 +8,7 @@ Rectangle {
     height: 100
 
     required property string headerText
+    property ListModel inputModel
     property Item content
 
     Rectangle {
@@ -33,6 +34,33 @@ Rectangle {
                 baseItem.y = Math.min(Math.max(baseItem.y, 0), desk.height - baseItem.height);
             }
         }
+    }
+
+    Rectangle {
+        id: itemInputs
+        anchors.top: itemHeader.bottom
+
+        Column {
+            spacing: 5
+
+            Repeater {
+                model: baseItem.inputModel
+
+                Rectangle {
+                    width: 15
+                    height: 15
+                    radius: 180
+                    color: baseItem.getConnectorColor(model.type)
+                }
+            }
+        }
+    }
+
+    function getConnectorColor(type) {
+        if (type === "bool") {
+            return "#3bd100";
+        }
+        return "#FF0000"
     }
 
     Item {
