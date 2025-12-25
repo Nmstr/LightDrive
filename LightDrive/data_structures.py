@@ -214,6 +214,11 @@ class DeskClock(GenericDeskItem):
 class DeskSubdesk(GenericDeskItem):
     pass  # Not yet implemented
 
+@dataclass
+class DeskSnippetOutput(GenericDeskItem):
+    snippet_uuid: str = field(default="", init=False)
+    priority: int = field(default=0, init=False)
+
 
 @dataclass
 class Workspace:
