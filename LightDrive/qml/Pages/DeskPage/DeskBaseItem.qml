@@ -7,6 +7,7 @@ Rectangle {
     width: 100
     height: 100
 
+    required property string deskItemUuid
     required property string headerText
     property ListModel inputModel
     property ListModel outputModel

@@ -157,6 +157,7 @@ Rectangle {
                         if (model.itemType === "DeskButton") {
                             let component = Qt.createComponent("DeskButton.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -165,6 +166,7 @@ Rectangle {
                         } else if (model.itemType === "DeskFader") {
                             let component = Qt.createComponent("DeskFader.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -173,6 +175,7 @@ Rectangle {
                         } else if (model.itemType === "DeskKnob") {
                             let component = Qt.createComponent("DeskKnob.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -181,6 +184,7 @@ Rectangle {
                         } else if (model.itemType === "DeskLabel") {
                             let component = Qt.createComponent("DeskLabel.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -189,6 +193,7 @@ Rectangle {
                         } else if (model.itemType === "DeskClock") {
                             let component = Qt.createComponent("DeskClock.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -197,6 +202,7 @@ Rectangle {
                         } else if (model.itemType === "DeskSubdesk") {
                             let component = Qt.createComponent("DeskSubdesk.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
@@ -205,6 +211,7 @@ Rectangle {
                         } else if (model.itemType === "DeskSnippetOutput") {
                             let component = Qt.createComponent("DeskSnippetOutput.qml");
                             component.createObject(this, {
+                                deskItemUuid: model.uuid,
                                 x: model.x,
                                 y: model.y,
                                 width: model.width,
