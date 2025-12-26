@@ -84,14 +84,16 @@ Rectangle {
 
         MouseArea {
             anchors.fill: parent
+            property string outputConnectorUuid
+
             onPressed: (mouse) => {
                 let outputConnector = getConnector(mouse.x, mouse.y, "output");
                 if (!outputConnector) {
                     return;  // No connector was pressed
                 }
-                console.log(outputConnector);
-                console.log(outputConnector.connectorUuid);
-                let deskConnectorPos = desk.mapFromGlobal(outputConnector.mapToGlobal(outputConnector.x, outputConnector.y))
+                this.outputConnectorUuid = outputConnector.connectorUuid;
+
+                let deskConnectorPos = desk.mapFromGlobal(outputConnector.mapToGlobal(outputConnector.x, outputConnector.y));
                 desk.drawingWireStart = Qt.point(deskConnectorPos.x, deskConnectorPos.y);
             }
             onPositionChanged: (mouse) => {
@@ -110,8 +112,8 @@ Rectangle {
                 if (!inputConnector) {
                     return;  // Mouse was not released above connector
                 }
-                console.log(inputConnector)
-                console.log(inputConnector.connectorUuid)
+                deskHandler.create_wire(this.outputConnectorUuid, inputConnector.connectorUuid);
+                this.outputConnectorUuid = ""
             }
 
             function getConnector(x, y, type): QQuickRectangle {

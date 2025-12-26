@@ -1,4 +1,4 @@
-from data_structures import IoDeskItem
+from data_structures import IoDeskItem, DeskItemConnector, DeskWire, DeskWireStop
 from PySide6.QtCore import Qt, QAbstractListModel, QModelIndex, QObject, Slot
 
 class DeskContentModel(QAbstractListModel):
@@ -100,6 +100,11 @@ class DeskContentModel(QAbstractListModel):
             self.PriorityRole: b"priority",
         }
 
+    def update(self) -> None:
+        self.beginResetModel()
+        self.items = self._root.workspace.desk_items
+        self.endResetModel()
+
 class ConnectorModel(QAbstractListModel):
     UuidRole = Qt.UserRole
     DataTypeRole = Qt.UserRole + 1
@@ -156,18 +161,62 @@ class DeskHandler(QObject):
         super().__init__()
         self.root = root
 
-        from data_structures import DeskButton, DeskFader, DeskKnob, DeskLabel, DeskClock, DeskSubdesk, DeskSnippetOutput
-        self.root.workspace.desk_items.append(DeskButton("Button", x=100, y=100))
-        self.root.workspace.desk_items.append(DeskFader("Fader", x=250, y=100))
-        self.root.workspace.desk_items.append(DeskKnob("Knob", x=350, y=100))
-        self.root.workspace.desk_items.append(DeskLabel("Label", x=100, y=50))
-        self.root.workspace.desk_items.append(DeskClock("Clock", x=250, y=50))
-        self.root.workspace.desk_items.append(DeskSubdesk("Subdesk", x=100, y=250))
-        self.root.workspace.desk_items.append(DeskSnippetOutput("Snippet Output", x=400, y=250))
-
         self.desk_content_model = DeskContentModel(self, self.root)
 
     @Slot(str, str, result="QVariant")
     def get_connector_model(self, item_uuid: str, side: str) -> ConnectorModel:
         model = ConnectorModel(self, self.root, item_uuid, side)
         return model
+
+    def _find_connector_by_uuid(self, connector_uuid: str) -> DeskItemConnector | None:
+        for item in self.root.workspace.desk_items:
+            if isinstance(item, IoDeskItem):
+                all_connectors = item.input_connectors + item.output_connectors
+                for connector in all_connectors:
+                    if connector.uuid == connector_uuid:
+                        return connector
+        return None
+
+    def _get_item_of_connector(self, connector_uuid: str) -> IoDeskItem | None:
+        """
+        Returns the IoDeskItem that has a specific connector.
+        :param connector_uuid: The uuid of the connector.
+        :return: The IoDeskItem that has a specific connector (or None if it could not be found).
+        """
+        for item in self.root.workspace.desk_items:
+            if isinstance(item, IoDeskItem):
+                all_connectors = item.input_connectors + item.output_connectors
+                for connector in all_connectors:
+                    if connector.uuid == connector_uuid:
+                        return item
+        return None
+
+    @Slot(str, str)
+    def create_wire(self, output_connector_uuid, input_connector_uuid) -> None:
+        # Get connectors
+        starting_connector = self._find_connector_by_uuid(output_connector_uuid)
+        ending_connector = self._find_connector_by_uuid(input_connector_uuid)
+        if not starting_connector or not ending_connector:
+            return  # Either connector not found
+
+        # Get items
+        starting_item = self._get_item_of_connector(starting_connector.uuid)
+        ending_item = self._get_item_of_connector(ending_connector.uuid)
+
+        # Calculate default positions for control points
+        cp1x = starting_item.x + 50  # Slightly to the right of the item
+        cp1y = starting_item.y
+        cp2x = ending_item.x - 50  # Slightly to the left of the item
+        cp2y = ending_item.y
+
+        # Create wire
+        self.root.workspace.desk_items.append(
+            DeskWire(
+                starting_connector_uuid=output_connector_uuid,
+                ending_connector_uuid=input_connector_uuid,
+                stops=[DeskWireStop(ending_item.x, ending_item.y, cp1x, cp1y, cp2x, cp2y)]
+            )
+        )
+
+        # Update model
+        self.desk_content_model.update()

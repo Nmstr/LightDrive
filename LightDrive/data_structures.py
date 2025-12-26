@@ -170,7 +170,7 @@ class DeskItemConnector(AbstractDeskItem):
     data_type: str  # Available: "bool", "number"
 
 @dataclass
-class WireStop(AbstractDeskItem):
+class DeskWireStop(AbstractDeskItem):
     x: int
     y: int
     cp1x: int
@@ -182,7 +182,7 @@ class WireStop(AbstractDeskItem):
 class DeskWire(AbstractDeskItem):
     starting_connector_uuid: str
     ending_connector_uuid: str
-    stops: list[WireStop]  # Last stop x and y should be x and y of ending connector
+    stops: list[DeskWireStop]  # Last stop x and y should be x and y of ending connector
 
 @dataclass
 class GenericDeskItem(AbstractDeskItem):

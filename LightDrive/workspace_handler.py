@@ -30,6 +30,16 @@ class WorkspaceHandler(QObject):
             self.root.data_models.build_all()
             self.root.output_manager.build_output_universes()
 
+            from data_structures import DeskButton, DeskFader, DeskKnob, DeskLabel, DeskClock, DeskSubdesk, DeskSnippetOutput
+            self.root.workspace.desk_items.append(DeskButton("Button", x=100, y=100))
+            self.root.workspace.desk_items.append(DeskFader("Fader", x=250, y=100))
+            self.root.workspace.desk_items.append(DeskKnob("Knob", x=350, y=100))
+            self.root.workspace.desk_items.append(DeskLabel("Label", x=100, y=50))
+            self.root.workspace.desk_items.append(DeskClock("Clock", x=250, y=50))
+            self.root.workspace.desk_items.append(DeskSubdesk("Subdesk", x=100, y=250))
+            self.root.workspace.desk_items.append(DeskSnippetOutput("Snippet Output", x=400, y=250))
+            self.root.desk_handler.desk_content_model.update()
+
         self.current_workspace_path = path
 
     @Slot()
