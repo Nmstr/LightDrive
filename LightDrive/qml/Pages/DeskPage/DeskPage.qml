@@ -90,6 +90,7 @@ Rectangle {
                     return;  // No connector was pressed
                 }
                 console.log(outputConnector);
+                console.log(outputConnector.connectorUuid);
                 let deskConnectorPos = desk.mapFromGlobal(outputConnector.mapToGlobal(outputConnector.x, outputConnector.y))
                 desk.drawingWireStart = Qt.point(deskConnectorPos.x, deskConnectorPos.y);
             }
@@ -110,6 +111,7 @@ Rectangle {
                     return;  // Mouse was not released above connector
                 }
                 console.log(inputConnector)
+                console.log(inputConnector.connectorUuid)
             }
 
             function getConnector(x, y, type): QQuickRectangle {

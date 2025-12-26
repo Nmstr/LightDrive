@@ -53,6 +53,7 @@ Rectangle {
                 model: deskHandler.get_connector_model(baseItem.deskItemUuid, "input")
 
                 Rectangle {
+                    property string connectorUuid: model.uuid
                     width: 15
                     height: 15
                     radius: 180
@@ -80,6 +81,7 @@ Rectangle {
                 model: deskHandler.get_connector_model(baseItem.deskItemUuid, "output")
 
                 Rectangle {
+                    property string connectorUuid: model.uuid
                     width: 15
                     height: 15
                     radius: 180
