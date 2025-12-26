@@ -162,8 +162,30 @@ class ShowSnippet(GenericSnippet):
 
 
 @dataclass
-class GenericDeskItem:
+class AbstractDeskItem:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
+
+@dataclass
+class DeskItemConnector(AbstractDeskItem):
+    data_type: str  # Available: "bool", "number"
+
+@dataclass
+class WireStop(AbstractDeskItem):
+    x: int
+    y: int
+    cp1x: int
+    cp1y: int
+    cp2x: int
+    cp2y: int
+
+@dataclass
+class DeskWire(AbstractDeskItem):
+    starting_connector_uuid: str
+    ending_connector_uuid: str
+    stops: list[WireStop]  # Last stop x and y should be x and y of ending connector
+
+@dataclass
+class GenericDeskItem(AbstractDeskItem):
     name: str
     x: int = field(default=0)
     y: int = field(default=0)
@@ -175,6 +197,7 @@ class DeskButton(GenericDeskItem):
     hotkey: str = field(default="", init=False)
     mode: str = field(default="toggle", init=False)  # Available: "toggle", "flash"
     flash_duration: float = field(default=0, init=False)
+    output_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("bool"), init=False)
 
 @dataclass
 class DeskFader(GenericDeskItem):
@@ -185,6 +208,7 @@ class DeskFader(GenericDeskItem):
     max: float = field(default=255.0, init=False)
     step_size: float = field(default=1.0, init=False)
     inverted: bool = field(default=False, init=False)
+    output_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("number"), init=False)
 
 @dataclass
 class DeskKnob(GenericDeskItem):
@@ -194,6 +218,7 @@ class DeskKnob(GenericDeskItem):
     min: float = field(default=0.0, init=False)
     max: float = field(default=255.0, init=False)
     step_size: float = field(default=1.0, init=False)
+    output_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("number"), init=False)
 
 @dataclass
 class DeskSoundTrigger(GenericDeskItem):
@@ -218,6 +243,7 @@ class DeskSubdesk(GenericDeskItem):
 class DeskSnippetOutput(GenericDeskItem):
     snippet_uuid: str = field(default="", init=False)
     priority: int = field(default=0, init=False)
+    input_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("bool"), init=False)
 
 
 @dataclass
