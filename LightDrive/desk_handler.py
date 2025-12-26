@@ -1,4 +1,5 @@
-from PySide6.QtCore import Qt, QAbstractListModel, QModelIndex, QObject
+from data_structures import IoDeskItem
+from PySide6.QtCore import Qt, QAbstractListModel, QModelIndex, QObject, Slot
 
 class DeskContentModel(QAbstractListModel):
     ItemTypeRole = Qt.UserRole
@@ -99,6 +100,57 @@ class DeskContentModel(QAbstractListModel):
             self.PriorityRole: b"priority",
         }
 
+class ConnectorModel(QAbstractListModel):
+    UuidRole = Qt.UserRole
+    DataTypeRole = Qt.UserRole + 1
+
+    def __init__(self, parent=None, root=None, item_uuid: str = None, side: str = None):
+        super().__init__(parent)
+        self.root = root
+        self.item_uuid = item_uuid
+        self.side = side
+        self.connectors = self.build_connectors_list()
+
+    def build_connectors_list(self) -> list:
+        for item in self.root.workspace.desk_items:
+            if item.uuid == self.item_uuid:
+                desk_item = item
+                break
+        else:
+            return []
+
+        if not isinstance(desk_item, IoDeskItem):
+            return []  # Not a desk item with connectors
+
+        connectors = []
+        if self.side == "input":
+            for connector in desk_item.input_connectors:
+                connectors.append(connector)
+        elif self.side == "output":
+            for connector in desk_item.output_connectors:
+                connectors.append(connector)
+        return connectors
+
+    def rowCount(self, parent=QModelIndex()):  # noqa: N802
+        return len(self.connectors)
+
+    def data(self, index: QModelIndex, role: int = None):
+        if not index.isValid():
+            return None
+
+        connector = self.connectors[index.row()]
+        if role == self.UuidRole:
+            return connector.uuid
+        elif role == self.DataTypeRole:
+            return connector.data_type
+        return None
+
+    def roleNames(self):  # noqa: N802
+        return {
+            self.UuidRole: b"uuid",
+            self.DataTypeRole: b"data_type",
+        }
+
 class DeskHandler(QObject):
     def __init__(self, root):
         super().__init__()
@@ -114,3 +166,8 @@ class DeskHandler(QObject):
         self.root.workspace.desk_items.append(DeskSnippetOutput("Snippet Output", x=400, y=250))
 
         self.desk_content_model = DeskContentModel(self, self.root)
+
+    @Slot(str, str, result="QVariant")
+    def get_connector_model(self, item_uuid: str, side: str) -> ConnectorModel:
+        model = ConnectorModel(self, self.root, item_uuid, side)
+        return model

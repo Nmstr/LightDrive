@@ -9,8 +9,6 @@ Rectangle {
 
     required property string deskItemUuid
     required property string headerText
-    property ListModel inputModel
-    property ListModel outputModel
     property Item content
 
     Rectangle {
@@ -52,13 +50,13 @@ Rectangle {
             spacing: 5
 
             Repeater {
-                model: baseItem.inputModel
+                model: deskHandler.get_connector_model(baseItem.deskItemUuid, "input")
 
                 Rectangle {
                     width: 15
                     height: 15
                     radius: 180
-                    color: baseItem.getConnectorColor(model.type)
+                    color: baseItem.getConnectorColor(model.data_type)
                 }
             }
         }
@@ -79,13 +77,13 @@ Rectangle {
 
             Repeater {
                 id: outputItemRepeater
-                model: baseItem.outputModel
+                model: deskHandler.get_connector_model(baseItem.deskItemUuid, "output")
 
                 Rectangle {
                     width: 15
                     height: 15
                     radius: 180
-                    color: baseItem.getConnectorColor(model.type)
+                    color: baseItem.getConnectorColor(model.data_type)
                 }
             }
         }
