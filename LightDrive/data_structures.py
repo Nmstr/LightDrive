@@ -193,14 +193,22 @@ class GenericDeskItem(AbstractDeskItem):
     height: int = field(default=100)
 
 @dataclass
-class DeskButton(GenericDeskItem):
+class IoDeskItem(GenericDeskItem):
+    output_connectors: list[DeskItemConnector] = field(default_factory=list, init=False)
+    input_connectors: list[DeskItemConnector] = field(default_factory=list, init=False)
+
+@dataclass
+class DeskButton(IoDeskItem):
     hotkey: str = field(default="", init=False)
     mode: str = field(default="toggle", init=False)  # Available: "toggle", "flash"
     flash_duration: float = field(default=0, init=False)
-    output_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("bool"), init=False)
+
+    def __post_init__(self):
+        output_connector = DeskItemConnector("bool")
+        self.output_connectors.append(output_connector)
 
 @dataclass
-class DeskFader(GenericDeskItem):
+class DeskFader(IoDeskItem):
     width: int = field(default=55)  # Override from default
     height: int = field(default=210)  # Override from default
     display_style: str = field(default="value", init=False)  # Available: "value", "percentage"
@@ -208,20 +216,26 @@ class DeskFader(GenericDeskItem):
     max: float = field(default=255.0, init=False)
     step_size: float = field(default=1.0, init=False)
     inverted: bool = field(default=False, init=False)
-    output_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("number"), init=False)
+
+    def __post_init__(self):
+        output_connector = DeskItemConnector("number")
+        self.output_connectors.append(output_connector)
 
 @dataclass
-class DeskKnob(GenericDeskItem):
+class DeskKnob(IoDeskItem):
     width: int = field(default=65)  # Override from default
     height: int = field(default=95)  # Override from default
     display_style: str = field(default="value", init=False)  # Available: "value", "percentage"
     min: float = field(default=0.0, init=False)
     max: float = field(default=255.0, init=False)
     step_size: float = field(default=1.0, init=False)
-    output_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("number"), init=False)
+
+    def __post_init__(self):
+        output_connector = DeskItemConnector("number")
+        self.output_connectors.append(output_connector)
 
 @dataclass
-class DeskSoundTrigger(GenericDeskItem):
+class DeskSoundTrigger(IoDeskItem):
     pass  # Not yet implemented
 
 @dataclass
@@ -236,14 +250,17 @@ class DeskClock(GenericDeskItem):
     timer_duration: float = field(default=0, init=False)
 
 @dataclass
-class DeskSubdesk(GenericDeskItem):
+class DeskSubdesk(IoDeskItem):
     pass  # Not yet implemented
 
 @dataclass
-class DeskSnippetOutput(GenericDeskItem):
+class DeskSnippetOutput(IoDeskItem):
     snippet_uuid: str = field(default="", init=False)
     priority: int = field(default=0, init=False)
-    input_connector: DeskItemConnector = field(default_factory=lambda: DeskItemConnector("bool"), init=False)
+
+    def __post_init__(self):
+        input_connector = DeskItemConnector("bool")
+        self.input_connectors.append(input_connector)
 
 
 @dataclass
