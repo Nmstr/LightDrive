@@ -17,6 +17,7 @@ classifiers = [
     "Topic :: Home Automation",
 ]
 dependencies = [
+    "pyartnet>=2.0",
     "pyside6>=6.10.1",
 ]
 [project.urls]
