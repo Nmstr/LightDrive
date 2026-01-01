@@ -99,6 +99,65 @@ Popup {
                 editable: true
             }
         }
+        Row {
+            CheckBox {
+                anchors.verticalCenter: parent.verticalCenter
+                id: artnetBackendCheckbox
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Enable ArtNet"
+                color: "white"
+            }
+        }
+        GridLayout {
+            id: artnetBackendGrid
+            columns: 2
+            enabled: artnetBackendCheckbox.checkState
+
+            Text {
+                text: "Target IP:"
+                color: "white"
+            }
+            TextField {
+                id: artnetTargetIpInput
+                placeholderText: "127.0.0.1"
+                text: "127.0.0.1"
+            }
+            Text {
+                text: "Universe:"
+                color: "white"
+            }
+            SpinBox {
+                id: artnetUniverseSpin
+                from: 0
+                to: 32767
+                stepSize: 1
+                editable: true
+            }
+            Text {
+                text: "Max FPS"
+                color: "white"
+            }
+            SpinBox {
+                id: artnetMaxFpsSpin
+                from: 1
+                to: 100
+                stepSize: 1
+                editable: true
+            }
+            Text {
+                text: "Min Interval:"
+                color: "white"
+            }
+            SpinBox {
+                id: artnetMinIntervalSpin
+                from: 100
+                to: 100_000
+                stepSize: 100
+                editable: true
+            }
+        }
     }
 
     Row {
