@@ -12,10 +12,18 @@ class UniverseTcpBackend(UniverseGenericBackend):
     hz: int = field(default=30, init=False)
 
 @dataclass
+class UniverseArtNetBackend(UniverseGenericBackend):
+    target_ip: str = field(default="127.0.0.1", init=False)
+    universe: int = field(default=0, init=False)
+    max_fps: int = field(default=25, init=False)
+    min_interval: int = field(default=2000, init=False)
+
+@dataclass
 class Universe:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
     name: str
     tcp_backend: UniverseTcpBackend = field(default_factory=UniverseTcpBackend, init=False)
+    artnet_backend: UniverseArtNetBackend = field(default_factory=UniverseArtNetBackend, init=False)
 
 
 @dataclass

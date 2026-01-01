@@ -187,6 +187,7 @@ Popup {
             onClicked: {
                 universeHandler.configure_universe(currentUuid, universeNameInput.text);
                 universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text, tcpHzSpin.value);
+                universeHandler.configure_artnet_backend(currentUuid, artnetBackendCheckbox.checkState, artnetTargetIpInput.text, artnetUniverseSpin.value, artnetMaxFpsSpin.value, artnetMinIntervalSpin.value);
                 cleanup();
             }
         }
@@ -222,6 +223,13 @@ Popup {
         tcpTargetIpInput.text = tcpBackendData[1];
         tcpPortInput.text = tcpBackendData[2];
         tcpHzSpin.value = tcpBackendData[3];
+
+        let artnetBackendData = universeHandler.get_artnet_backend_configuration(currentUuid);
+        artnetBackendCheckbox.checkState = artnetBackendData[0];
+        artnetTargetIpInput.text = artnetBackendData[1];
+        artnetUniverseSpin.value = artnetBackendData[2];
+        artnetMaxFpsSpin.value = artnetBackendData[3];
+        artnetMinIntervalSpin.value = artnetBackendData[4];
     }
 
     function cleanup() {
@@ -231,6 +239,12 @@ Popup {
         tcpTargetIpInput.text = "127.0.0.1";
         tcpPortInput.text = "7500";
         tcpHzSpin.value = 30
+
+        artnetBackendCheckbox.checkState = false;
+        artnetTargetIpInput.text = "127.0.0.1";
+        artnetUniverseSpin.value = 0;
+        artnetMaxFpsSpin.value = 25;
+        artnetMinIntervalSpin.value = 2;
 
         currentUuid = "";
         configureUniversePopup.close();
