@@ -20,9 +20,8 @@ class OutputUniverse:
         if self._universe_data.artnet_backend.enabled:
             target_ip = self._universe_data.artnet_backend.target_ip
             universe = self._universe_data.artnet_backend.universe
-            max_fps = self._universe_data.artnet_backend.max_fps
-            min_interval = self._universe_data.artnet_backend.min_interval
-            artnet_backend = ArtNetBackend(target_ip, universe, max_fps, min_interval)
+            fps = self._universe_data.artnet_backend.fps
+            artnet_backend = ArtNetBackend(target_ip, universe, fps)
             self.output_backends.append(artnet_backend)
 
     def update_backends(self):
@@ -48,13 +47,13 @@ class OutputUniverse:
         artnet_backend = _get_backend(ArtNetBackend)
         if artnet_backend and self._universe_data.artnet_backend.enabled:
             artnet_backend_data = self._universe_data.artnet_backend
-            artnet_backend.update_configuration(artnet_backend_data.target_ip, artnet_backend_data.universe, artnet_backend_data.max_fps, artnet_backend_data.min_interval)
+            artnet_backend.update_configuration(artnet_backend_data.target_ip, artnet_backend_data.universe, artnet_backend_data.fps)
         elif artnet_backend and not self._universe_data.artnet_backend.enabled:
             artnet_backend.stop()
             self.output_backends.remove(artnet_backend)
         elif not artnet_backend and self._universe_data.artnet_backend.enabled:
             artnet_backend_data = self._universe_data.artnet_backend
-            artnet_backend = ArtNetBackend(artnet_backend_data.target_ip, artnet_backend_data.universe, artnet_backend_data.max_fps, artnet_backend_data.min_interval)
+            artnet_backend = ArtNetBackend(artnet_backend_data.target_ip, artnet_backend_data.universe, artnet_backend_data.fps)
             self.output_backends.append(artnet_backend)
 
     def tick_output(self, values: list[int]) -> None:

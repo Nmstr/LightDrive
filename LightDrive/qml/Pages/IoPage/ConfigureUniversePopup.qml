@@ -140,21 +140,10 @@ Popup {
                 color: "white"
             }
             SpinBox {
-                id: artnetMaxFpsSpin
+                id: artnetFpsSpin
                 from: 1
                 to: 100
                 stepSize: 1
-                editable: true
-            }
-            Text {
-                text: "Min Interval:"
-                color: "white"
-            }
-            SpinBox {
-                id: artnetMinIntervalSpin
-                from: 100
-                to: 100_000
-                stepSize: 100
                 editable: true
             }
         }
@@ -187,7 +176,7 @@ Popup {
             onClicked: {
                 universeHandler.configure_universe(currentUuid, universeNameInput.text);
                 universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text, tcpHzSpin.value);
-                universeHandler.configure_artnet_backend(currentUuid, artnetBackendCheckbox.checkState, artnetTargetIpInput.text, artnetUniverseSpin.value, artnetMaxFpsSpin.value, artnetMinIntervalSpin.value);
+                universeHandler.configure_artnet_backend(currentUuid, artnetBackendCheckbox.checkState, artnetTargetIpInput.text, artnetUniverseSpin.value, artnetFpsSpin.value);
                 cleanup();
             }
         }
@@ -228,8 +217,7 @@ Popup {
         artnetBackendCheckbox.checkState = artnetBackendData[0];
         artnetTargetIpInput.text = artnetBackendData[1];
         artnetUniverseSpin.value = artnetBackendData[2];
-        artnetMaxFpsSpin.value = artnetBackendData[3];
-        artnetMinIntervalSpin.value = artnetBackendData[4];
+        artnetFpsSpin.value = artnetBackendData[3];
     }
 
     function cleanup() {
@@ -243,8 +231,7 @@ Popup {
         artnetBackendCheckbox.checkState = false;
         artnetTargetIpInput.text = "127.0.0.1";
         artnetUniverseSpin.value = 0;
-        artnetMaxFpsSpin.value = 25;
-        artnetMinIntervalSpin.value = 2;
+        artnetFpsSpin.value = 30;
 
         currentUuid = "";
         configureUniversePopup.close();

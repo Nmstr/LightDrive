@@ -15,8 +15,7 @@ class UniverseTcpBackend(UniverseGenericBackend):
 class UniverseArtNetBackend(UniverseGenericBackend):
     target_ip: str = field(default="127.0.0.1", init=False)
     universe: int = field(default=0, init=False)
-    max_fps: int = field(default=25, init=False)
-    min_interval: int = field(default=2000, init=False)
+    fps: int = field(default=30, init=False)
 
 @dataclass
 class Universe:
