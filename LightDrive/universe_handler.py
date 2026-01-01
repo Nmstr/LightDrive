@@ -73,3 +73,30 @@ class UniverseHandler(QObject):
                 return [universe.tcp_backend.enabled, universe.tcp_backend.target_ip, universe.tcp_backend.port, universe.tcp_backend.hz]
         else:
             return []
+
+    @Slot(str, bool, str, int, int)
+    def configure_artnet_backend(self, universe_uuid: str, enabled: bool, target_ip: str, universe_num: int, fps: int) -> None:
+        if not universe_uuid:
+            return
+        for universe in self.root.workspace.universes:
+            if universe.uuid == universe_uuid:
+                universe_data = universe
+                break
+        else:
+            return
+
+        universe_data.artnet_backend.enabled = enabled
+        universe_data.artnet_backend.target_ip = target_ip
+        universe_data.artnet_backend.universe = universe_num
+        universe_data.artnet_backend.fps = fps
+        self.root.output_manager.build_output_universes()
+
+    @Slot(str, result=list)  # See reason for type above
+    def get_artnet_backend_configuration(self, universe_uuid: str) -> list:
+        if not universe_uuid:
+            return []
+        for universe in self.root.workspace.universes:
+            if universe.uuid == universe_uuid:
+                return [universe.artnet_backend.enabled, universe.artnet_backend.target_ip, universe.artnet_backend.universe, universe.artnet_backend.fps]
+        else:
+            return []

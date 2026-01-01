@@ -99,6 +99,54 @@ Popup {
                 editable: true
             }
         }
+        Row {
+            CheckBox {
+                anchors.verticalCenter: parent.verticalCenter
+                id: artnetBackendCheckbox
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Enable ArtNet"
+                color: "white"
+            }
+        }
+        GridLayout {
+            id: artnetBackendGrid
+            columns: 2
+            enabled: artnetBackendCheckbox.checkState
+
+            Text {
+                text: "Target IP:"
+                color: "white"
+            }
+            TextField {
+                id: artnetTargetIpInput
+                placeholderText: "127.0.0.1"
+                text: "127.0.0.1"
+            }
+            Text {
+                text: "Universe:"
+                color: "white"
+            }
+            SpinBox {
+                id: artnetUniverseSpin
+                from: 0
+                to: 32767
+                stepSize: 1
+                editable: true
+            }
+            Text {
+                text: "Max FPS"
+                color: "white"
+            }
+            SpinBox {
+                id: artnetFpsSpin
+                from: 1
+                to: 100
+                stepSize: 1
+                editable: true
+            }
+        }
     }
 
     Row {
@@ -128,6 +176,7 @@ Popup {
             onClicked: {
                 universeHandler.configure_universe(currentUuid, universeNameInput.text);
                 universeHandler.configure_tcp_backend(currentUuid, tcpBackendCheckbox.checkState, tcpTargetIpInput.text, tcpPortInput.text, tcpHzSpin.value);
+                universeHandler.configure_artnet_backend(currentUuid, artnetBackendCheckbox.checkState, artnetTargetIpInput.text, artnetUniverseSpin.value, artnetFpsSpin.value);
                 cleanup();
             }
         }
@@ -163,6 +212,12 @@ Popup {
         tcpTargetIpInput.text = tcpBackendData[1];
         tcpPortInput.text = tcpBackendData[2];
         tcpHzSpin.value = tcpBackendData[3];
+
+        let artnetBackendData = universeHandler.get_artnet_backend_configuration(currentUuid);
+        artnetBackendCheckbox.checkState = artnetBackendData[0];
+        artnetTargetIpInput.text = artnetBackendData[1];
+        artnetUniverseSpin.value = artnetBackendData[2];
+        artnetFpsSpin.value = artnetBackendData[3];
     }
 
     function cleanup() {
@@ -172,6 +227,11 @@ Popup {
         tcpTargetIpInput.text = "127.0.0.1";
         tcpPortInput.text = "7500";
         tcpHzSpin.value = 30
+
+        artnetBackendCheckbox.checkState = false;
+        artnetTargetIpInput.text = "127.0.0.1";
+        artnetUniverseSpin.value = 0;
+        artnetFpsSpin.value = 30;
 
         currentUuid = "";
         configureUniversePopup.close();

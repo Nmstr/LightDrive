@@ -1,5 +1,6 @@
 from data_structures import Universe
 from output.output_backends.generic_output_backend import GenericOutputBackend
+from output.output_backends.artnet_backend import ArtNetBackend
 from output.output_backends.tcp_backend import TcpBackend
 
 class OutputUniverse:
@@ -15,6 +16,13 @@ class OutputUniverse:
             hz = self._universe_data.tcp_backend.hz
             tcp_backend = TcpBackend(target_ip, port, hz)
             self.output_backends.append(tcp_backend)
+
+        if self._universe_data.artnet_backend.enabled:
+            target_ip = self._universe_data.artnet_backend.target_ip
+            universe = self._universe_data.artnet_backend.universe
+            fps = self._universe_data.artnet_backend.fps
+            artnet_backend = ArtNetBackend(target_ip, universe, fps)
+            self.output_backends.append(artnet_backend)
 
     def update_backends(self):
         def _get_backend(backend_type) -> GenericOutputBackend | None:
@@ -35,6 +43,18 @@ class OutputUniverse:
             tcp_backend_data = self._universe_data.tcp_backend
             tcp_backend = TcpBackend(tcp_backend_data.target_ip, tcp_backend_data.port, tcp_backend_data.hz)
             self.output_backends.append(tcp_backend)
+
+        artnet_backend = _get_backend(ArtNetBackend)
+        if artnet_backend and self._universe_data.artnet_backend.enabled:
+            artnet_backend_data = self._universe_data.artnet_backend
+            artnet_backend.update_configuration(artnet_backend_data.target_ip, artnet_backend_data.universe, artnet_backend_data.fps)
+        elif artnet_backend and not self._universe_data.artnet_backend.enabled:
+            artnet_backend.stop()
+            self.output_backends.remove(artnet_backend)
+        elif not artnet_backend and self._universe_data.artnet_backend.enabled:
+            artnet_backend_data = self._universe_data.artnet_backend
+            artnet_backend = ArtNetBackend(artnet_backend_data.target_ip, artnet_backend_data.universe, artnet_backend_data.fps)
+            self.output_backends.append(artnet_backend)
 
     def tick_output(self, values: list[int]) -> None:
         """
