@@ -39,7 +39,7 @@ VConsoleBaseItem {
     MouseArea {
         anchors.fill: knobCircle
         preventStealing: true
-        onPositionChanged: {
+        onPositionChanged: (mouse) => {
             let rad = Math.atan2(mouse.x - knobCircle.width / 2, mouse.y - knobCircle.height / 2);
             let deg = rad * (180 / Math.PI);
             knobRotation.angle = -deg;
