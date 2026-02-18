@@ -1,7 +1,7 @@
 <RCC>
     <!-- Categories -->
     <qresource prefix="/icons">
-        <file alias="console_page.svg">icons/console_page.svg</file>
+        <file alias="editor_page.svg">icons/editor_page.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="control_desk_page.svg">icons/control_desk_page.svg</file>

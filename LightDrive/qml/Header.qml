@@ -29,8 +29,8 @@ Rectangle {
             destinationIndex: 1
         }
         CollapsibleButton {
-            iconSource: "qrc:/icons/console_page.svg"
-            labelText: "Console"
+            iconSource: "qrc:/icons/editor_page.svg"
+            labelText: "Editor"
             destinationIndex: 2
         }
         CollapsibleButton {

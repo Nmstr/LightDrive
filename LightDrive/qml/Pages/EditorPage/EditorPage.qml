@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 Rectangle {
-    id: consolePage
+    id: editorPage
     color: "transparent"
 
 
