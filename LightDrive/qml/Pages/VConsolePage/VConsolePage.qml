@@ -2,7 +2,7 @@ import QtQuick
 import Elements
 
 Rectangle {
-    id: controlDeskPage
+    id: vConsolePage
     color: "transparent"
 
     Rectangle {
@@ -20,34 +20,34 @@ Rectangle {
             spacing: 10
 
             IconButton {
-                iconSource: "qrc:/icons/desk_button.svg"
+                iconSource: "qrc:/icons/v_console_button.svg"
                 onClicked: console.log("button")
             }
             IconButton {
-                iconSource: "qrc:/icons/desk_fader.svg"
+                iconSource: "qrc:/icons/v_console_fader.svg"
                 onClicked: console.log("fader")
             }
             IconButton {
-                iconSource: "qrc:/icons/desk_knob.svg"
+                iconSource: "qrc:/icons/v_console_knob.svg"
                 onClicked: console.log("knob")
             }
             IconButton {
-                iconSource: "qrc:/icons/desk_sound_trigger.svg"
+                iconSource: "qrc:/icons/v_console_sound_trigger.svg"
                 onClicked: console.log("sound_trigger")
             }
             IconButton {
-                iconSource: "qrc:/icons/desk_label.svg"
+                iconSource: "qrc:/icons/v_console_label.svg"
                 onClicked: console.log("label")
             }
             IconButton {
-                iconSource: "qrc:/icons/desk_clock.svg"
+                iconSource: "qrc:/icons/v_console_clock.svg"
                 onClicked: console.log("clock")
             }
         }
     }
 
     Rectangle {
-        id: desk
+        id: vConsole
         anchors {
             top: buttonRow.bottom
             left: parent.left
@@ -57,10 +57,10 @@ Rectangle {
         }
         color: "#555555"
 
-        DeskButton {x: 100; y: 100}
-        DeskFader {x: 250; y: 100}
-        DeskKnob {x: 300; y: 100}
-        DeskLabel {x: 100; y: 50}
-        DeskClock {x: 250; y: 50}
+        VConsoleButton {x: 100; y: 100}
+        VConsoleFader {x: 250; y: 100}
+        VConsoleKnob {x: 300; y: 100}
+        VConsoleLabel {x: 100; y: 50}
+        VConsoleClock {x: 250; y: 50}
     }
 }

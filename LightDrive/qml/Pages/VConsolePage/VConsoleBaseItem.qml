@@ -12,8 +12,8 @@ Rectangle {
         anchors.fill: parent
         drag.target: parent
         onPositionChanged: {
-            rect.x = Math.min(Math.max(rect.x, 0), desk.width - rect.width);
-            rect.y = Math.min(Math.max(rect.y, 0), desk.height - rect.height);
+            rect.x = Math.min(Math.max(rect.x, 0), vConsole.width - rect.width);
+            rect.y = Math.min(Math.max(rect.y, 0), vConsole.height - rect.height);
         }
     }
 }

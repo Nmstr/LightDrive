@@ -6,7 +6,7 @@ import QtQuick.Dialogs
 import Pages.FixturePage 1.0
 import Pages.SnippetPage 1.0
 import Pages.EditorPage 1.0
-import Pages.ControlDeskPage 1.0
+import Pages.VConsolePage 1.0
 import Pages.IoPage 1.0
 import Elements
 
@@ -39,7 +39,7 @@ ApplicationWindow {
             FixturePage { }
             SnippetPage { }
             EditorPage { }
-            ControlDeskPage { }
+            VConsolePage { }
             IoPage { }
         }
 

@@ -1,6 +1,6 @@
 import QtQuick
 
-DeskBaseItem {
+VConsoleBaseItem {
     height: 25
 
     Text {

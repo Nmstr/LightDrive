@@ -169,7 +169,7 @@ class ShowSnippet(GenericSnippet):
 
 
 @dataclass
-class GenericDeskItem:
+class GenericVConsoleItem:
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
     name: str
     x: int = field(default=0, init=False)
@@ -178,13 +178,13 @@ class GenericDeskItem:
     height: int = field(default=0, init=False)
 
 @dataclass
-class DeskButton(GenericDeskItem):
+class VConsoleButton(GenericVConsoleItem):
     hotkey: str = field(default="", init=False)
     mode: str = field(default="toggle", init=False)  # Available: "toggle", "flash"
     flash_duration: float = field(default=0, init=False)
 
 @dataclass
-class DeskFader(GenericDeskItem):
+class VConsoleFader(GenericVConsoleItem):
     display_style: str = field(default="value", init=False)  # Available: "value", "percentage"
     min: float = field(default=0.0, init=False)
     max: float = field(default=255.0, init=False)
@@ -192,22 +192,22 @@ class DeskFader(GenericDeskItem):
     inverted: bool = field(default=False, init=False)
 
 @dataclass
-class DeskKnob(GenericDeskItem):
+class VConsoleKnob(GenericVConsoleItem):
     display_style: str = field(default="value", init=False)  # Available: "value", "percentage"
     min: float = field(default=0.0, init=False)
     max: float = field(default=255.0, init=False)
     step_size: float = field(default=1.0, init=False)
 
 @dataclass
-class DeskSoundTrigger(GenericDeskItem):
+class VConsoleSoundTrigger(GenericVConsoleItem):
     pass  # Not yet implemented
 
 @dataclass
-class DeskLabel(GenericDeskItem):
+class VConsoleLabel(GenericVConsoleItem):
     pass  # No extra attributes, but separate class required because for type distinction
 
 @dataclass
-class DeskClock(GenericDeskItem):
+class VConsoleClock(GenericVConsoleItem):
     mode: str = field(default="clock", init=False)  # Available: "clock", "timer", "stopwatch"
     timer_duration: float = field(default=0, init=False)
 
@@ -217,4 +217,4 @@ class Workspace:
     universes: list[Universe] = field(default_factory=list, init=False)
     fixtures: list[Fixture] = field(default_factory=list, init=False)
     snippets: list[GenericSnippet] = field(default_factory=list, init=False)
-    desk_items: list[GenericDeskItem] = field(default_factory=list, init=False)
+    v_console_items: list[GenericVConsoleItem] = field(default_factory=list, init=False)

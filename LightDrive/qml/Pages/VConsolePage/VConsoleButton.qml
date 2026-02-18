@@ -1,6 +1,6 @@
 import QtQuick
 
-DeskBaseItem {
+VConsoleBaseItem {
     Text {
         text: "Button"
     }

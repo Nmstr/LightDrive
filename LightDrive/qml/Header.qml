@@ -34,8 +34,8 @@ Rectangle {
             destinationIndex: 2
         }
         CollapsibleButton {
-            iconSource: "qrc:/icons/control_desk_page.svg"
-            labelText: "Control Desk"
+            iconSource: "qrc:/icons/v_console_page.svg"
+            labelText: "VConsole"
             destinationIndex: 3
         }
         CollapsibleButton {

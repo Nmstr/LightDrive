@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-DeskBaseItem {
+VConsoleBaseItem {
     width: knobCircle.width
     height: valueText.height + knobCircle.height + knobLabel.height
 

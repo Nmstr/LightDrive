@@ -4,7 +4,7 @@
         <file alias="editor_page.svg">icons/editor_page.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="control_desk_page.svg">icons/control_desk_page.svg</file>
+        <file alias="v_console_page.svg">icons/v_console_page.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="fixture_page.svg">icons/fixture_page.svg</file>
@@ -71,24 +71,24 @@
         <file alias="channel_reset.svg">icons/channel_reset.svg</file>
     </qresource>
 
-    <!-- Specific Desk Related Icons -->
+    <!-- Specific VConsole Related Icons -->
     <qresource prefix="/icons">
-        <file alias="desk_button.svg">icons/desk_button.svg</file>
+        <file alias="v_console_button.svg">icons/v_console_button.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="desk_clock.svg">icons/desk_clock.svg</file>
+        <file alias="v_console_clock.svg">icons/v_console_clock.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="desk_fader.svg">icons/desk_fader.svg</file>
+        <file alias="v_console_fader.svg">icons/v_console_fader.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="desk_knob.svg">icons/desk_knob.svg</file>
+        <file alias="v_console_knob.svg">icons/v_console_knob.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="desk_label.svg">icons/desk_label.svg</file>
+        <file alias="v_console_label.svg">icons/v_console_label.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="desk_sound_trigger.svg">icons/desk_sound_trigger.svg</file>
+        <file alias="v_console_sound_trigger.svg">icons/v_console_sound_trigger.svg</file>
     </qresource>
 
     <!-- Workspace Icons -->

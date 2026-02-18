@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-DeskBaseItem {
+VConsoleBaseItem {
     width: faderColumn.implicitWidth
     height: faderColumn.implicitHeight
 
