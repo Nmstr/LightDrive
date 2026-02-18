@@ -43,10 +43,6 @@ Rectangle {
                 iconSource: "qrc:/icons/desk_clock.svg"
                 onClicked: console.log("clock")
             }
-            IconButton {
-                iconSource: "qrc:/icons/desk_subdesk.svg"
-                onClicked: console.log("subdesk")
-            }
         }
     }
 
@@ -66,6 +62,5 @@ Rectangle {
         DeskKnob {x: 300; y: 100}
         DeskLabel {x: 100; y: 50}
         DeskClock {x: 250; y: 50}
-        DeskSubdesk {x: 100; y: 250}
     }
 }

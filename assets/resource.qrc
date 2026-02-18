@@ -90,9 +90,6 @@
     <qresource prefix="/icons">
         <file alias="desk_sound_trigger.svg">icons/desk_sound_trigger.svg</file>
     </qresource>
-    <qresource prefix="/icons">
-        <file alias="desk_subdesk.svg">icons/desk_subdesk.svg</file>
-    </qresource>
 
     <!-- Workspace Icons -->
     <qresource prefix="/icons">

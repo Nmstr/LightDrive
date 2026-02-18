@@ -211,10 +211,6 @@ class DeskClock(GenericDeskItem):
     mode: str = field(default="clock", init=False)  # Available: "clock", "timer", "stopwatch"
     timer_duration: float = field(default=0, init=False)
 
-@dataclass
-class DeskSubdesk(GenericDeskItem):
-    pass  # Not yet implemented
-
 
 @dataclass
 class Workspace:
