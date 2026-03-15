@@ -1,3 +1,4 @@
 CollapsibleButton 1.0 CollapsibleButton.qml
 TextIconButton 1.0 TextIconButton.qml
 IconButton 1.0 IconButton.qml
+DoubleSpinBox 1.0 DoubleSpinBox.qml
