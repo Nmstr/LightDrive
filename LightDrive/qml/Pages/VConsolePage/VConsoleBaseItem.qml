@@ -17,4 +17,17 @@ Rectangle {
         yAxis.minimum: 0
         yAxis.maximum: vConsole.height - rect.height
     }
+
+    MouseArea {
+        anchors.fill: parent
+        onDoubleClicked: (mouse) => {
+            if (mouse.modifier === Qt.CtrlModifier) {
+                if (typeof openConfig === "function") {
+                    openConfig();
+                } else {
+                    console.log("WARNING: Missing VConsole item configuration page");
+                }
+            }
+        }
+    }
 }
