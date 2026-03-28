@@ -36,7 +36,6 @@ VConsoleBaseItem {
                     TextField {
                         id: labelInput
                         placeholderText: "Button"
-                        color: "#ffffff"
                     }
                 }
                 Row {
@@ -51,7 +50,6 @@ VConsoleBaseItem {
                     TextField {
                         id: snippetField
                         readOnly: true
-                        color: "#ffffff"
                     }
                     Button {
                         id: linkSnippetButton
@@ -80,7 +78,6 @@ VConsoleBaseItem {
                     TextField {
                         id: hotkeyField
                         readOnly: true
-                        color: "#ffffff"
                     }
                     Button {
                         id: selectHotkeyButton
